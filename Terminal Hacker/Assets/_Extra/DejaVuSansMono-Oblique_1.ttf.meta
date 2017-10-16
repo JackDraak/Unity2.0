@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: 6fd7a82c64ca94b41892e6056d303dbf
+timeCreated: 1508085397
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: DejaVu Sans Mono
+  fontNames:
+  - DejaVu Sans Mono Oblique
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 378651e4b9bdc4f47b056843dcfa6ae0, type: 3}
+  - {fileID: 12800000, guid: 9277dc5b13294754f80f39e5bbeffcbd, type: 3}
+  - {fileID: 12800000, guid: a313b81cfc5e55547986511b8aa1ed3d, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
