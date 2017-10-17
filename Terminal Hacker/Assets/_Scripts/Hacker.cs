@@ -1,25 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Hacker : MonoBehaviour {
     // Data
-    string[] wordsOne = { "blue", "pink", "green", "yellow", "purple", "orange" };
-    string[] wordsTwo = { "duke", "coco", "tiger", "buddy", "bandit", "sunny" };
-    string[] wordsThree = { "wells", "clarke", "gibson", "asimov", "bradbury", "heinlein" };
-    string[] wordsFour = { "maypole", "wellwood", "spadina", "townsend", "nostrand", "divisadero" };
-    int wordsPerLevel = 5; // NOTE: Count starts at zero, therefore 5 wPL = 6 words per level.
+    string[] wordsOne = 
+        { "blue", "pink", "green", "yellow", "purple", "orange", "grey", "black", "white", "brown", "beige", "tan" };
+    string[] wordsTwo = 
+        { "duke", "coco", "tiger", "buddy", "bandit", "sunny", "shadow", "muffy", "lassie", "flipper", "rosco" };
+    string[] wordsThree = 
+        { "wells", "clarke", "gibson", "asimov", "bradbury", "heinlein", "stephenson", "sagan", "anthony" };
+    string[] wordsFour = 
+        { "maypole", "wellwood", "spadina", "townsend", "nostrand", "divisadero", "thames", "leaside", "marshall" };
 
     // Initial settings
-    int wordOnePos = 0;
-    int wordTwoPos = 0;
-    int wordThreePos = 0;
-    int wordFourPos = 0;
-    int tokens = 10;                                // Game currency
-    int currentValue;                               // Effective difficulty level & TOA factor
-    enum Screen { Menu, Help, Guess, Pass, Fail}    // Game state enum
-    Screen currentScreen;                           // Game state placeholder
-    string scrambleWord;                            // Placeholder for current scramble-word
+    int tokens = 10;                                    // Game currency
+    enum Screen
+    { Menu, Help, Guess, Pass, Fail, Egg, }             // Game state enum
+    Screen currentScreen;                               // Game state placeholder
+    enum Access { Locked, Unlocked }                    // Access state enum
+    Access levelThree = Access.Locked;                  // Access-state
+    Access levelFour = Access.Locked;                   // Access-state
+    int currentValue;                                   // Effective difficulty level
+    string scrambleWord;                                // Placeholder for scramble-word
 
 	void Start ()
     {
@@ -28,8 +29,10 @@ public class Hacker : MonoBehaviour {
 
     void OnUserInput(string input)
     {
-        if (tokens <= 0) ShowFail();
-        else if (input == "menu") ShowMenu();
+        if (input.ToLower() == "load \"*\",8,1") ShowEasterEgg();
+        else if (currentScreen == Screen.Egg) HandleEggInput(input);
+        else if (tokens <= 0) ShowFail();
+        else if (input.ToLower() == "menu") ShowMenu();
         else if (input == "?") ShowHelp();
         else if (currentScreen == Screen.Menu) HandleMenuInput(input);
         else if (currentScreen == Screen.Guess) HandleGuessInput(input);
@@ -38,55 +41,94 @@ public class Hacker : MonoBehaviour {
         else if (currentScreen == Screen.Fail) HandleFailInput(input);
     }
 
+    void HandleEggInput(string input)
+    {
+        if (input.ToLower() == "help") ShowEggHelp();
+        else if (input.ToLower() == "exit") ShowMenu();
+        else if (int.Parse(input) > 0 || int.Parse(input) < 0)
+        {
+            tokens += int.Parse(input);
+            Terminal.WriteLine("[TOA: " + tokens + "]");
+            Terminal.WriteLine("ENTER COMMAND:");
+        }
+        else ShowEasterEgg();
+    }
+
     void HandleMenuInput(string input)
     {
         if (currentScreen == Screen.Fail) return;
         else if (input == "1") Level(1);
         else if (input == "2") Level(2);
-        else if (input == "3") Level(3);
-        else if (input == "4") Level(4);
+        else if (input == "3")
+        {
+            if (levelThree == Access.Locked)
+            {
+                if (tokens == 15)
+                {
+                    ShowMenu();
+                    Terminal.WriteLine("Unable to deplete TOA to zero.");
+                }
+                else if (tokens > 15)
+                {
+                    tokens -= 15;
+                    levelThree = Access.Unlocked;
+                    ShowMenu();
+                }
+                else
+                {
+                    ShowMenu();
+                    Terminal.WriteLine("Insufficient tokens.");
+                }
+            }
+            else Level(3);
+        }
+        else if (input == "4")
+        {
+            if (levelFour == Access.Locked)
+            {
+                if (tokens == 15)
+                {
+                    ShowMenu();
+                    Terminal.WriteLine("Unable to deplete TOA to zero.");
+                }
+                else if (tokens > 15)
+                {
+                    tokens -= 15;
+                    levelFour = Access.Unlocked;
+                    ShowMenu();
+                }
+                else
+                {
+                    ShowMenu();
+                    Terminal.WriteLine("Insufficient tokens.");
+                }
+            }
+            else Level(4);
+        }
         else
         {
             ShowMenu();
             Terminal.WriteLine("Syntax Error: " + input);
         }
-
     }
 
     void HandleGuessInput(string input)
     {
         Terminal.WriteLine("Guess Input: " + input);
-        if (input == scrambleWord)
+        if (input.ToLower() == scrambleWord)
         {
             tokens += (currentValue * 2);
-            if (currentValue == 1)
-            {
-                if (wordOnePos < wordsPerLevel) wordOnePos++;
-                else wordOnePos = 0;
-            }
-            if (currentValue == 2)
-            {
-                if (wordTwoPos < wordsPerLevel) wordTwoPos++;
-                else wordTwoPos = 0;
-            }
-            if (currentValue == 3)
-            {
-                if (wordThreePos < wordsPerLevel) wordThreePos++;
-                else wordThreePos = 0;
-            }
-            if (currentValue == 4)
-            {
-                if (wordFourPos < wordsPerLevel) wordFourPos++;
-                else wordFourPos = 0;
-            }
-            currentScreen = Screen.Pass; // Really? Maybe save this for the final ending?
+            currentScreen = Screen.Pass;
+            ShowReward(currentValue);
             Terminal.WriteLine("Congratulations! You've earned " + (currentValue * 2) + " TOA.");
+            Terminal.WriteLine("(reminder, you may enter 'menu' or '?' at any time)");
             Terminal.WriteLine("[TOA: " + tokens +"]");
         }
         else
         {
             tokens -= currentValue;
             Terminal.WriteLine("Bummer! You've lost " + currentValue + " TOA.");
+            Terminal.WriteLine("(reminder, you may enter 'menu' or '?' at any time)");
             Terminal.WriteLine("[TOA: " + tokens + "]");
         }
     }
@@ -95,7 +137,7 @@ public class Hacker : MonoBehaviour {
     {
         Terminal.WriteLine("Pass Input: " + input);
         Terminal.WriteLine("\nPlease enter 'menu' at any time, or '?' for help.\n" +
-                           "otherwise use the menu then make a selection [#].\n\n" +
+                           "Otherwise use the menu then make a selection [#].\n\n" +
                            "[TOA: " + tokens + "]");
     }
 
@@ -115,19 +157,110 @@ public class Hacker : MonoBehaviour {
     {
         currentScreen = Screen.Menu;
         Terminal.ClearScreen();
-        Terminal.WriteLine("Thank you for your assistance with our global\n" +
-                           "distributed effort which we call 'Terminal-Hacker'\n" +
-                           "You will be rewarded tokens of appreciation (TOA)\n" +
-                           "for your success. Please work dilligently however,\n" +
-                           "as failures will not be accomodated.\n");
-        Terminal.WriteLine("Please descramble one of the following:\n" +
-                           "  1) What is your favourite colour?\n" +
-                           "  2) What is the name of your first pet?\n" +
-                           "  3) Who is your favourite SciFi author?\n" +
-                           "  4) Name of the street you grew up on?");
-        Terminal.WriteLine("\nPlease enter 'menu' at any time, or '?' for help.\n" +
-                           "otherwise, please make a menu selection [#].\n\n" +
-                           "[TOA: " + tokens + "]");
+        //                 |                                                        |
+        Terminal.WriteLine("GTHDB: Main Menu [access at anytime by entering 'menu']");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("Earn tokens of appreciation (TOA) as rewards for your");
+        Terminal.WriteLine("success. Please work dilligently however, as failures");
+        Terminal.WriteLine("will not be accomodated.");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("  1) What is your favourite colour?");
+        Terminal.WriteLine("  2) What is the name of your first pet?");
+        if (levelThree == Access.Locked)
+        {
+            Terminal.WriteLine("  3) Unlock with 15 TOA.");
+        }
+        else Terminal.WriteLine("  3) Who is your favourite SciFi author?");
+        if (levelFour == Access.Locked)
+        {
+            Terminal.WriteLine("  4) Unlock with 15 TOA.");
+        }
+        else Terminal.WriteLine("  4) What is the name of the street you grew up on?");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("Please enter '?' any time for help, otherwise, please");
+        Terminal.WriteLine("select a security question to descramble their answers.");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("[TOA: " + tokens + "]");
+    }
+
+    void ShowReward(int level)
+    {
+        switch (level)
+        {
+            case 1:
+                Terminal.WriteLine("                        .----,");
+                Terminal.WriteLine("                       /--._(");
+                Terminal.WriteLine("                       |____|");
+                Terminal.WriteLine("                       [____] .=======.");
+                Terminal.WriteLine("                         YY   q.     .p");
+                Terminal.WriteLine("                         ||   | `---' |");
+                Terminal.WriteLine("                         []   |_______|");
+                Terminal.WriteLine("");
+                break;
+            case 2:
+                Terminal.WriteLine("                        |\\__/|");
+                Terminal.WriteLine("                        (_^-^)");
+                Terminal.WriteLine("                   _     )  (");
+                Terminal.WriteLine("                  ((  __/    \\    ( ( (");
+                Terminal.WriteLine("                   (   ) ||  ||   ) ) )");
+                Terminal.WriteLine("                   '---''--''--'  >+++°>");
+                Terminal.WriteLine("");
+                break;
+            case 3:
+                Terminal.WriteLine("                            *");
+                Terminal.WriteLine("                           /_\\");
+                Terminal.WriteLine("                           | |");
+                Terminal.WriteLine("                           |_|");
+                Terminal.WriteLine("                           | |");
+                Terminal.WriteLine("                           )_(");
+                Terminal.WriteLine("                          /| |\\");
+                Terminal.WriteLine("                         /_|_|_\\");
+                Terminal.WriteLine("");
+                break;
+            case 4:
+                Terminal.WriteLine("                        ,dP\"\"d8b,");
+                Terminal.WriteLine("                       d\"   d88\"8b");
+                Terminal.WriteLine("                      I8    Y88a88)");
+                Terminal.WriteLine("                      `Y, a  )888P");
+                Terminal.WriteLine("                        \"b,,a88P\"");
+                Terminal.WriteLine("");
+                Terminal.WriteLine("                  You are at peak Zen!");
+                Terminal.WriteLine("        Now would be a good time for a vacation!");
+                //                 |                                                        |
+                Terminal.WriteLine("");
+                break;
+            default:
+                break;
+        }
+    }
+
+    void ShowEasterEgg()
+    {
+        currentScreen = Screen.Egg;
+        Terminal.ClearScreen();
+        Terminal.WriteLine("LOAD \"*\",8,1");
+        Terminal.WriteLine("..................................");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("Distributed Social Hacking Tool v3.95f02");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("[TOA: " + tokens + "]");
+        Terminal.WriteLine("ENTER COMMAND:");
+    }
+
+    void ShowEggHelp()
+    {
+        Terminal.ClearScreen();
+        Terminal.WriteLine("Distributed Social Hacking Tool v3.95f02");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("Did you forget what you put me for here, boss?");
+        Terminal.WriteLine("Okay, okay, I'll give you a hint... Do you have enough");
+        Terminal.WriteLine("TOA? If you forgot, you can always get back to the main");
+        //                 |                                                        |
+        Terminal.WriteLine("menu at any time by entering 'exit', otherwise, gimme a"); 
+        Terminal.WriteLine("number, already!");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("[TOA: " + tokens + "]");
+        Terminal.WriteLine("ENTER COMMAND:");
     }
 
     void ShowHelp()
@@ -141,12 +274,13 @@ public class Hacker : MonoBehaviour {
         Terminal.WriteLine("   menu - will display the Main Menu.");
         Terminal.WriteLine("   [#] - select menu options for further options.");
         Terminal.WriteLine("");
-        Terminal.WriteLine(" * While descrambling security question answers it");
-        Terminal.WriteLine("   costs specific TOA to make a guess, but if you");
-        Terminal.WriteLine("   are correct you will double your TOA. If you");
+        //                 |                                                        |
+        Terminal.WriteLine(" * While descrambling security question answers it costs");
+        Terminal.WriteLine("   specific TOA to make a guess, but if you are correct,");
+        Terminal.WriteLine("   then you will double your TOA! Note: If you manage to");
         Terminal.WriteLine("   deplete your cache of TOA, you will be erased.");
         Terminal.WriteLine("\nPlease enter 'menu' at any time, or '?' for help.\n" +
-                           "otherwise use the menu then make a selection [#].\n\n" +
+                           "Otherwise use the menu then make a selection [#].\n\n" +
                            "[TOA: " + tokens + "]");
     }
 
@@ -160,10 +294,10 @@ public class Hacker : MonoBehaviour {
 
     void ShowScramble(int level)
     {
-        if (level == 1) scrambleWord = wordsOne[wordOnePos];
-        else if (level == 2) scrambleWord = wordsTwo[wordTwoPos];
-        else if (level == 3) scrambleWord = wordsThree[wordThreePos];
-        else if (level == 4) scrambleWord = wordsFour[wordFourPos];
+        if (level == 1) scrambleWord = wordsOne[Random.Range(0, wordsOne.Length)];
+        else if (level == 2) scrambleWord = wordsTwo[Random.Range(0, wordsTwo.Length)];
+        else if (level == 3) scrambleWord = wordsThree[Random.Range(0, wordsThree.Length)];
+        else if (level == 4) scrambleWord = wordsFour[Random.Range(0, wordsFour.Length)];
         string currentWord = scrambleWord.Anagram();
         Terminal.WriteLine("Scramble Level " + level + ": " + currentWord);
     }
@@ -171,10 +305,16 @@ public class Hacker : MonoBehaviour {
     void Level(int level)
         {
         currentValue = level;
+        if (tokens < currentValue)
+        {
+            ShowMenu();
+            Terminal.WriteLine("You lack the tokens to make any guesses at that level.");
+            return;
+        }
         currentScreen = Screen.Guess;
         Terminal.ClearScreen();
         Terminal.WriteLine("GTHDB Level " + currentValue + " | TOA: " + tokens);
-        Terminal.WriteLine("This group is worth " + currentValue + " TOA for each answer.");
+        Terminal.WriteLine("This group is worth " + currentValue + " TOA for each guess.");
         Terminal.WriteLine("Unscramble the answer to the security question:");
         Terminal.WriteLine("");
         if (currentValue == 1) Terminal.WriteLine("What is your favourite colour?");
@@ -183,5 +323,4 @@ public class Hacker : MonoBehaviour {
         else if (currentValue == 4) Terminal.WriteLine("What is the name of the street you grew up on?");
         ShowScramble(level);
     }
-
 }
