@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class Hacker : MonoBehaviour {
     // Data
@@ -10,11 +11,15 @@ public class Hacker : MonoBehaviour {
         { "wells", "clarke", "gibson", "asimov", "bradbury", "heinlein", "stephenson", "sagan", "anthony" };
     string[] wordsFour = 
         { "maypole", "wellwood", "spadina", "townsend", "nostrand", "divisadero", "thames", "leaside", "marshall" };
+    const int unlockFee_3 = 15;
+    const int unlockFee_4 = 20;
+
+    public GameObject keyboard;
 
     // Initial settings
     int tokens = 10;                                    // Game currency
     enum Screen
-    { Menu, Help, Guess, Pass, Fail, Egg, }             // Game state enum
+    { Menu, Help, Guess, Pass, Fail, Egg, Login }       // Game state enum
     Screen currentScreen;                               // Game state placeholder
     enum Access { Locked, Unlocked }                    // Access state enum
     Access levelThree = Access.Locked;                  // Access-state
@@ -24,12 +29,14 @@ public class Hacker : MonoBehaviour {
 
 	void Start ()
     {
-        ShowMenu(); // OnUserInput is the primary controller, initialize scene with ShowMenu()
+        keyboard.SetActive(false); // disable keyboard (user) input during 'boot-up sequence'
+        StartCoroutine(ShowLoad()); // OnUserInput is the primary controller, see below:
     }
 
     void OnUserInput(string input)
     {
-        if (input.ToLower() == "load \"*\",8,1") ShowEasterEgg();
+        if (currentScreen == Screen.Login) HandleLoginInput(input);
+        else if (input.ToLower() == "load \"*\",8,1") StartCoroutine(ShowEasterEgg());
         else if (currentScreen == Screen.Egg) HandleEggInput(input);
         else if (tokens <= 0) ShowFail();
         else if (input.ToLower() == "menu") ShowMenu();
@@ -51,7 +58,7 @@ public class Hacker : MonoBehaviour {
             Terminal.WriteLine("[TOA: " + tokens + "]");
             Terminal.WriteLine("ENTER COMMAND:");
         }
-        else ShowEasterEgg();
+        else StartCoroutine(ShowEasterEgg());
     }
 
     void HandleMenuInput(string input)
@@ -63,14 +70,14 @@ public class Hacker : MonoBehaviour {
         {
             if (levelThree == Access.Locked)
             {
-                if (tokens == 15)
+                if (tokens == unlockFee_3)
                 {
                     ShowMenu();
                     Terminal.WriteLine("Unable to deplete TOA to zero.");
                 }
-                else if (tokens > 15)
+                else if (tokens > unlockFee_3)
                 {
-                    tokens -= 15;
+                    tokens -= unlockFee_3;
                     levelThree = Access.Unlocked;
                     ShowMenu();
                 }
@@ -86,14 +93,14 @@ public class Hacker : MonoBehaviour {
         {
             if (levelFour == Access.Locked)
             {
-                if (tokens == 15)
+                if (tokens == unlockFee_4)
                 {
                     ShowMenu();
                     Terminal.WriteLine("Unable to deplete TOA to zero.");
                 }
-                else if (tokens > 15)
+                else if (tokens > unlockFee_4)
                 {
-                    tokens -= 15;
+                    tokens -= unlockFee_4;
                     levelFour = Access.Unlocked;
                     ShowMenu();
                 }
@@ -127,7 +134,9 @@ public class Hacker : MonoBehaviour {
         else
         {
             tokens -= currentValue;
-            Terminal.WriteLine("Bummer! You've lost " + currentValue + " TOA.");
+            //                                                                                              |
+            Terminal.WriteLine("Yikes! You've lost " + currentValue + " TOA!");
+            Terminal.WriteLine("...be sure to not lose them all!");
             Terminal.WriteLine("(reminder, you may enter 'menu' or '?' at any time)");
             Terminal.WriteLine("[TOA: " + tokens + "]");
         }
@@ -137,7 +146,7 @@ public class Hacker : MonoBehaviour {
     {
         Terminal.WriteLine("Pass Input: " + input);
         Terminal.WriteLine("\nPlease enter 'menu' at any time, or '?' for help.\n" +
-                           "Otherwise use the menu then make a selection [#].\n\n" +
+                           "Otherwise use the menu, then enter a selection '#'.\n\n" +
                            "[TOA: " + tokens + "]");
     }
 
@@ -153,12 +162,67 @@ public class Hacker : MonoBehaviour {
         Terminal.WriteLine("Syntax Error: " + input);
     }
 
-    void ShowMenu()
+    void HandleLoginInput(string input)
+    {
+        return;
+    }
+
+    IEnumerator ShowLoad() // Coroutine to simulate computer booting-up.
+    {
+        currentScreen = Screen.Login;
+        Terminal.ClearScreen();
+        //                 |                                                        |
+        yield return new WaitForSeconds(.2f);
+        Terminal.WriteLine("           **** COMMODORE 64 BASIC v4.20 ****");
+        yield return new WaitForSeconds(1.8f); 
+        Terminal.WriteLine("");
+        Terminal.WriteLine("         64K RAM SYSTEM  33710 BASIC BYTES FREE");
+        yield return new WaitForSeconds(1.3f);
+        Terminal.WriteLine("");
+        Terminal.WriteLine("READY.");
+        yield return new WaitForSeconds(.8f);
+        Terminal.WriteLine("LOAD \"GTHDB.PRG\",8,1");
+        Terminal.WriteLine("");
+        yield return new WaitForSeconds(.7f);
+        Terminal.WriteLine("SEARCHING FOR GTHDB.PRG");
+        yield return new WaitForSeconds(.3f);
+        Terminal.WriteLine("LOADING");
+        yield return new WaitForSeconds(.6f);
+        Terminal.WriteLine(".");
+        yield return new WaitForSeconds(.8f);
+        Terminal.WriteLine(".");
+        yield return new WaitForSeconds(1);
+        Terminal.WriteLine(".");
+        yield return new WaitForSeconds(1.2f);
+        Terminal.WriteLine(".");
+        yield return new WaitForSeconds(1.4f);
+        StartCoroutine(ShowLogin());
+    }
+
+    IEnumerator ShowLogin() // Coroutine to simulate sutomatic computer login.
+    {
+        currentScreen = Screen.Login;
+        Terminal.ClearScreen();
+        //                 |                                                        |
+        Terminal.WriteLine("GTHDB release 13.2.7 (GrubbyPaws Update 3)");
+        Terminal.WriteLine("Kernel 2.6.5-21.EL on VIC-64");
+        yield return new WaitForSeconds(1.2f);
+        Terminal.WriteLine("LOGIN (guest):");
+        yield return new WaitForSeconds(1.4f);
+        Terminal.WriteLine("PASSWORD:");
+        Terminal.WriteLine("");
+        yield return new WaitForSeconds(1.6f);
+        keyboard.SetActive(true); // reactivate the keyboard!
+        ShowMenu(); // Light-show is over, start the game now.
+    }
+
+    void ShowMenu() // Primary game interface
     {
         currentScreen = Screen.Menu;
         Terminal.ClearScreen();
         //                 |                                                        |
-        Terminal.WriteLine("GTHDB: Main Menu [access at anytime by entering 'menu']");
+        Terminal.WriteLine("                    GTHDB: Main Menu");
+        Terminal.WriteLine("          [access at anytime by entering 'menu']");
         Terminal.WriteLine("");
         Terminal.WriteLine("Earn tokens of appreciation (TOA) as rewards for your");
         Terminal.WriteLine("success. Please work dilligently however, as failures");
@@ -173,7 +237,7 @@ public class Hacker : MonoBehaviour {
         else Terminal.WriteLine("  3) Who is your favourite SciFi author?");
         if (levelFour == Access.Locked)
         {
-            Terminal.WriteLine("  4) Unlock with 15 TOA.");
+            Terminal.WriteLine("  4) Unlock with 20 TOA.");
         }
         else Terminal.WriteLine("  4) What is the name of the street you grew up on?");
         Terminal.WriteLine("");
@@ -183,7 +247,7 @@ public class Hacker : MonoBehaviour {
         Terminal.WriteLine("[TOA: " + tokens + "]");
     }
 
-    void ShowReward(int level)
+    void ShowReward(int level) // Display ASCII-art rewards for de-scrambles
     {
         switch (level)
         {
@@ -230,18 +294,29 @@ public class Hacker : MonoBehaviour {
                 Terminal.WriteLine("");
                 break;
             default:
+                Debug.Log("fell to default case in ShowReward().");
                 break;
         }
     }
 
-    void ShowEasterEgg()
+    IEnumerator ShowEasterEgg() // 
     {
         currentScreen = Screen.Egg;
         Terminal.ClearScreen();
+        yield return new WaitForSeconds(.3f);
         Terminal.WriteLine("LOAD \"*\",8,1");
-        Terminal.WriteLine("..................................");
+        yield return new WaitForSeconds(1.4f);
+        Terminal.WriteLine(".");
+        yield return new WaitForSeconds(1.4f);
+        Terminal.WriteLine(".");
+        yield return new WaitForSeconds(1.4f);
+        Terminal.WriteLine(".");
+        yield return new WaitForSeconds(1.4f);
+        Terminal.ClearScreen();
+        //                 |                                                        |
+        Terminal.WriteLine("        Distributed Social Hacking Tool v3.95f02");
+        Terminal.WriteLine("          [enter 'help' or 'exit' at any time]");
         Terminal.WriteLine("");
-        Terminal.WriteLine("Distributed Social Hacking Tool v3.95f02");
         Terminal.WriteLine("");
         Terminal.WriteLine("[TOA: " + tokens + "]");
         Terminal.WriteLine("ENTER COMMAND:");
@@ -250,7 +325,7 @@ public class Hacker : MonoBehaviour {
     void ShowEggHelp()
     {
         Terminal.ClearScreen();
-        Terminal.WriteLine("Distributed Social Hacking Tool v3.95f02");
+        Terminal.WriteLine("        Distributed Social Hacking Tool v3.95f02");
         Terminal.WriteLine("");
         Terminal.WriteLine("Did you forget what you put me for here, boss?");
         Terminal.WriteLine("Okay, okay, I'll give you a hint... Do you have enough");
