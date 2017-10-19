@@ -527,23 +527,21 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Hit Play or Ctrl+P to turn me on.
-
-
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque consequat
-    porta nunc porta laoreet. Nam tempor orci consequat ipsum volutpat, non tristique
-    neque viverra. Aenean sit amet sagittis lacus. Proin eu semper mi, ut tincidunt
-    dolor. Integer tortor felis, mollis vitae quam in, efficitur porta enim. Proin
-    sit amet commodo augue, accumsan mollis mi. Duis aliquam in diam sed tincidunt.
-    Aliquam ultrices eget ipsum at efficitur. Integer orci est, condimentum nec facilisis
-    ac, rutrum eu ex. Nullam sodales leo id bibendum dictum. Lorem ipsum dolor sit
-    amet, consectetur adipiscing elit. Pellentesque consequat porta nunc porta laoreet.
-    Nam tempor orci consequat ipsum volutpat, non tristique neque viverra. Aenean
-    sit amet sagittis lacus. Proin eu semper mi, ut tincidunt dolor. Integer tortor
-    felis, mollis vitae quam in, efficitur porta enim. Proin sit amet commodo augue,
-    accumsan mollis mi. Duis aliquam in diam sed tincidunt. Aliquam ultrices eget
-    ipsum at efficitur. Integer orci est, condimentum nec facilisis ac, rutrum eu
-    ex. Nullam sodales leo id bibendum dictum.'
+  m_Text: "Hit Play or Ctrl+P to turn me on.\n\nLorem ipsum dolor sit amet, consectetur
+    adipiscing elit. Pellentesque consequat porta nunc porta laoreet. Nam tempor orci
+    consequat ipsum volutpat, non tristique neque viverra. \n\nAenean sit amet sagittis
+    lacus. Proin eu semper mi, ut tincidunt dolor. Integer tortor felis, mollis vitae
+    quam in, efficitur porta enim. Proin sit amet commodo augue, accumsan mollis mi.
+    Duis aliquam in diam sed tincidunt. Aliquam ultrices eget ipsum at efficitur.
+    \n\nInteger orci est, condimentum nec facilisis ac, rutrum eu ex. Nullam sodales
+    leo id bibendum dictum. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    Pellentesque consequat porta nunc porta laoreet. Nam tempor orci consequat ipsum
+    volutpat, non tristique neque viverra. Aenean sit amet sagittis lacus. Proin eu
+    semper mi, ut tincidunt dolor. \n\nInteger tortor felis, mollis vitae quam in,
+    efficitur porta enim. Proin sit amet commodo augue, accumsan mollis mi. Duis aliquam
+    in diam sed tincidunt. Aliquam ultrices eget ipsum at efficitur. Integer orci
+    est, condimentum nec facilisis ac, rutrum eu ex. Nullam sodales leo id bibendum
+    dictum."
 --- !u!114 &114969123019208958
 MonoBehaviour:
   m_ObjectHideFlags: 1

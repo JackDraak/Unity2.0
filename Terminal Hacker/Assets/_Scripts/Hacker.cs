@@ -1,50 +1,65 @@
-﻿using System.Collections; // Required for IEnumerator co-routines
-using UnityEngine;  // Unity requirement
+﻿/*  Hacker.cs
+ *  Written for Complete Unity Developer 2.0 course in Unity 2017 (Section 2)
+ *  Resources: 
+ *      https://community.gamedev.tv/
+ *      https://www.udemy.com/unitycourse2/
+ *      WM2000 unitypackage (accessible via the Udemy course)
+ *      https://fonts2u.com/dotrice-condensed.font/
+ *      
+ *  Author: @JackDraak
+ *  2017-Oct-18
+ */
+
+using System.Collections;                           // Required for IEnumerator co-routines
+using UnityEngine;                                  // Unity requirement
 
 public class Hacker : MonoBehaviour {
-    // Data
-    const int unlockFee_3 = 15;                         // TOA cost to unlock level 3
-    const int unlockFee_4 = 20;                         // TOA cost to unlock level 4
+    // Game-Data:
+    const int unlockFee_3 = 15;                     // TOA cost to unlock level 3
+    const int unlockFee_4 = 20;                     // TOA cost to unlock level 4
     string[] wordsOne = 
         { "blue", "pink", "green", "yellow", "purple", "orange", "grey", "black", "white",
-        "brown", "beige", "tan", "teal" };              // Level One words
+        "brown", "beige", "tan", "teal" };          // Level One words
     string[] wordsTwo = 
         { "duke", "coco", "tiger", "buddy", "bandit", "sunny", "shadow", "muffy", "lassie",
-        "flipper", "rosco" };                           // Level Two words
+        "flipper", "rosco" };                       // Level Two words
     string[] wordsThree = 
         { "wells", "clarke", "gibson", "asimov", "bradbury", "heinlein", "stephenson",
-        "sagan", "anthony" };                           // Level Three words
+        "sagan", "anthony" };                       // Level Three words
     string[] wordsFour = 
         { "maypole", "wellwood", "spadina", "townsend", "nostrand", "divisadero", "thames",
-        "leaside", "marshall" };                        // Level Four words
+        "leaside", "marshall" };                    // Level Four words
 
-    // Need control of Keyboard game object (to disable user input)
-    public GameObject keyboard;                         // We want to turn this off/on
+    // Need control of Keyboard game object (to disable user input).
+    // Use Unity inspector to drag/drop the keyboard in the scene into script field.
+    [SerializeField] GameObject keyboard;           // We want to turn this off/on
 
-    // Initial settings
+    // Initial settings:
     enum Screen
     { Menu, Help, Guess, Pass, Fail, Egg, Login, Exit } // Game state enum
-    Screen currentScreen;                               // Game state placeholder
+    Screen currentScreen;                           // Game state placeholder
 
-    enum Access { Locked, Unlocked }                    // Access state enum
-    Access levelThree = Access.Locked;                  // Access-state
-    Access levelFour = Access.Locked;                   // Access-state
+    enum Access { Locked, Unlocked }                // Access state enum
+    Access levelThree = Access.Locked;              // Access-state
+    Access levelFour = Access.Locked;               // Access-state
 
-    int currentLevel;                                   // Effective difficulty level
-    string scrambleWord;                                // Placeholder for scramble-word
-    int tokens = 10;                                    // Game currency
+    int currentLevel;                               // Effective difficulty level
+    string scrambleWord;                            // Placeholder for scramble-word
+    int tokens = 10;                                // Game currency
 
-    // Obligatory Unity 'Start()' function. 'OnUserInput()' is the primary game controller.
+    // Obligatory Unity 'Start()' function; 'OnUserInput()' is the primary game controller.
     void Start ()
     {
         keyboard.SetActive(false); // disable user input during 'boot-up sequence'.
-        StartCoroutine(ShowLoad());
+        StartCoroutine(ShowLoad()); // begin the light show.
     }
 
     void OnUserInput(string input) // Primary controller. User input handled here.
     {
-        // The order of these checks is very important to proper game-flow, use caution when
-        // playing with this function. Most-significant checks go to the top.
+        // This function is explicity for "traffic control" with user input. The order
+        // of these checks is very important to proper game-flow, use caution when
+        // playing with this function. Most-significant checks go to the top. 
+
         if (currentScreen == Screen.Login) HandleLoginInput(input); // TODO: depreciate.
         else if (input.ToLower() == "load \"*\",8,1") StartCoroutine(ShowEasterEgg());
         else if (currentScreen == Screen.Egg) HandleEggInput(input);
@@ -62,15 +77,16 @@ public class Hacker : MonoBehaviour {
 
     void HandleEggInput(string input) // Process user input from backdoor screen(s).
     {
+        int g;
         if (input.ToLower() == "help") ShowEggHelp();
         else if (input.ToLower() == "exit") ShowMenu();
-        else if (int.Parse(input) > 0 || int.Parse(input) < 0)
+        else if (int.TryParse(input, out g)) // If input is a #, apply to tokens.
         {
             tokens += int.Parse(input);
             Terminal.WriteLine("[TOA: " + tokens + "]");
             Terminal.WriteLine("ENTER COMMAND:");
         }
-        else StartCoroutine(ShowEasterEgg());
+        else ShowSyntaxError(input); // Otherwise, fail gracefully.
     }
 
     void HandleMenuInput(string input) // Process user menu selection.
@@ -80,6 +96,7 @@ public class Hacker : MonoBehaviour {
         else if (input == "2") Level(2);
         else if (input == "3")
         {
+            // Access-control here: if locked, try to unlock (Level 3).
             if (levelThree == Access.Locked)
             {
                 if (tokens == unlockFee_3)
@@ -99,8 +116,9 @@ public class Hacker : MonoBehaviour {
                     Terminal.WriteLine("Insufficient tokens.");
                 }
             }
-            else Level(3);
+            else Level(3); // if unlocked, proceed.
         }
+        // Access-control here: if locked, try to unlock (Level 4).
         else if (input == "4")
         {
             if (levelFour == Access.Locked)
@@ -122,7 +140,7 @@ public class Hacker : MonoBehaviour {
                     Terminal.WriteLine("Insufficient tokens.");
                 }
             }
-            else Level(4);
+            else Level(4); // If unlocked, proceed.
         }
         else
         {
@@ -255,7 +273,7 @@ public class Hacker : MonoBehaviour {
         Terminal.WriteLine("Earn tokens of appreciation (TOA) as rewards for your");
         //                 |<<<----  ----  -- MAXIMUM COULMN WIDTH --  ----  ---->>>|
         Terminal.WriteLine("success. Please work dilligently however, as failures");
-        Terminal.WriteLine("will not be accomodated.");
+        Terminal.WriteLine("will not be accommodated.");
         Terminal.WriteLine("");
         Terminal.WriteLine("  1) What is your favourite colour?");
         Terminal.WriteLine("  2) What is the name of your first pet?");
