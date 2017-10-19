@@ -127,10 +127,10 @@ public class Hacker : MonoBehaviour {
         else
         {
             ShowMenu();
-            Terminal.WriteLine("Syntax Error: " + input);
+            ShowSyntaxError(input);
         }
     }
-
+    
     void HandleGuessInput(string input) // Process user guesses or directive input.
     {
         if (input == "")
@@ -145,7 +145,7 @@ public class Hacker : MonoBehaviour {
             Terminal.WriteLine("[TOA: " + tokens + "]");
             return;
         }
-        Terminal.WriteLine("Guess Input: " + input);
+        Terminal.WriteLine("Guess Input: " + ReformatInput(input));
         if (input.ToLower() == scrambleWord)
         {
             tokens += (currentLevel * 2);
@@ -168,7 +168,7 @@ public class Hacker : MonoBehaviour {
 
     void HandlePassInput(string input) // Process user input after challenge-win.
     {
-        Terminal.WriteLine("\nYou solved the active scramble. Directive unkown: " + input);
+        Terminal.WriteLine("\nYou solved the active scramble. Directive unkown: " + ReformatInput(input));
         Terminal.WriteLine("\nPlease enter 'menu' at any time, or '?' for help.\n" +
                            "Otherwise use the menu, then enter a selection '#'.\n\n" +
                            "[TOA: " + tokens + "]");
@@ -177,13 +177,13 @@ public class Hacker : MonoBehaviour {
     void HandleHelpInput(string input) // Process user input in helpmode.
     {
         ShowHelp();
-        Terminal.WriteLine("Syntax Error: " + input);
+        ShowSyntaxError(input);
     }
 
     void HandleFailInput(string input) // Process user input in failmode.
     {
         ShowFail();
-        Terminal.WriteLine("Syntax Error: " + input);
+        ShowSyntaxError(input);
     }
 
     void HandleLoginInput(string input) // Depreciated... now keyboard is inactive for login.
@@ -191,7 +191,7 @@ public class Hacker : MonoBehaviour {
         return;
     }
 
-    void HandleExitInput(string input) // Depreciated... now keyboard is inactive for login.
+    void HandleExitInput(string input) // Do nothing after exit (backdoor still avail.)
     {
         return;
     }
@@ -410,6 +410,30 @@ public class Hacker : MonoBehaviour {
                    "your shoes, I'd be making myself well, scarce...\n" +
                    "now!\n\n" +
                    "[TOA: " + tokens + "]");
+    }
+
+    void ShowSyntaxError(string input) // Help user by highlighting spaces in input.
+    {
+        Terminal.WriteLine("Syntax Error: " + ReformatInput(input));
+    }
+
+    string ReformatInput(string input) // Replace <space> with '_' for user-feedback.
+    {
+        string s = "";
+        int l = input.Length;
+        if (l > 0)
+        {
+            for (int i = 0; i < l; i++)
+            {
+                char c = input[i];
+                if (c == ' ')
+                {
+                    s = string.Concat(s, '_');
+                }
+                else s = string.Concat(s, input[i]);
+            }
+        }
+        return s;
     }
 
     // Select (as member-variable 'scrambleWord') a random word from a specific level.
