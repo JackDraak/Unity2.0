@@ -23,7 +23,7 @@ public class Hacker : MonoBehaviour {
 
     // Initial settings
     enum Screen
-    { Menu, Help, Guess, Pass, Fail, Egg, Login }       // Game state enum
+    { Menu, Help, Guess, Pass, Fail, Egg, Login, Exit } // Game state enum
     Screen currentScreen;                               // Game state placeholder
 
     enum Access { Locked, Unlocked }                    // Access state enum
@@ -37,17 +37,19 @@ public class Hacker : MonoBehaviour {
     // Obligatory Unity 'Start()' function. 'OnUserInput()' is the primary game controller.
     void Start ()
     {
-        keyboard.SetActive(false); // disable keyboard (user) input during 'boot-up sequence'
+        keyboard.SetActive(false); // disable user input during 'boot-up sequence'.
         StartCoroutine(ShowLoad());
     }
 
-    void OnUserInput(string input) // Primary controller. User input handled here...
+    void OnUserInput(string input) // Primary controller. User input handled here.
     {
         // The order of these checks is very important to proper game-flow, use caution when
         // playing with this function. Most-significant checks go to the top.
         if (currentScreen == Screen.Login) HandleLoginInput(input); // TODO: depreciate.
         else if (input.ToLower() == "load \"*\",8,1") StartCoroutine(ShowEasterEgg());
         else if (currentScreen == Screen.Egg) HandleEggInput(input);
+        else if (currentScreen == Screen.Exit) HandleExitInput(input);
+        else if (input.ToLower() == "quit") ShowExit();
         else if (tokens <= 0) ShowFail();
         else if (input.ToLower() == "menu") ShowMenu();
         else if (input == "?") ShowHelp();
@@ -189,6 +191,11 @@ public class Hacker : MonoBehaviour {
         return;
     }
 
+    void HandleExitInput(string input) // Depreciated... now keyboard is inactive for login.
+    {
+        return;
+    }
+
     IEnumerator ShowLoad() // Coroutine to simulate computer booting-up.
     {
         currentScreen = Screen.Login;
@@ -238,7 +245,7 @@ public class Hacker : MonoBehaviour {
         ShowMenu(); // The Light-Show is over, start the game now.
     }
 
-    void ShowMenu() // Primary game interface
+    void ShowMenu() // Primary game interface.
     {
         currentScreen = Screen.Menu;
         Terminal.ClearScreen();
@@ -269,7 +276,7 @@ public class Hacker : MonoBehaviour {
         Terminal.WriteLine("[TOA: " + tokens + "]");
     }
 
-    void ShowReward(int level) // Display ASCII-art rewards for de-scrambles
+    void ShowReward(int level) // Display ASCII-art rewards for de-scrambles.
     {
         switch (level)
         {
@@ -321,7 +328,7 @@ public class Hacker : MonoBehaviour {
         }
     }
 
-    IEnumerator ShowEasterEgg() // The 'backdoor'. Needed by players with no TOA....
+    IEnumerator ShowEasterEgg() // The 'backdoor'. Needed by players with no TOA.
     {
         currentScreen = Screen.Egg;
         Terminal.ClearScreen();
@@ -366,7 +373,16 @@ public class Hacker : MonoBehaviour {
         Terminal.WriteLine("ENTER COMMAND:");
     }
 
-    void ShowHelp() // Display 'Help' page for primary interface.
+    void ShowExit() // Display 'Quit' info, or just quit.
+    {
+        currentScreen = Screen.Exit;
+        Terminal.ClearScreen();
+        Application.Quit(); // Can't close a user browser, so explain:
+        Terminal.WriteLine("Thank you for playing! You may now close your browser");
+        Terminal.WriteLine("tab.");
+    }
+
+        void ShowHelp() // Display 'Help' page for primary interface.
     {
         currentScreen = Screen.Help;
         Terminal.ClearScreen();
@@ -375,6 +391,7 @@ public class Hacker : MonoBehaviour {
         Terminal.WriteLine("");
         Terminal.WriteLine("   ? - will display the user help.");
         Terminal.WriteLine("   menu - will display the Main Menu.");
+        Terminal.WriteLine("   quit - will end the simulation.");
         Terminal.WriteLine("   {#} - select menu options for further options.");
         Terminal.WriteLine("");
         Terminal.WriteLine(" * While descrambling security question answers it costs");
