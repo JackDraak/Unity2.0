@@ -31,7 +31,7 @@ public class DroneController : MonoBehaviour {
     private void ProcessInput()
     {
     // Data
-        // TODO: allow swap port/starboard numbers if player wants inverted controls.
+        // TODO: allow swap of port/starboard numbers if player wants inverted controls.
         int port = -1;
         int starboard = 1;
         const int main = 0;
@@ -45,12 +45,11 @@ public class DroneController : MonoBehaviour {
         bool key_ra = Input.GetKey(KeyCode.RightArrow);
         bool key_q = Input.GetKey(KeyCode.Q);
         bool key_r = Input.GetKey(KeyCode.R);
-        bool key_lc = Input.GetKey(KeyCode.LeftControl);
 
     // Input parsing...
         // ...Special-case cues
         Quit(key_q);
-        ResetPlayer(key_r);
+        StartCoroutine(ResetPlayer(key_r));
 
         // ...Audio cues
         thrustAudio = (key_w || key_a || key_d || key_ua || key_la || key_ra);
@@ -67,7 +66,7 @@ public class DroneController : MonoBehaviour {
         if (key_q) Application.Quit(); 
     }
 
-    private void ResetPlayer(bool key_r)
+    private IEnumerator ResetPlayer(bool key_r)
     {
         // TODO: make this Ctrl-R?
         if (key_r)
@@ -75,6 +74,7 @@ public class DroneController : MonoBehaviour {
             rigidbody.isKinematic = true; // Nullify velocity
             transform.position = startPosition;
             transform.rotation = startRotation;
+            yield return new WaitForSeconds(.035f);
             rigidbody.isKinematic = false; // Re-enable physics
         }
     }

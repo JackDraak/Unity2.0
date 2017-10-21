@@ -246,7 +246,7 @@ public class Hacker : MonoBehaviour {
         StartCoroutine(ShowLogin());
     }
 
-    IEnumerator ShowLogin() // Coroutine to simulate sutomatic computer login.
+    IEnumerator ShowLogin() // Coroutine to simulate automatic computer login.
     {
         currentScreen = Screen.Login;
         Terminal.ClearScreen();
