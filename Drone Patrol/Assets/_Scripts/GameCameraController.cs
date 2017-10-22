@@ -35,13 +35,17 @@ public class GameCameraController : MonoBehaviour {
     }
 
     // LateUpdate is called after eache Update frame.
+    public float thisDistance;
+    public float vFactor;
     void LateUpdate()
     {
         Vector3 velocity = Vector3.zero;
         Vector3 forward = player.transform.forward * 10.0f;
         Vector3 needPos = player.transform.position - forward;
-        transform.position = Vector3.SmoothDamp(transform.position, needPos,
-                                                ref velocity, 0.15f);
+        thisDistance = Mathf.Abs(player.transform.position.x - needPos.x);
+        vFactor = .1f;
+        transform.position = Vector3.SmoothDamp(transform.position, needPos, ref velocity, vFactor );
+        transform.rotation = Quaternion.Lerp(transform.rotation, player.transform.rotation, 0.03f);
         transform.LookAt(player.transform);
     }
 }
