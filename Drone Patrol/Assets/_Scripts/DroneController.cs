@@ -10,25 +10,31 @@ using UnityEngine;
  * 
  */
 
-public class DroneController : MonoBehaviour {
-    [SerializeField] int rcsThrust = 275;
-    [SerializeField] int mainThrust = 850;
+public class DroneController : MonoBehaviour
+{
+    [SerializeField] int rcsThrust = 225;
+    [SerializeField] int mainThrust = 825;
     [SerializeField] ParticleSystem particleSystem;
+    [SerializeField] GameObject siren_B;
+    [SerializeField] GameObject siren_R;
     [SerializeField] AudioClip collisionSound;
     [SerializeField] AudioClip thrustSound;
     [SerializeField] AudioClip bonusSound;
-    Rigidbody rigidbody;
-    RigidbodyConstraints rigidbodyConstraints;
-    Vector3 startPosition;
-    AudioSource audioSource;
-    Quaternion startRotation;
-    bool thrustAudio;
-    bool resetting = false;
-    const int BaseHitPoints = 5;
-    int hitPoints = BaseHitPoints;
+    private float driftMass;
+    private Rigidbody rigidbody;
+    private RigidbodyConstraints rigidbodyConstraints;
+    private Vector3 startPosition;
+    private AudioSource audioSource;
+    private Quaternion startRotation;
+    private bool thrustAudio;
+    private bool resetting = false;
+    private const int BaseHitPoints = 5;
+    private int hitPoints = BaseHitPoints;
+    private float sirenSpeed = 200f;
 
     // Use this for initialization.
-    void Start () {
+    void Start()
+    {
         bool pass;
         pass = (rigidbody = GetComponent<Rigidbody>());
         if (!pass) Debug.Log("FAIL: rigidbody");
@@ -38,23 +44,30 @@ public class DroneController : MonoBehaviour {
         startRotation = transform.rotation;
         rigidbodyConstraints = rigidbody.constraints;
     }
-	
-	// Update is called once per frame.
-	void Update () {
+
+    // Update is called once per frame.
+    void Update()
+    {
+        driftMass = Time.deltaTime / 70;
+        rigidbody.mass += driftMass;
         ProcessInput();
         ProcessVisualEffects();
         ProcessAudio();
-	}
+        siren_R.transform.Rotate
+            (new Vector3(0, 1, 0) * Time.deltaTime * sirenSpeed * Mathf.Pow(2,  rigidbody.mass));
+        siren_B.transform.Rotate
+            (new Vector3(0, -1, 0) * Time.deltaTime * sirenSpeed * Mathf.Pow(2, rigidbody.mass));
+    }
 
     private void ProcessInput()
     {
-    // Data
+        // Data
         // TODO: allow swap of port/starboard numbers if player wants inverted controls.
         int port = -1;
         int starboard = 1;
         const int main = 0;
 
-    // Inputs we care about
+        // Inputs we care about
         bool key_w = Input.GetKey(KeyCode.W);
         bool key_a = Input.GetKey(KeyCode.A);
         bool key_d = Input.GetKey(KeyCode.D);
@@ -64,7 +77,7 @@ public class DroneController : MonoBehaviour {
         bool key_q = Input.GetKey(KeyCode.Q);
         bool key_r = Input.GetKey(KeyCode.R);
 
-    // Input parsing...
+        // Input parsing...
         // ...Special-case cues
         Quit(key_q);
 
@@ -84,13 +97,14 @@ public class DroneController : MonoBehaviour {
 
     void OnCollisionEnter(Collision collision)
     {
-      switch(collision.gameObject.tag)
+        switch (collision.gameObject.tag)
         {
             case "Pad":
                 if (collision.relativeVelocity.magnitude > 1)
                 {
                     AudioSource.PlayClipAtPoint(bonusSound, transform.position);
                     if (hitPoints < BaseHitPoints) hitPoints++;
+                    if (rigidbody.mass > 1.1f) rigidbody.mass -= 0.03f;
                 }
                 break;
             case "Obstacle":
@@ -98,11 +112,7 @@ public class DroneController : MonoBehaviour {
                 {
                     hitPoints--;
                     AudioSource.PlayClipAtPoint(collisionSound, transform.position);
-                    if (hitPoints <= 0)
-                    {
-                        StartCoroutine(ResetPlayer(true));
-                        hitPoints = BaseHitPoints;
-                    }
+                    if (hitPoints <= 0) StartCoroutine(ResetPlayer(true));
                 }
                 break;
             default:
@@ -114,7 +124,7 @@ public class DroneController : MonoBehaviour {
     private static void Quit(bool key_q)
     {
         // TODO: make this Ctrl-Q or Alt-X?
-        if (key_q) Application.Quit(); 
+        if (key_q) Application.Quit();
     }
 
     private IEnumerator ResetPlayer(bool key_r)
@@ -124,11 +134,13 @@ public class DroneController : MonoBehaviour {
         {
             resetting = true;
             thrustAudio = false;
+            hitPoints = BaseHitPoints;
             rigidbody.isKinematic = true; // Nullify velocity
             transform.position = startPosition;
             transform.rotation = startRotation;
             yield return new WaitForSeconds(1.7f);
             rigidbody.isKinematic = false;
+            rigidbody.mass = 1;
             resetting = false;
         }
     }
@@ -145,20 +157,30 @@ public class DroneController : MonoBehaviour {
         var em = particleSystem.emission;
         if (thrustAudio) em.rateOverTime = 15;
         else if (!thrustAudio) em.rateOverTime = 0;
-    }
-
-    private void ActivateThrust(int v)
-    {
-        float rotationForce = rcsThrust * Time.deltaTime;
-        float thrustForce = mainThrust * Time.deltaTime;
-
-        if (v == 0 && !resetting) rigidbody.AddRelativeForce(Vector3.up * thrustForce);
-        else if (!resetting)
+        if (rigidbody.mass > 1.2f)
         {
-            rigidbody.freezeRotation = true;
-            transform.Rotate((-v) * Vector3.forward * rotationForce);
-            rigidbody.freezeRotation = false;
-            rigidbody.constraints = rigidbodyConstraints;
+            siren_R.SetActive(true);
+            siren_B.SetActive(true);
+        }
+        else
+        {
+            siren_R.SetActive(false);
+            siren_B.SetActive(false);
         }
     }
+
+        private void ActivateThrust(int v)
+        {
+            float rotationForce = rcsThrust * Time.deltaTime;
+            float thrustForce = mainThrust * Time.deltaTime;
+
+            if (v == 0 && !resetting) rigidbody.AddRelativeForce(Vector3.up * thrustForce);
+            else if (!resetting)
+            {
+                rigidbody.freezeRotation = true;
+                transform.Rotate((-v) * Vector3.forward * rotationForce);
+                rigidbody.freezeRotation = false;
+                rigidbody.constraints = rigidbodyConstraints;
+            }
+        }
 }
