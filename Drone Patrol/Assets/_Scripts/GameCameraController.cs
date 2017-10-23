@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class GameCameraController : MonoBehaviour {
     [SerializeField] GameObject player;
+    [SerializeField] float rDelay = 0.001f;
     private Vector3 playerStartPos;
     private Vector3 startPos;
     private Vector3 newPos;
@@ -17,16 +18,19 @@ public class GameCameraController : MonoBehaviour {
 
     void Update()
     {
-        StartCoroutine(CheckForReset());
+        float fc = Time.deltaTime;
+        if (Time.deltaTime > (fc + rDelay))
+        {
+            CheckForReset();
+            fc = Time.deltaTime;
+            print(fc);
+        }
+        else fc++;
     }
 
-    private IEnumerator CheckForReset()
+    private void CheckForReset()
     {
-        yield return new WaitForSeconds(0.3f);
-        if (player.transform.position == playerStartPos)
-        {
-            Reset();
-        }
+        if (player.transform.position == playerStartPos) Reset();
     }
 
     private void Reset()
@@ -35,15 +39,12 @@ public class GameCameraController : MonoBehaviour {
     }
 
     // LateUpdate is called after eache Update frame.
-    public float thisDistance;
-    public float vFactor;
+    public float vFactor = .1f;
     void LateUpdate()
     {
         Vector3 velocity = Vector3.zero;
         Vector3 forward = player.transform.forward * 10.0f;
         Vector3 needPos = player.transform.position - forward;
-        thisDistance = Mathf.Abs(player.transform.position.x - needPos.x);
-        vFactor = .1f;
         transform.position = Vector3.SmoothDamp(transform.position, needPos, ref velocity, vFactor );
         transform.rotation = Quaternion.Lerp(transform.rotation, player.transform.rotation, 0.03f);
         transform.LookAt(player.transform);
