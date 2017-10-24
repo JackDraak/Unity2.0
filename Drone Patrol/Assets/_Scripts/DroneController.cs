@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 /*
  * Concept: gravity increases over time...... (maybe just increase mass of player-drone?)
  * Touching the landing pads(?) helps normalize gravity....
@@ -14,49 +12,79 @@ public class DroneController : MonoBehaviour
 {
     [SerializeField] int rcsThrust = 225;
     [SerializeField] int mainThrust = 825;
-    [SerializeField] ParticleSystem particleSystem;
     [SerializeField] GameObject siren_B;
     [SerializeField] GameObject siren_R;
     [SerializeField] AudioClip collisionSound;
     [SerializeField] AudioClip thrustSound;
     [SerializeField] AudioClip bonusSound;
-    private float driftMass;
+    [SerializeField] Scene nextScene;
+    [SerializeField] Scene priorScene;
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
+    [SerializeField] ParticleSystem particleSystem;
     private Rigidbody rigidbody;
+#pragma warning restore CS0108
     private RigidbodyConstraints rigidbodyConstraints;
     private Vector3 startPosition;
     private AudioSource audioSource;
     private Quaternion startRotation;
-    private bool thrustAudio;
-    private bool resetting = false;
+    private const int zip = 0;
+    private const int emissionRate = 15;
     private const int BaseHitPoints = 5;
     private int hitPoints = BaseHitPoints;
+    private int playerLives = 5;
+    private int score = 0;
+    private bool thrustAudio;
+    private bool resetting = false;
+    private float driftMass;
+    private float driftMassFactor = 70f;
     private float sirenSpeed = 200f;
+    private float sirenRotationBase = 2f;
+    private float sirenMassTrigger = 1.2f;
+    private float sirenRotationFactor = 0.5f;
 
     // Use this for initialization.
     void Start()
     {
         bool pass;
         pass = (rigidbody = GetComponent<Rigidbody>());
-        if (!pass) Debug.Log("FAIL: rigidbody");
+            if (!pass) Debug.Log("FAIL: rigidbody");
         pass = (audioSource = GetComponent<AudioSource>());
-        if (!pass) Debug.Log("FAIL: audioSource");
+            if (!pass) Debug.Log("FAIL: audioSource");
         startPosition = transform.position;
         startRotation = transform.rotation;
         rigidbodyConstraints = rigidbody.constraints;
+        playerLives++;
+        ResetPlayer(true);
     }
 
     // Update is called once per frame.
     void Update()
     {
-        driftMass = Time.deltaTime / 70;
-        rigidbody.mass += driftMass;
+        ProcessMass();
         ProcessInput();
+        RotateSirenLamps();
         ProcessVisualEffects();
         ProcessAudio();
+    }
+
+    private void ProcessMass()
+    {
+        driftMass = Time.deltaTime / driftMassFactor;
+        rigidbody.mass += driftMass;
+    }
+
+    private void RotateSirenLamps()
+    {
         siren_R.transform.Rotate
-            (new Vector3(0, 1, 0) * Time.deltaTime * sirenSpeed * Mathf.Pow(2,  rigidbody.mass));
+            (new Vector3(0, 1, 0)
+            * Time.deltaTime
+            * sirenSpeed
+            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + rigidbody.mass));
         siren_B.transform.Rotate
-            (new Vector3(0, -1, 0) * Time.deltaTime * sirenSpeed * Mathf.Pow(2, rigidbody.mass));
+            (new Vector3(0, -1, 0)
+            * Time.deltaTime
+            * sirenSpeed
+            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + rigidbody.mass));
     }
 
     private void ProcessInput()
@@ -95,18 +123,34 @@ public class DroneController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        switch (other.gameObject.tag)
+        {
+            case "Recycler_Active":
+                AudioSource.PlayClipAtPoint(bonusSound, transform.position);
+                if (hitPoints < BaseHitPoints) hitPoints++;
+                rigidbody.mass = 1f;
+                other.gameObject.tag = "Recycler_Inactive";
+                other.gameObject.SetActive(false);
+                score++;
+                break;
+            case "Finish":
+                if (score == 21)
+                {
+                    SceneManager.LoadScene("Level_02");
+                }
+                break;
+            default:
+                Debug.Log("unknown trigger.");
+                break;
+        }
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         switch (collision.gameObject.tag)
         {
-            case "Pad":
-                if (collision.relativeVelocity.magnitude > 1)
-                {
-                    AudioSource.PlayClipAtPoint(bonusSound, transform.position);
-                    if (hitPoints < BaseHitPoints) hitPoints++;
-                    if (rigidbody.mass > 1.1f) rigidbody.mass -= 0.03f;
-                }
-                break;
             case "Obstacle":
                 if (collision.relativeVelocity.magnitude > 2)
                 {
@@ -114,6 +158,20 @@ public class DroneController : MonoBehaviour
                     AudioSource.PlayClipAtPoint(collisionSound, transform.position);
                     if (hitPoints <= 0) StartCoroutine(ResetPlayer(true));
                 }
+                break;
+            case "Ground":
+                if (collision.relativeVelocity.magnitude > 2)
+                {
+                    hitPoints--;
+                    AudioSource.PlayClipAtPoint(collisionSound, transform.position);
+                    if (hitPoints <= 0) StartCoroutine(ResetPlayer(true));
+                }
+                break;
+            case "Pad":
+                Debug.Log("Pad collision.");
+                break;
+            case "Recycler_Active":
+                Debug.Log("Recycler collision.");
                 break;
             default:
                 Debug.Log("unknown collision.");
@@ -129,6 +187,11 @@ public class DroneController : MonoBehaviour
 
     private IEnumerator ResetPlayer(bool key_r)
     {
+        playerLives--;
+        if (playerLives <= 0)
+        {
+            SceneManager.LoadScene(0);
+        }
         // TODO: make this Ctrl-R?
         if (key_r)
         {
@@ -154,10 +217,13 @@ public class DroneController : MonoBehaviour
 
     private void ProcessVisualEffects()
     {
+        // Thrusters
         var em = particleSystem.emission;
-        if (thrustAudio) em.rateOverTime = 15;
+        if (thrustAudio) em.rateOverTime = emissionRate;
         else if (!thrustAudio) em.rateOverTime = 0;
-        if (rigidbody.mass > 1.2f)
+
+        // Siren
+        if (rigidbody.mass > sirenMassTrigger || resetting)
         {
             siren_R.SetActive(true);
             siren_B.SetActive(true);
@@ -169,18 +235,18 @@ public class DroneController : MonoBehaviour
         }
     }
 
-        private void ActivateThrust(int v)
-        {
-            float rotationForce = rcsThrust * Time.deltaTime;
-            float thrustForce = mainThrust * Time.deltaTime;
+    private void ActivateThrust(int v)
+    {
+        float rotationForce = rcsThrust * Time.deltaTime;
+        float thrustForce = mainThrust * Time.deltaTime;
 
-            if (v == 0 && !resetting) rigidbody.AddRelativeForce(Vector3.up * thrustForce);
-            else if (!resetting)
-            {
-                rigidbody.freezeRotation = true;
-                transform.Rotate((-v) * Vector3.forward * rotationForce);
-                rigidbody.freezeRotation = false;
-                rigidbody.constraints = rigidbodyConstraints;
-            }
+        if (v == 0 && !resetting) rigidbody.AddRelativeForce(Vector3.up * thrustForce);
+        else if (!resetting)
+        { 
+            rigidbody.freezeRotation = true;
+            transform.Rotate((-v) * Vector3.forward * rotationForce);
+            rigidbody.freezeRotation = false;
+            rigidbody.constraints = rigidbodyConstraints;
         }
+    }
 }

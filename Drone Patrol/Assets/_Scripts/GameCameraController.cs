@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameCameraController : MonoBehaviour {
     [SerializeField] GameObject player;
@@ -9,6 +6,7 @@ public class GameCameraController : MonoBehaviour {
     private Vector3 playerStartPos;
     private Vector3 startPos;
     private Vector3 newPos;
+    private float vFactor = .1f;
 
     void Start()
     {
@@ -39,7 +37,6 @@ public class GameCameraController : MonoBehaviour {
     }
 
     // LateUpdate is called after eache Update frame.
-    public float vFactor = .1f;
     void LateUpdate()
     {
         Vector3 velocity = Vector3.zero;
