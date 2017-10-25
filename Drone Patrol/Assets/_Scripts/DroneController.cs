@@ -1,46 +1,27 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-/*
- * Concept: gravity increases over time...... (maybe just increase mass of player-drone?)
- * Touching the landing pads(?) helps normalize gravity....
- * Touch all the pads in the time-limit to save the core......
- * 
- */
 
 public class DroneController : MonoBehaviour
 {
-    [SerializeField] int rcsThrust = 225;
-    [SerializeField] int mainThrust = 825;
+    [SerializeField] AudioClip bonusSound;
+    [SerializeField] AudioClip collisionSound;
+    [SerializeField] ParticleSystem particleSystem;
     [SerializeField] GameObject siren_B;
     [SerializeField] GameObject siren_R;
-    [SerializeField] AudioClip collisionSound;
     [SerializeField] AudioClip thrustSound;
-    [SerializeField] AudioClip bonusSound;
-    [SerializeField] Scene nextScene;
-    [SerializeField] Scene priorScene;
-#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
-    [SerializeField] ParticleSystem particleSystem;
-    private Rigidbody rigidbody;
-#pragma warning restore CS0108
-    private RigidbodyConstraints rigidbodyConstraints;
-    private Vector3 startPosition;
+    private bool resetting = false;
+    private bool thrustAudio;
+    private const int BaseHitPoints = 5;
+    private const int maxPlayerLives = 5;
+    private int hitPoints = BaseHitPoints;
+    private int playerLives = maxPlayerLives;
+    private int score = 0;
     private AudioSource audioSource;
     private Quaternion startRotation;
-    private const int zip = 0;
-    private const int emissionRate = 15;
-    private const int BaseHitPoints = 5;
-    private int hitPoints = BaseHitPoints;
-    private int playerLives = 5;
-    private int score = 0;
-    private bool thrustAudio;
-    private bool resetting = false;
-    private float driftMass;
-    private float driftMassFactor = 70f;
-    private float sirenSpeed = 200f;
-    private float sirenRotationBase = 2f;
-    private float sirenMassTrigger = 1.2f;
-    private float sirenRotationFactor = 0.5f;
+    private Rigidbody rigidbody;
+    private RigidbodyConstraints rigidbodyConstraints;
+    private Vector3 startPosition;
 
     // Use this for initialization.
     void Start()
@@ -53,8 +34,7 @@ public class DroneController : MonoBehaviour
         startPosition = transform.position;
         startRotation = transform.rotation;
         rigidbodyConstraints = rigidbody.constraints;
-        playerLives++;
-        ResetPlayer(true);
+        playerLives++; ResetPlayer(true);
     }
 
     // Update is called once per frame.
@@ -69,12 +49,17 @@ public class DroneController : MonoBehaviour
 
     private void ProcessMass()
     {
+        float driftMass;
+        float driftMassFactor = 70f;
         driftMass = Time.deltaTime / driftMassFactor;
         rigidbody.mass += driftMass;
     }
 
     private void RotateSirenLamps()
     {
+        float sirenRotationBase = 2f;
+        float sirenRotationFactor = 0.5f;
+        float sirenSpeed = 200f;
         siren_R.transform.Rotate
             (new Vector3(0, 1, 0)
             * Time.deltaTime
@@ -107,7 +92,7 @@ public class DroneController : MonoBehaviour
 
         // Input parsing...
         // ...Special-case cues
-        Quit(key_q);
+        if (key_q) Quit(key_q);
 
         if (!resetting)
         {
@@ -136,10 +121,7 @@ public class DroneController : MonoBehaviour
                 score++;
                 break;
             case "Finish":
-                if (score == 21)
-                {
-                    SceneManager.LoadScene("Level_02");
-                }
+                if (score == 21) SceneManager.LoadScene("Level_02");
                 break;
             default:
                 Debug.Log("unknown trigger.");
@@ -187,6 +169,7 @@ public class DroneController : MonoBehaviour
 
     private IEnumerator ResetPlayer(bool key_r)
     {
+        resetting = true;
         playerLives--;
         if (playerLives <= 0)
         {
@@ -195,7 +178,6 @@ public class DroneController : MonoBehaviour
         // TODO: make this Ctrl-R?
         if (key_r)
         {
-            resetting = true;
             thrustAudio = false;
             hitPoints = BaseHitPoints;
             rigidbody.isKinematic = true; // Nullify velocity
@@ -204,8 +186,8 @@ public class DroneController : MonoBehaviour
             yield return new WaitForSeconds(1.7f);
             rigidbody.isKinematic = false;
             rigidbody.mass = 1;
-            resetting = false;
         }
+        resetting = false;
     }
 
     private void ProcessAudio()
@@ -217,10 +199,14 @@ public class DroneController : MonoBehaviour
 
     private void ProcessVisualEffects()
     {
+        const int zip = 0;
+        const int emissionRate = 15;
+        const float sirenMassTrigger = 1.2f;
+
         // Thrusters
         var em = particleSystem.emission;
         if (thrustAudio) em.rateOverTime = emissionRate;
-        else if (!thrustAudio) em.rateOverTime = 0;
+        else if (!thrustAudio) em.rateOverTime = zip;
 
         // Siren
         if (rigidbody.mass > sirenMassTrigger || resetting)
@@ -237,6 +223,8 @@ public class DroneController : MonoBehaviour
 
     private void ActivateThrust(int v)
     {
+        const int rcsThrust = 200;
+        const int mainThrust = 835;
         float rotationForce = rcsThrust * Time.deltaTime;
         float thrustForce = mainThrust * Time.deltaTime;
 
