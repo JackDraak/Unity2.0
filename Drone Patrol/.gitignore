@@ -32,10 +32,3 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-/Drone Patrol/Assets/Area730
-/Drone Patrol/Assets/Editor Default Resources
-/Drone Patrol/Assets/Smoke
-/Drone Patrol/Assets/_Audio
-/Drone Patrol/Assets/_Materials
-/Drone Patrol/ProjectSettings
-/Drone Patrol/UnityPackageManager

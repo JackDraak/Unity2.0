@@ -6,14 +6,16 @@ public class DroneController : MonoBehaviour
 {
     [SerializeField] AudioClip bonusSound;
     [SerializeField] AudioClip collisionSound;
+    [SerializeField] AudioClip explosionSound;
+    [SerializeField] AudioClip finishSound;
+    [SerializeField] AudioClip startSound;
+    [SerializeField] AudioClip thrustSound;
     [SerializeField] ParticleSystem particleSystem;
     [SerializeField] GameObject siren_B;
     [SerializeField] GameObject siren_R;
-    [SerializeField] AudioClip thrustSound;
-    private bool resetting = false;
-    private bool thrustAudio;
     private const int BaseHitPoints = 5;
     private const int maxPlayerLives = 5;
+    private bool thrustAudio;
     private int hitPoints = BaseHitPoints;
     private int playerLives = maxPlayerLives;
     private int score = 0;
@@ -22,6 +24,8 @@ public class DroneController : MonoBehaviour
     private Rigidbody rigidbody;
     private RigidbodyConstraints rigidbodyConstraints;
     private Vector3 startPosition;
+    private enum State { Dead, Alive, Dying, Resetting, Transcending }
+    State thisState;
 
     // Use this for initialization.
     void Start()
@@ -34,7 +38,10 @@ public class DroneController : MonoBehaviour
         startPosition = transform.position;
         startRotation = transform.rotation;
         rigidbodyConstraints = rigidbody.constraints;
-        playerLives++; ResetPlayer(true);
+
+        Debug.Log("Start()");
+        thisState = State.Resetting;
+        StartCoroutine(ResetPlayer(true));
     }
 
     // Update is called once per frame.
@@ -45,31 +52,6 @@ public class DroneController : MonoBehaviour
         RotateSirenLamps();
         ProcessVisualEffects();
         ProcessAudio();
-    }
-
-    private void ProcessMass()
-    {
-        float driftMass;
-        float driftMassFactor = 70f;
-        driftMass = Time.deltaTime / driftMassFactor;
-        rigidbody.mass += driftMass;
-    }
-
-    private void RotateSirenLamps()
-    {
-        float sirenRotationBase = 2f;
-        float sirenRotationFactor = 0.5f;
-        float sirenSpeed = 200f;
-        siren_R.transform.Rotate
-            (new Vector3(0, 1, 0)
-            * Time.deltaTime
-            * sirenSpeed
-            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + rigidbody.mass));
-        siren_B.transform.Rotate
-            (new Vector3(0, -1, 0)
-            * Time.deltaTime
-            * sirenSpeed
-            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + rigidbody.mass));
     }
 
     private void ProcessInput()
@@ -94,9 +76,15 @@ public class DroneController : MonoBehaviour
         // ...Special-case cues
         if (key_q) Quit(key_q);
 
-        if (!resetting)
+        if (!(thisState == State.Dying) 
+            && !(thisState == State.Resetting)
+            && !(thisState == State.Transcending))
         {
-            if (key_r) StartCoroutine(ResetPlayer(key_r));
+            if (key_r)
+            {
+                thisState = State.Resetting;
+                StartCoroutine(ResetPlayer(key_r));
+            }
 
             // ...Audio cues
             thrustAudio = (key_w || key_a || key_d || key_ua || key_la || key_ra);
@@ -121,7 +109,14 @@ public class DroneController : MonoBehaviour
                 score++;
                 break;
             case "Finish":
-                if (score == 21) SceneManager.LoadScene("Level_02");
+                if (score >= 21)
+                {
+                    thisState = State.Transcending;
+                    rigidbody.isKinematic = true;
+                    audioSource.Stop();
+                    audioSource.PlayOneShot(finishSound);
+                    Invoke("LoadLevelTwo", 2.075f);
+                }
                 break;
             default:
                 Debug.Log("unknown trigger.");
@@ -138,7 +133,11 @@ public class DroneController : MonoBehaviour
                 {
                     hitPoints--;
                     AudioSource.PlayClipAtPoint(collisionSound, transform.position);
-                    if (hitPoints <= 0) StartCoroutine(ResetPlayer(true));
+                    if (hitPoints <= 0)
+                    {
+                        thisState = State.Dying;
+                        StartCoroutine(ResetPlayer(true));
+                    }
                 }
                 break;
             case "Ground":
@@ -146,7 +145,11 @@ public class DroneController : MonoBehaviour
                 {
                     hitPoints--;
                     AudioSource.PlayClipAtPoint(collisionSound, transform.position);
-                    if (hitPoints <= 0) StartCoroutine(ResetPlayer(true));
+                    if (hitPoints <= 0)
+                    {
+                        thisState = State.Dying;
+                        StartCoroutine(ResetPlayer(true));
+                    }
                 }
                 break;
             case "Pad":
@@ -161,39 +164,100 @@ public class DroneController : MonoBehaviour
         }
     }
 
+    private IEnumerator ResetPlayer(bool key_r)
+    {
+        // TODO: make this Ctrl-R?
+        if (key_r)
+        {
+            Debug.Log("resetting...");
+            hitPoints = BaseHitPoints;
+            thrustAudio = false;
+            rigidbody.freezeRotation = true;
+            rigidbody.isKinematic = true; // Nullify velocity
+            if (thisState == State.Resetting)
+            {
+                Debug.Log("RESETTING...");
+                transform.position = startPosition;
+                transform.rotation = startRotation;
+                audioSource.Stop();
+                audioSource.PlayOneShot(startSound);
+                yield return new WaitForSeconds(2.633f);
+            }
+            else if (thisState == State.Dying)
+            {
+                Debug.Log("DYING...");
+                playerLives--;
+                audioSource.Stop();
+                audioSource.PlayOneShot(explosionSound);
+                yield return new WaitForSeconds(2.222f);
+                transform.position = startPosition;
+                transform.rotation = startRotation;
+                if (playerLives <= 0)
+                {
+                    Invoke("LoadLevelOne", 1f);
+                }
+            }
+            else
+            {
+                Debug.Log("ResetPlayer() called but noy dying or resetting.");
+            }
+            rigidbody.mass = 1;
+            rigidbody.isKinematic = false;
+            rigidbody.freezeRotation = false;
+            rigidbody.constraints = rigidbodyConstraints;
+            thisState = State.Alive;
+        }
+    }
+
+    private void LoadLevelOne()
+    {
+        SceneManager.LoadScene("Level_01");
+    }
+
+    private void LoadLevelTwo()
+    {
+        SceneManager.LoadScene("Level_02");
+    }
+
     private static void Quit(bool key_q)
     {
         // TODO: make this Ctrl-Q or Alt-X?
         if (key_q) Application.Quit();
     }
 
-    private IEnumerator ResetPlayer(bool key_r)
+    private void RotateSirenLamps()
     {
-        resetting = true;
-        playerLives--;
-        if (playerLives <= 0)
-        {
-            SceneManager.LoadScene(0);
-        }
-        // TODO: make this Ctrl-R?
-        if (key_r)
-        {
-            thrustAudio = false;
-            hitPoints = BaseHitPoints;
-            rigidbody.isKinematic = true; // Nullify velocity
-            transform.position = startPosition;
-            transform.rotation = startRotation;
-            yield return new WaitForSeconds(1.7f);
-            rigidbody.isKinematic = false;
-            rigidbody.mass = 1;
-        }
-        resetting = false;
+        float sirenRotationBase = 2f;
+        float sirenRotationFactor = 0.5f;
+        float sirenSpeed = 200f;
+
+        Transform rSiren = siren_R.transform;
+        rSiren.Rotate
+            (new Vector3(0, 1, 0)
+            * Time.deltaTime
+            * sirenSpeed
+            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + rigidbody.mass));
+
+        Transform bSiren = siren_B.transform;
+        bSiren.Rotate
+            (new Vector3(0, -1, 0)
+            * Time.deltaTime
+            * sirenSpeed
+            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + rigidbody.mass));
+    }
+
+    private void ProcessMass()
+    {
+        float driftMass;
+        float driftMassFactor = 70f;
+        driftMass = Time.deltaTime / driftMassFactor;
+        rigidbody.mass += driftMass;
     }
 
     private void ProcessAudio()
     {
         var audioOn = audioSource.isPlaying;
-        if (!audioOn && thrustAudio) audioSource.Play();
+        if (!audioOn && thrustAudio) audioSource.PlayOneShot(thrustSound);
         else if (audioOn && !thrustAudio) audioSource.Stop();
     }
 
@@ -209,7 +273,7 @@ public class DroneController : MonoBehaviour
         else if (!thrustAudio) em.rateOverTime = zip;
 
         // Siren
-        if (rigidbody.mass > sirenMassTrigger || resetting)
+        if (rigidbody.mass > sirenMassTrigger || thisState == State.Resetting)
         {
             siren_R.SetActive(true);
             siren_B.SetActive(true);
@@ -228,8 +292,14 @@ public class DroneController : MonoBehaviour
         float rotationForce = rcsThrust * Time.deltaTime;
         float thrustForce = mainThrust * Time.deltaTime;
 
-        if (v == 0 && !resetting) rigidbody.AddRelativeForce(Vector3.up * thrustForce);
-        else if (!resetting)
+        var compositeState = ((thisState == State.Resetting)
+            || (thisState == State.Dying)
+            || (thisState == State.Transcending));
+
+        if (v == 0 && !compositeState)
+            rigidbody.AddRelativeForce(Vector3.up * thrustForce);
+
+        else if (!compositeState)
         { 
             rigidbody.freezeRotation = true;
             transform.Rotate((-v) * Vector3.forward * rotationForce);
