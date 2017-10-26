@@ -2,10 +2,10 @@
 
 public class GameCameraController : MonoBehaviour {
     [SerializeField] GameObject player;
-    [SerializeField] float rDelay = 0.001f;
     private Vector3 playerStartPos;
     private Vector3 startPos;
     private Vector3 newPos;
+    private float rDelay = 0.001f;
     private float vFactor = .1f;
 
     void Start()
