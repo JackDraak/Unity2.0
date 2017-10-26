@@ -2,28 +2,27 @@
 
 public class GameCameraController : MonoBehaviour {
     [SerializeField] GameObject player;
+    private Vector3 newPos;
     private Vector3 playerStartPos;
     private Vector3 startPos;
-    private Vector3 newPos;
-    private float rDelay = 0.001f;
-    private float vFactor = .1f;
+    private const float rDelay = 0.1f;
+    private const float vFactor = 0.1f;
 
     void Start()
     {
-        startPos = transform.position;
         playerStartPos = player.transform.position;
+        startPos = transform.position;
     }
 
     void Update()
     {
-        float fc = Time.deltaTime;
-        if (Time.deltaTime > (fc + rDelay))
+        float fc = Time.time;
+        if (Time.time > (fc + rDelay))
         {
             CheckForReset();
-            fc = Time.deltaTime;
+            fc = Time.time;
             print(fc);
         }
-        else fc++;
     }
 
     private void CheckForReset()

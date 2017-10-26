@@ -28,7 +28,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4837119002623450
 Transform:
   m_ObjectHideFlags: 1
@@ -36,7 +36,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1674346791611894}
   m_LocalRotation: {x: 0.07076627, y: 0, z: 0, w: 0.99749297}
-  m_LocalPosition: {x: -17.7, y: 25.5, z: -7.3}
+  m_LocalPosition: {x: -17.9, y: 23.87, z: -8.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -54,19 +54,19 @@ Camera:
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.8
     y: 0
-    width: 1
-    height: 1
+    width: 0.2
+    height: 0.2
   near clip plane: 0.03
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 27.7
-  m_Depth: -1
+  orthographic size: 28.1
+  m_Depth: -5
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294967279
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
