@@ -1,20 +1,29 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 // TODO: Game mechanic: something that boosts and/or retards: rcsThrust or mainThrust.
-// TODO: Fix lighting issue caused by large ground-plane and background-plane..
-// TODO: Create GUI to display score, hitpoints, etc...
+//       Note: ^ Handles in-place: rcsFactor & thrustFactor 
 // TODO: use ctrl- or alt- keys for Quit and Respawn.
 // TODO: allow swap of port/starboard numbers if player wants inverted controls.
+// TODO: fix GUItext colour issue
+// TODO: fix lighting issues (i.e. tail not showing until first 3 deaths & reset)
+// http://www.sharemygame.com/share/f5018b3f-52f6-4708-bd10-d3d0f3b0203f
 
 public class DroneController : MonoBehaviour
 {
     // Data
+    private const float ExplosionDelay = 2.222f;
+    private const float FinishDelay = 2.075f;
+    private const float StartDelay = 2.633f;
     private const int BaseHitPoints = 5;
     private const int CollisionVelocityThreshold = 2;
-    private const int MaxPlayerLives = 3;
     private const int DefaultDroneMass = 1;
+    private const int MaxPlayerLives = 3;
+    private const int StandardDelay = 1;
+    private string scene_01 = "Level_01";
+    private string scene_02 = "Level_02";
 
     // Sound
     [SerializeField] AudioClip bonusSound;
@@ -31,8 +40,16 @@ public class DroneController : MonoBehaviour
     [SerializeField] GameObject mapMarker;
     [SerializeField] GameObject siren_B;
     [SerializeField] GameObject siren_R;
+    [SerializeField] Text collectibles;
+    [SerializeField] Text droneLives;
+    [SerializeField] Text gameTime;
+    [SerializeField] Text health;
+    [SerializeField] Text mass;
+
 
     // Member variables
+    [Range(-0.5f, 2f)] private float rcsFactor = 1;
+    [Range(-0.5f, 2f)] private float thrustFactor = 1;
     private AudioSource audioSource;
     private GameObject finish = null;
     private Quaternion startRotation;
@@ -40,11 +57,13 @@ public class DroneController : MonoBehaviour
     private Vector3 startPosition;
     private RigidbodyConstraints rigidbodyConstraints;
     private bool thrustAudio;
-    private enum State { Dead, Alive, Dying, Resetting, Transcending }
     private int hitPoints;
     private int playerLives;
     private int score;
+    private int scoreToClear;
+    private enum State { Dead, Alive, Dying, Resetting, Transcending }
     private State thisState;
+    private GameObject[] pickups; 
 
     // Use this for initialization.
     void Start()
@@ -59,13 +78,17 @@ public class DroneController : MonoBehaviour
         if (GameObject.FindWithTag("Finish") != null) finish = GameObject.FindWithTag("Finish");
         else Debug.Log("FAIL: 'Finish' object not found");
 
+        // Collectibles
+        pickups = GameObject.FindGameObjectsWithTag("Recycler_Active");
+        scoreToClear = pickups.Length;
+
         // Data
         hitPoints = BaseHitPoints;
         playerLives = MaxPlayerLives;
         startPosition = transform.position;
         startRotation = transform.rotation;
         rigidbodyConstraints = myRigidbody.constraints;
-        score = 0; 
+        score = 0;
 
         // Set state & begin
         thisState = State.Resetting;
@@ -77,12 +100,35 @@ public class DroneController : MonoBehaviour
     // Update is called once per frame.
     void Update()
     {
-        ProcessInput(); // Keyboard only
-        ProcessMass(); // Drone mass +OT
+        ProcessInput(); // Keyboard only ATM
+        ProcessMass(); // Drone mass +OverTime
+        RotateSirenLamps(); // Faster for higher mass drones: haptics!
         ProcessAudio();
         ProcessVisualEffects();
-        RotateSirenLamps(); // Faster for higher mass drones
-        if (score >= 21 && !finish.activeSelf) finish.SetActive(true);
+        UpdateGUI();
+        MonitorExit(); // Reveal exit portal when the time is right.
+    }
+
+    private void UpdateGUI()
+    {
+        if (GetCount() == 0) collectibles.text = "Find the Exit Portal!";
+        else collectibles.text = GetCount().ToString() + " Orbs remain";
+
+        int droneStore = (playerLives - 1);
+        if (droneStore < 0) droneLives.text = "";
+        else if (droneStore == 1) droneLives.text = "1 Stored drone";
+        else droneLives.text = droneStore.ToString() + " Stored drones";
+
+        if (myRigidbody.mass < 1.2) mass.material.color = Color.black;
+        else mass.material.color = Color.red;
+        float mText = Mathf.Round(myRigidbody.mass * 100f) / 100f;
+        mass.text = mText.ToString() + " Drone mass";
+
+      //  float tText = (Mathf.Round(Time.time) * 10f) / 10f;
+      //  gameTime.text = tText.ToString() + " Sec";
+
+      //  float tHealth = Mathf.Round((hitPoints / BaseHitPoints) * 10000f) / 100f;
+      //  health.text = tHealth.ToString() + "% Health";
     }
 
     private IEnumerator BlinkMapMarker()
@@ -149,12 +195,15 @@ public class DroneController : MonoBehaviour
                 myRigidbody.mass = DefaultDroneMass;
                 break;
             case "Finish":
-                if (score >= 21)
+                if (score >= scoreToClear)
                 {
                     thisState = State.Transcending;
                     myRigidbody.isKinematic = true;
                     AudioSource.PlayClipAtPoint(finishSound, transform.position);
-                    Invoke("LoadLevelTwo", 2.075f);
+                    transform.position = 
+                        other.gameObject.transform.position 
+                        + new Vector3(0f,-0.2f,-0.3f);
+                    Invoke("LoadLevelTwo", FinishDelay);
                 }
                 break;
             default:
@@ -217,7 +266,7 @@ public class DroneController : MonoBehaviour
                 transform.position = startPosition;
                 transform.rotation = startRotation;
                 AudioSource.PlayClipAtPoint(startSound, transform.position);
-                yield return new WaitForSeconds(2.633f);
+                yield return new WaitForSeconds(StartDelay);
             }
             else if (thisState == State.Dying)
             {
@@ -225,11 +274,11 @@ public class DroneController : MonoBehaviour
                 explosion.SetActive(true);
                 playerLives--;
                 AudioSource.PlayClipAtPoint(explosionSound, transform.position);
-                yield return new WaitForSeconds(2.222f);
+                yield return new WaitForSeconds(ExplosionDelay);
                 if (playerLives <= 0)
                 {
-                    Invoke("LoadLevelOne", 1f);
-                    yield return new WaitForSeconds(1f);
+                    Invoke("LoadLevelOne", StandardDelay);
+                    yield return new WaitForSeconds(StandardDelay);
                 }
                 transform.position = startPosition;
                 transform.rotation = startRotation;
@@ -248,13 +297,16 @@ public class DroneController : MonoBehaviour
         }
     }
 
-    private void LoadLevelOne() { SceneManager.LoadScene("Level_01"); }
-
-    private void LoadLevelTwo() { SceneManager.LoadScene("Level_02"); }
-
-    private static void Quit(bool key_q)
+    private void Warp()
     {
-        if (key_q) Application.Quit();
+        const int wrFactor = 360;
+        const int wsFactor = 90;
+
+        transform.localScale = 
+            transform.localScale - 
+            ((transform.localScale / 100f) * wsFactor * Time.deltaTime);
+
+        transform.Rotate(Vector3.back * wrFactor * Time.deltaTime);
     }
 
     private void RotateSirenLamps()
@@ -277,6 +329,12 @@ public class DroneController : MonoBehaviour
             * Time.deltaTime
             * sirenSpeed
             * Mathf.Pow(sirenRotationBase, sirenRotationFactor + myRigidbody.mass));
+    }
+
+    private void MonitorExit()
+    {
+        if (score >= scoreToClear && !finish.activeSelf) finish.SetActive(true);
+        if (thisState == State.Transcending) Warp();
     }
 
     private void ProcessMass()
@@ -324,8 +382,8 @@ public class DroneController : MonoBehaviour
         // Data & calculations
         const int rcsThrust = 200;
         const int mainThrust = 835;
-        float rotationForce = rcsThrust * Time.deltaTime;
-        float thrustForce = mainThrust * Time.deltaTime;
+        float rotationForce = rcsThrust * Time.deltaTime * rcsFactor;
+        float thrustForce = mainThrust * Time.deltaTime * thrustFactor;
 
         // Thrust and/or rotation activation
         if (v == 0 && thisState == State.Alive)
@@ -338,4 +396,9 @@ public class DroneController : MonoBehaviour
             myRigidbody.constraints = rigidbodyConstraints;
         }
     }
+
+    private void LoadLevelOne() { SceneManager.LoadScene(scene_01); }
+    private void LoadLevelTwo() { SceneManager.LoadScene(scene_02); }
+    private void Quit(bool key_q) { if (key_q) Application.Quit(); }
+    private int GetCount() { return scoreToClear - score; }
 }
