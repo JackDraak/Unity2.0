@@ -3,13 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+// TODO: fix obs so smoke remains after collection
+// TODO: fix GUItext colour issue
 // TODO: Game mechanic: something that boosts and/or retards: rcsThrust or mainThrust.
 //       Note: ^ Handles in-place: rcsFactor & thrustFactor 
 // TODO: use ctrl- or alt- keys for Quit and Respawn.
 // TODO: allow swap of port/starboard numbers if player wants inverted controls.
-// TODO: fix GUItext colour issue
 // TODO: fix lighting issues (i.e. tail not showing until first 3 deaths & reset)
-// http://www.sharemygame.com/share/f5018b3f-52f6-4708-bd10-d3d0f3b0203f
+// http://www.sharemygame.com/share/f8e87d4e-8198-4326-92fb-c86cbc693f7b
 
 public class DroneController : MonoBehaviour
 {
