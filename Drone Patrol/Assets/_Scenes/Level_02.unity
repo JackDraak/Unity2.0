@@ -123,12 +123,12 @@ Prefab:
     - target: {fileID: 224660845130875730, guid: e95f77fdf045d0545990d83bbaa89a56,
         type: 2}
       propertyPath: m_LocalPosition.x
-      value: 372.5
+      value: 374.5
       objectReference: {fileID: 0}
     - target: {fileID: 224660845130875730, guid: e95f77fdf045d0545990d83bbaa89a56,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: 209.5
+      value: 210.5
       objectReference: {fileID: 0}
     - target: {fileID: 224660845130875730, guid: e95f77fdf045d0545990d83bbaa89a56,
         type: 2}
@@ -408,7 +408,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: 1
-  period: 22.2
+  period: 33.3
   mode: 0
 --- !u!1 &202377972 stripped
 GameObject:
@@ -427,7 +427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: -1
-  period: 25.1
+  period: 35.8
   mode: 1
 --- !u!1 &295056434 stripped
 GameObject:
@@ -446,7 +446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: 1
-  period: 6
+  period: 35.3
   mode: 1
 --- !u!1 &423399573 stripped
 GameObject:
@@ -464,7 +464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe124e0bfa184048bae84ca697b6b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  period: 5.75
+  period: 7.69
   movementVector: {x: 6.9, y: 0, z: 0}
   mode: 1
 --- !u!108 &600276221 stripped
@@ -489,7 +489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: -1
-  period: 27
+  period: 28
   mode: 0
 --- !u!1 &759738478 stripped
 GameObject:
@@ -574,16 +574,6 @@ Prefab:
       propertyPath: mass
       value: 
       objectReference: {fileID: 1825585930}
-    - target: {fileID: 114727814594481382, guid: 7126e915daedcbb4d92b3a5526659208,
-        type: 2}
-      propertyPath: wrFactor
-      value: 360
-      objectReference: {fileID: 0}
-    - target: {fileID: 114727814594481382, guid: 7126e915daedcbb4d92b3a5526659208,
-        type: 2}
-      propertyPath: wsFactor
-      value: 70
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7126e915daedcbb4d92b3a5526659208, type: 2}
   m_IsPrefabParent: 0
@@ -603,9 +593,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe124e0bfa184048bae84ca697b6b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  period: 7.2
+  period: 8.6
   movementVector: {x: 0, y: 3, z: 0}
   mode: 1
+--- !u!1 &863262667 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1000207651067890, guid: 83412cdbebffae54989400da11311917,
+    type: 2}
+  m_PrefabInternal: {fileID: 2094479289}
+--- !u!114 &863262672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 863262667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efe124e0bfa184048bae84ca697b6b0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  period: 5
+  movementVector: {x: 0, y: 3, z: 0}
+  mode: 0
 --- !u!1001 &1225627690
 Prefab:
   m_ObjectHideFlags: 0
@@ -855,7 +864,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe124e0bfa184048bae84ca697b6b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  period: 5.03
+  period: 9.6
   movementVector: {x: 0, y: 4, z: 0}
   mode: 1
 --- !u!114 &1685234095 stripped
@@ -1115,6 +1124,11 @@ Prefab:
     - target: {fileID: 4472697158980734, guid: 83412cdbebffae54989400da11311917, type: 2}
       propertyPath: m_LocalPosition.y
       value: 7.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 114062659138634534, guid: 83412cdbebffae54989400da11311917,
+        type: 2}
+      propertyPath: period
+      value: 6.17
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 83412cdbebffae54989400da11311917, type: 2}

@@ -381,7 +381,7 @@ public class DroneController : MonoBehaviour
     {
         // Data & calculations
         const int rcsThrust = 200;
-        const int mainThrust = 835;
+        const int mainThrust = 925;
         float rotationForce = rcsThrust * Time.deltaTime * rcsFactor;
         float thrustForce = mainThrust * Time.deltaTime * thrustFactor;
 

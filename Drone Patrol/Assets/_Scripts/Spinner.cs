@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Spinner : MonoBehaviour {
     [Range(-1, 1)] [SerializeField] int direction = 1;
-    [Range(0f, 30f)] [SerializeField] float period = 25f;
+    [Range(0f, 60f)] [SerializeField] float period = 50f;
     [SerializeField] bool mode = true; 
 
     void Update()

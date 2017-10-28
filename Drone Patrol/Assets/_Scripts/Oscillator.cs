@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class Oscillator : MonoBehaviour {
-    [Range(0f, 10f)][SerializeField] float period = 6f;
+    [Range(0f, 20f)][SerializeField] float period = 6f;
     [SerializeField] Vector3 movementVector = new Vector3(10f, 10f, 10f);
     [SerializeField] bool mode = true;
     private Vector3 startPos;

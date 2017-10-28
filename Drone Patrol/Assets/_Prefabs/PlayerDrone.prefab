@@ -1285,7 +1285,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.8
-  m_Pitch: 0.7
+  m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
@@ -1559,12 +1559,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f49823a668ec1ca4191e4b911d7c7d3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bonusSound: {fileID: 8300000, guid: a6c6b67bbb271e3469df4d2856eb51b5, type: 3}
-  collisionSound: {fileID: 8300000, guid: bc6003bda62f96f4bab4ae9745d5f418, type: 3}
-  explosionSound: {fileID: 8300000, guid: fc32576d186759140a64cc84eec33044, type: 3}
-  finishSound: {fileID: 8300000, guid: cb104cec1b68cc542bf4cb0b6f99c6a8, type: 3}
-  startSound: {fileID: 8300000, guid: beca6766b16a80b4eb6f338d4c07806b, type: 3}
-  thrustSound: {fileID: 8300000, guid: b78a5e77bb5eb9d48a4179d2308b9a1d, type: 3}
+  bonusSound: {fileID: 8300000, guid: 1dc8557f98e813c49aee5fabf6c62d99, type: 3}
+  collisionSound: {fileID: 8300000, guid: 0cacc97679ab380408a49191f0872d78, type: 3}
+  explosionSound: {fileID: 8300000, guid: 35c24da27c48f5244b04abfb5781101e, type: 3}
+  finishSound: {fileID: 8300000, guid: c2f82c0c7d3f7c140b1a688cee25e61f, type: 3}
+  startSound: {fileID: 8300000, guid: 70cd8fc6dc99e354e918349681d95817, type: 3}
+  thrustSound: {fileID: 8300000, guid: d9df2dd9dde9cb34ca3438fc9750018a, type: 3}
   thrustSmoke: {fileID: 198940730905670714}
   droneBody: {fileID: 1278963839162286}
   explosion: {fileID: 1243518721152074}
