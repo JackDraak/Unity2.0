@@ -651,7 +651,7 @@ Prefab:
       objectReference: {fileID: 1685234095}
     - target: {fileID: 114727814594481382, guid: 7126e915daedcbb4d92b3a5526659208,
         type: 2}
-      propertyPath: health
+      propertyPath: gees
       value: 
       objectReference: {fileID: 1551421299}
     - target: {fileID: 114727814594481382, guid: 7126e915daedcbb4d92b3a5526659208,
@@ -1396,7 +1396,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 239048418}
   - {fileID: 1305174849}
   - {fileID: 1032444538}
   - {fileID: 941876968}
@@ -1404,6 +1403,7 @@ Transform:
   - {fileID: 1098196097}
   - {fileID: 1957882393}
   - {fileID: 1583011194}
+  - {fileID: 239048418}
   - {fileID: 632428957}
   - {fileID: 1284275169}
   - {fileID: 1167115807}

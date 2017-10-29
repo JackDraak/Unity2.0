@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 // TODO: use ctrl- or alt- keys for Quit and Respawn.
 // TODO: fix lighting issues (i.e. tail not showing until first 3 deaths & reset)
 // TODO: allow swap of port/starboard numbers if player wants inverted controls.
-// http://www.sharemygame.com/share/f8e87d4e-8198-4326-92fb-c86cbc693f7b
+// http://www.sharemygame.com/share/f5bd9140-8ede-45f5-9201-862f157e375e
 
 public class DroneController : MonoBehaviour
 {
