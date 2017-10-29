@@ -2,19 +2,9 @@
 
 public class GameCameraController : MonoBehaviour {
     [SerializeField] GameObject player;
- //   private Vector3 playerStartPos;
- //   private Vector3 startPos;
     private const float vFactor = 0.1f;
     private const float qFactor = 0.03f;
-//    DroneController drone = null;
 
-    void Start()
-    {
-     //   playerStartPos = player.transform.position;
-     //   startPos = transform.position;
-    }
-
-    // LateUpdate is called after eache Update frame.
     void LateUpdate()
     {
         Vector3 velocity = Vector3.zero;

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 // TODO: fix GUItext colour issue
 // TODO: Game mechanic: something that boosts and/or retards: rcsThrust or mainThrust.
 //       Note: ^ Handles in-place: rcsFactor & thrustFactor 
-// TODO: Keep working on G;s mechanic?
+// TODO: Keep working on G's mechanic?
 // TODO: use ctrl- or alt- keys for Quit and Respawn.
 // TODO: fix lighting issues (i.e. tail not showing until first 3 deaths & reset)
 // TODO: allow swap of port/starboard numbers if player wants inverted controls.
@@ -67,7 +67,6 @@ public class DroneController : MonoBehaviour
     private State thisState;
     private GameObject[] pickups = null;
     private GameObject[] uniquePickups;
-   // List<GameObject> unityGameObjects = new List<GameObject>();
 
     // Use this for initialization.
     void Start()
@@ -86,7 +85,7 @@ public class DroneController : MonoBehaviour
         pickups = GameObject.FindGameObjectsWithTag("Recycler_Active");
         // TODO: debug +80 pickups:
         // for (int f = 0; f < pickups.Length; f++) Debug.Log(pickups[f]); // WTF? 5 copies of each?
-      //  for (int f = 0; f < pickups.Length; f++) AddObjectToUniquePickups(pickups[f]);
+        // for (int f = 0; f < pickups.Length; f++) AddObjectToUniquePickups(pickups[f]);
 
         // TODO: new game bug with improved orbs.... this is now broken vvv (WIP)
         scoreToClear = pickups.Length;
@@ -273,7 +272,7 @@ public class DroneController : MonoBehaviour
                 }
                 break;
             default:
-                Debug.Log("unknown trigger.");
+                // Debug.Log("unknown trigger.");
                 break;
         }
     }
@@ -321,7 +320,7 @@ public class DroneController : MonoBehaviour
                 Debug.Log("Recycler collision.");
                 break;
             default:
-                Debug.Log("unknown collision.");
+                // Debug.Log("unknown collision.");
                 break;
         }
     }
