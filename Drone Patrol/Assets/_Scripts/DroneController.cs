@@ -3,13 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-// TODO: fix obs so smoke remains after collection
+// Priorities:
 // TODO: fix GUItext colour issue
 // TODO: Game mechanic: something that boosts and/or retards: rcsThrust or mainThrust.
 //       Note: ^ Handles in-place: rcsFactor & thrustFactor 
+// TODO: Keep working on G;s mechanic?
 // TODO: use ctrl- or alt- keys for Quit and Respawn.
-// TODO: allow swap of port/starboard numbers if player wants inverted controls.
 // TODO: fix lighting issues (i.e. tail not showing until first 3 deaths & reset)
+// TODO: allow swap of port/starboard numbers if player wants inverted controls.
 // http://www.sharemygame.com/share/f8e87d4e-8198-4326-92fb-c86cbc693f7b
 
 public class DroneController : MonoBehaviour
@@ -43,10 +44,10 @@ public class DroneController : MonoBehaviour
     [SerializeField] GameObject siren_R;
     [SerializeField] Text collectibles;
     [SerializeField] Text droneLives;
-    [SerializeField] Text gameTime;
-    [SerializeField] Text health;
+    [SerializeField] Text gameTime; // TODO: not in-use at this time
+    [SerializeField] Text gees;
+    //[SerializeField] Text health; // TODO: only showing 100% or 0%... huh?
     [SerializeField] Text mass;
-
 
     // Member variables
     [Range(-0.5f, 2f)] private float rcsFactor = 1;
@@ -64,7 +65,9 @@ public class DroneController : MonoBehaviour
     private int scoreToClear;
     private enum State { Dead, Alive, Dying, Resetting, Transcending }
     private State thisState;
-    private GameObject[] pickups; 
+    private GameObject[] pickups = null;
+    private GameObject[] uniquePickups;
+   // List<GameObject> unityGameObjects = new List<GameObject>();
 
     // Use this for initialization.
     void Start()
@@ -81,6 +84,11 @@ public class DroneController : MonoBehaviour
 
         // Collectibles
         pickups = GameObject.FindGameObjectsWithTag("Recycler_Active");
+        // TODO: debug +80 pickups:
+        // for (int f = 0; f < pickups.Length; f++) Debug.Log(pickups[f]); // WTF? 5 copies of each?
+      //  for (int f = 0; f < pickups.Length; f++) AddObjectToUniquePickups(pickups[f]);
+
+        // TODO: new game bug with improved orbs.... this is now broken vvv (WIP)
         scoreToClear = pickups.Length;
 
         // Data
@@ -98,51 +106,79 @@ public class DroneController : MonoBehaviour
         if (finish != null) finish.SetActive(false);
     }
 
+/*    private bool ObjectIsUniquePickup(GameObject obj)
+    {
+        bool unique = true;
+        if (uniquePickups == null) return unique;
+
+        int size = uniquePickups.Length;
+        for (int u = 0; u < size; u++)
+        {
+            if (obj == uniquePickups[u])
+            {
+                unique = false;
+                break;
+            }
+        }
+        return unique;
+    }
+
+   private void AddObjectToUniquePickups(GameObject obj)
+    {
+        int size = 0;
+        if (uniquePickups != null) size = uniquePickups.Length;
+        if (ObjectIsUniquePickup(obj)) uniquePickups[size] = obj;
+    } */
+
     // Update is called once per frame.
     void Update()
     {
         ProcessInput(); // Keyboard only ATM
-        ProcessMass(); // Drone mass +OverTime
-        RotateSirenLamps(); // Faster for higher mass drones: haptics!
         ProcessAudio();
         ProcessVisualEffects();
         UpdateGUI();
         MonitorExit(); // Reveal exit portal when the time is right.
     }
 
+    private void FixedUpdate()
+    {
+        ProcessMass(); // Drone mass +OverTime
+        RotateSirenLamps(); // Faster for higher mass drones: haptics!
+    }
+
     private void UpdateGUI()
     {
+        collectibles.material.color = Color.black;
         if (GetCount() == 0) collectibles.text = "Find the Exit Portal!";
         else collectibles.text = GetCount().ToString() + " Orbs remain";
 
+        droneLives.material.color = Color.black;
         int droneStore = (playerLives - 1);
         if (droneStore < 0) droneLives.text = "";
         else if (droneStore == 1) droneLives.text = "1 Stored drone";
         else droneLives.text = droneStore.ToString() + " Stored drones";
 
-        if (myRigidbody.mass < 1.2) mass.material.color = Color.black;
-        else mass.material.color = Color.red;
+        if (myRigidbody.mass < 1.2)
+        {
+            mass.material.color = Color.black;
+            mass.color = Color.black;
+        }
+        else
+        {
+            mass.material.color = Color.red;
+            mass.color = Color.red;
+        }
         float mText = Mathf.Round(myRigidbody.mass * 100f) / 100f;
         mass.text = mText.ToString() + " Drone mass";
 
+        gees.material.color = Color.black;
+        float tGees = Mathf.Round(-Physics.gravity.y * 100) /100;
+        gees.text = "You Set the G's! {#} at: " + tGees.ToString();
+
       //  float tText = (Mathf.Round(Time.time) * 10f) / 10f;
       //  gameTime.text = tText.ToString() + " Sec";
-
       //  float tHealth = Mathf.Round((hitPoints / BaseHitPoints) * 10000f) / 100f;
       //  health.text = tHealth.ToString() + "% Health";
-    }
-
-    private IEnumerator BlinkMapMarker()
-    {
-        yield return new WaitForSeconds(0.4f);
-        if (mapMarker.activeInHierarchy) mapMarker.SetActive(false);
-        else mapMarker.SetActive(true);
-        Invoke("BumpBlink", 0.1f);
-    }
-
-    private void BumpBlink()
-    {
-        StartCoroutine(BlinkMapMarker());
     }
 
     private void ProcessInput()
@@ -161,9 +197,21 @@ public class DroneController : MonoBehaviour
         bool key_la = Input.GetKey(KeyCode.LeftArrow);
         bool key_ra = Input.GetKey(KeyCode.RightArrow);
         bool key_ua = Input.GetKey(KeyCode.UpArrow);
+        bool key_0 = Input.GetKey(KeyCode.Alpha0);
+        bool key_1 = Input.GetKey(KeyCode.Alpha1);
+        bool key_2 = Input.GetKey(KeyCode.Alpha2);
+        bool key_3 = Input.GetKey(KeyCode.Alpha3);
+        bool key_4 = Input.GetKey(KeyCode.Alpha4);
+        bool key_5 = Input.GetKey(KeyCode.Alpha5);
+        bool key_6 = Input.GetKey(KeyCode.Alpha6);
+        bool key_7 = Input.GetKey(KeyCode.Alpha7);
+        bool key_8 = Input.GetKey(KeyCode.Alpha8);
+        bool key_9 = Input.GetKey(KeyCode.Alpha9);
 
         // Input parsing...
         if (key_q) Quit(key_q);
+        if (key_1 || key_2 || key_3 || key_4 || key_5 || key_6 || key_7 || key_8 || key_9 || key_0)
+            ChangeGravity(key_1, key_2, key_3, key_4, key_5, key_6, key_7, key_8, key_9, key_0);
         if (thisState == State.Alive)
         {
             if (key_r)
@@ -182,6 +230,21 @@ public class DroneController : MonoBehaviour
         }
     }
 
+    private void ChangeGravity
+        (bool k1, bool k2, bool k3, bool k4, bool k5, bool k6, bool k7, bool k8, bool k9, bool k0)
+    {
+        if (k0) Physics.gravity = new Vector3(0, -9.80665f, 0); // "standard" Earth gravity
+        if (k1) Physics.gravity = new Vector3(0, -1f, 0);
+        if (k2) Physics.gravity = new Vector3(0, -2f, 0);
+        if (k3) Physics.gravity = new Vector3(0, -3f, 0);
+        if (k4) Physics.gravity = new Vector3(0, -4f, 0);
+        if (k5) Physics.gravity = new Vector3(0, -5f, 0);
+        if (k6) Physics.gravity = new Vector3(0, -6f, 0);
+        if (k7) Physics.gravity = new Vector3(0, -7f, 0);
+        if (k8) Physics.gravity = new Vector3(0, -8f, 0);
+        if (k9) Physics.gravity = new Vector3(0, -9f, 0);
+    }
+
     void OnTriggerEnter(Collider other)
     {
         switch (other.gameObject.tag)
@@ -191,9 +254,11 @@ public class DroneController : MonoBehaviour
                 Debug.Log("Score: " + other + " : " + score);
                 AudioSource.PlayClipAtPoint(bonusSound, transform.position);
                 if (hitPoints < BaseHitPoints) hitPoints++;
-                other.gameObject.tag = "Recycler_Inactive";
-                other.gameObject.SetActive(false);
                 myRigidbody.mass = DefaultDroneMass;
+                StartCoroutine(ClaimOrb(other));
+                break;
+            case "Orb":
+                other.gameObject.SetActive(false);
                 break;
             case "Finish":
                 if (score >= scoreToClear)
@@ -211,6 +276,13 @@ public class DroneController : MonoBehaviour
                 Debug.Log("unknown trigger.");
                 break;
         }
+    }
+
+    private IEnumerator ClaimOrb(Collider other)
+    {
+        other.gameObject.tag = "Recycler_Inactive";
+        yield return new WaitForSeconds(35);
+        other.gameObject.SetActive(false);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -398,6 +470,15 @@ public class DroneController : MonoBehaviour
         }
     }
 
+    private IEnumerator BlinkMapMarker()
+    {
+        yield return new WaitForSeconds(0.4f);
+        if (mapMarker.activeInHierarchy) mapMarker.SetActive(false);
+        else mapMarker.SetActive(true);
+        Invoke("BumpBlink", 0.1f);
+    }
+
+    private void BumpBlink() { StartCoroutine(BlinkMapMarker()); }
     private void LoadLevelOne() { SceneManager.LoadScene(scene_01); }
     private void LoadLevelTwo() { SceneManager.LoadScene(scene_02); }
     private void Quit(bool key_q) { if (key_q) Application.Quit(); }
