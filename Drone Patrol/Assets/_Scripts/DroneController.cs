@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 // TODO: fix lighting issues (i.e. tail not showing until first 3 deaths & reset)
 // TODO: allow swap of port/starboard numbers if player wants inverted controls.
 
-// http://www.sharemygame.com/share/f5bd9140-8ede-45f5-9201-862f157e375e
+// Demo @ https://jackdraak.itch.io/
 
 public class DroneController : MonoBehaviour
 {
@@ -60,6 +60,8 @@ public class DroneController : MonoBehaviour
     private Rigidbody myRigidbody;
     private Vector3 startPosition;
     private RigidbodyConstraints rigidbodyConstraints;
+    private bool doOnce = false;
+    private bool finishHaptic = true;
     private bool thrustAudio;
     private int hitPoints;
     private int playerLives;
@@ -184,17 +186,21 @@ public class DroneController : MonoBehaviour
             case "Finish":
                 if (score >= scoreToClear)
                 {
-                    thisState = State.Transcending;
-                    myRigidbody.isKinematic = true;
-                    AudioSource.PlayClipAtPoint(finishSound, transform.position);
-                    transform.position = 
-                        trigger.gameObject.transform.position 
-                        + new Vector3(0f,-0.2f,-0.3f);
-                    Invoke("LoadLevelTwo", FinishDelay);
+                    if (!doOnce)
+                    {
+                        thisState = State.Transcending;
+                        myRigidbody.isKinematic = true;
+                        AudioSource.PlayClipAtPoint(finishSound, transform.position);
+                        transform.position = 
+                            trigger.gameObject.transform.position 
+                            + new Vector3(0f,-0.2f,-0.3f);
+                        Invoke("LoadLevelTwo", FinishDelay); // TODO: have more than 2 levels
+                        doOnce = true;
+                    }
                 }
                 break;
             default:
-                Debug.Log("Drone - Trigger - Default - " + trigger);
+                // Debug.Log("Drone - Trigger - Default - " + trigger);
                 break;
         }
     }
@@ -232,10 +238,10 @@ public class DroneController : MonoBehaviour
                     AudioSource.PlayClipAtPoint(collisionSound, transform.position);
                 break;
             case "Recycler_Active":
-                Debug.Log("Drone - Recycler collision - " + collision);
+                // Debug.Log("Drone - Recycler collision - " + collision);
                 break;
             default:
-                 Debug.Log("Drone - Collision - Default - " + collision);
+                 // Debug.Log("Drone - Collision - Default - " + collision);
                 break;
         }
     }
@@ -274,7 +280,7 @@ public class DroneController : MonoBehaviour
             }
             else
             {
-                Debug.Log("ResetPlayer(true) called but noy dying or resetting.");
+                Debug.Log("ResetPlayer(true) called but not dying or resetting.");
             }
             myRigidbody.mass = DefaultDroneMass;
             myRigidbody.isKinematic = false;
@@ -286,30 +292,26 @@ public class DroneController : MonoBehaviour
 
     private void UpdateGUI()
     {
-      //  collectibles.material.color = Color.grey;
-        if (GetCount() == 0) collectibles.text = "Find the Exit Portal!";
+        bool finished = false;
+        if (GetCount() == 0 && !finished)
+        {
+            finished = true;
+            collectibles.text = "Find the Exit Portal!";
+            StartCoroutine(ShowFinish());
+        }
         else collectibles.text = GetCount().ToString() + " Orbs remain";
 
-      //  droneLives.material.color = Color.grey;
         int droneStore = (playerLives - 1);
         if (droneStore < 0) droneLives.text = "";
         else if (droneStore == 1) droneLives.text = "1 Stored drone";
         else droneLives.text = droneStore.ToString() + " Stored drones";
 
-        if (myRigidbody.mass < 1.2)
-        {
-            mass.color = Color.white;
-      //      mass.material.color = Color.grey;
-        }
-        else
-        {
-            mass.color = Color.red;
-      //      mass.material.color = Color.white;
-        }
+        if (myRigidbody.mass < 1.2) mass.color = Color.white;
+        else mass.color = Color.red;
+
         float mText = Mathf.Round(myRigidbody.mass * 100f) / 100f;
         mass.text = mText.ToString() + " Drone mass";
 
-       // gees.material.color = Color.grey;
         float tGees = Mathf.Round(-Physics.gravity.y * 100) / 100;
         gees.text = "You Set the G's at: " + tGees.ToString() + " m/s²";
 
@@ -398,13 +400,6 @@ public class DroneController : MonoBehaviour
             * Mathf.Pow(sirenRotationBase, sirenRotationFactor + myRigidbody.mass));
     }
 
-    private IEnumerator ClaimOrb(Collider other)
-    {
-        other.gameObject.tag = "Recycler_Inactive";
-        yield return new WaitForSeconds(35);
-        other.gameObject.SetActive(false);
-    }
-
     private void Warp()
     {
         const int wrFactor = 360;
@@ -441,6 +436,22 @@ public class DroneController : MonoBehaviour
             myRigidbody.freezeRotation = false;
             myRigidbody.constraints = rigidbodyConstraints;
         }
+    }
+
+    private IEnumerator ClaimOrb(Collider other)
+    {
+        other.gameObject.tag = "Recycler_Inactive";
+        yield return new WaitForSeconds(35);
+        other.gameObject.SetActive(false);
+    }
+
+    private IEnumerator ShowFinish()
+    {
+        if (finishHaptic) collectibles.color = Color.green;
+        else collectibles.color = Color.white;
+        finishHaptic = !finishHaptic;
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(ShowFinish());
     }
 
     private IEnumerator BlinkMapMarker()
