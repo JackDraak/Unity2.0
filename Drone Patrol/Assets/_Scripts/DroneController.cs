@@ -3,14 +3,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-// Priorities:
+// Features:
 // TODO: fix GUItext colour issue
 // TODO: Game mechanic: something that boosts and/or retards: rcsThrust or mainThrust.
 //       Note: ^ Handles in-place: rcsFactor & thrustFactor 
-// TODO: Keep working on G's mechanic?
 // TODO: use ctrl- or alt- keys for Quit and Respawn.
+
+// Bugs
 // TODO: fix lighting issues (i.e. tail not showing until first 3 deaths & reset)
 // TODO: allow swap of port/starboard numbers if player wants inverted controls.
+
 // http://www.sharemygame.com/share/f5bd9140-8ede-45f5-9201-862f157e375e
 
 public class DroneController : MonoBehaviour
@@ -19,13 +21,13 @@ public class DroneController : MonoBehaviour
     private const float ExplosionDelay = 2.222f;
     private const float FinishDelay = 2.075f;
     private const float StartDelay = 2.633f;
-    private const int BaseHitPoints = 5;
+    private const int BaseHitPoints = 6;
     private const int CollisionVelocityThreshold = 2;
     private const int DefaultDroneMass = 1;
     private const int MaxPlayerLives = 3;
     private const int StandardDelay = 1;
-    private string scene_01 = "Level_01";
-    private string scene_02 = "Level_02";
+    private string scene_01 = "_StartMenu";
+    private string scene_02 = "DronePatrol_02";
 
     // Sound
     [SerializeField] AudioClip bonusSound;
@@ -68,7 +70,6 @@ public class DroneController : MonoBehaviour
     private GameObject[] pickups = null;
     private GameObject[] uniquePickups;
 
-    // Use this for initialization.
     void Start()
     {
         // Components
@@ -83,16 +84,11 @@ public class DroneController : MonoBehaviour
 
         // Collectibles
         pickups = GameObject.FindGameObjectsWithTag("Recycler_Active");
-        // TODO: debug +80 pickups:
-        // for (int f = 0; f < pickups.Length; f++) Debug.Log(pickups[f]); // WTF? 5 copies of each?
-        // for (int f = 0; f < pickups.Length; f++) AddObjectToUniquePickups(pickups[f]);
-
-        // TODO: new game bug with improved orbs.... this is now broken vvv (WIP)
         scoreToClear = pickups.Length;
 
         // Data
         hitPoints = BaseHitPoints;
-        playerLives = MaxPlayerLives;
+        playerLives = MaxPlayerLives; // TODO: put in a LevelManager() to track user data between levels
         startPosition = transform.position;
         startRotation = transform.rotation;
         rigidbodyConstraints = myRigidbody.constraints;
@@ -105,34 +101,8 @@ public class DroneController : MonoBehaviour
         if (finish != null) finish.SetActive(false);
     }
 
-/*    private bool ObjectIsUniquePickup(GameObject obj)
-    {
-        bool unique = true;
-        if (uniquePickups == null) return unique;
-
-        int size = uniquePickups.Length;
-        for (int u = 0; u < size; u++)
-        {
-            if (obj == uniquePickups[u])
-            {
-                unique = false;
-                break;
-            }
-        }
-        return unique;
-    }
-
-   private void AddObjectToUniquePickups(GameObject obj)
-    {
-        int size = 0;
-        if (uniquePickups != null) size = uniquePickups.Length;
-        if (ObjectIsUniquePickup(obj)) uniquePickups[size] = obj;
-    } */
-
-    // Update is called once per frame.
     void Update()
     {
-        ProcessInput(); // Keyboard only ATM
         ProcessAudio();
         ProcessVisualEffects();
         UpdateGUI();
@@ -141,43 +111,9 @@ public class DroneController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        ProcessInput(); // Keyboard only ATM
         ProcessMass(); // Drone mass +OverTime
         RotateSirenLamps(); // Faster for higher mass drones: haptics!
-    }
-
-    private void UpdateGUI()
-    {
-        collectibles.material.color = Color.black;
-        if (GetCount() == 0) collectibles.text = "Find the Exit Portal!";
-        else collectibles.text = GetCount().ToString() + " Orbs remain";
-
-        droneLives.material.color = Color.black;
-        int droneStore = (playerLives - 1);
-        if (droneStore < 0) droneLives.text = "";
-        else if (droneStore == 1) droneLives.text = "1 Stored drone";
-        else droneLives.text = droneStore.ToString() + " Stored drones";
-
-        if (myRigidbody.mass < 1.2)
-        {
-            mass.material.color = Color.black;
-            mass.color = Color.black;
-        }
-        else
-        {
-            mass.material.color = Color.red;
-            mass.color = Color.red;
-        }
-        float mText = Mathf.Round(myRigidbody.mass * 100f) / 100f;
-        mass.text = mText.ToString() + " Drone mass";
-
-        gees.material.color = Color.black;
-        float tGees = Mathf.Round(-Physics.gravity.y * 100) /100;
-        gees.text = "You Set the G's! {#} at: " + tGees.ToString();
-
-      //  float tText = (Mathf.Round(Time.time) * 10f) / 10f;
-      //  gameTime.text = tText.ToString() + " Sec";
-      //  float tHealth = Mathf.Round((hitPoints / BaseHitPoints) * 10000f) / 100f;
-      //  health.text = tHealth.ToString() + "% Health";
     }
 
     private void ProcessInput()
@@ -207,10 +143,11 @@ public class DroneController : MonoBehaviour
         bool key_8 = Input.GetKey(KeyCode.Alpha8);
         bool key_9 = Input.GetKey(KeyCode.Alpha9);
 
-        // Input parsing...
+        // Input parsing... parse any time:
         if (key_q) Quit(key_q);
         if (key_1 || key_2 || key_3 || key_4 || key_5 || key_6 || key_7 || key_8 || key_9 || key_0)
             ChangeGravity(key_1, key_2, key_3, key_4, key_5, key_6, key_7, key_8, key_9, key_0);
+        // ...parse these inputs only in .Alive State:
         if (thisState == State.Alive)
         {
             if (key_r)
@@ -229,35 +166,20 @@ public class DroneController : MonoBehaviour
         }
     }
 
-    private void ChangeGravity
-        (bool k1, bool k2, bool k3, bool k4, bool k5, bool k6, bool k7, bool k8, bool k9, bool k0)
+    void OnTriggerEnter(Collider trigger)
     {
-        if (k0) Physics.gravity = new Vector3(0, -9.80665f, 0); // "standard" Earth gravity
-        if (k1) Physics.gravity = new Vector3(0, -1f, 0);
-        if (k2) Physics.gravity = new Vector3(0, -2f, 0);
-        if (k3) Physics.gravity = new Vector3(0, -3f, 0);
-        if (k4) Physics.gravity = new Vector3(0, -4f, 0);
-        if (k5) Physics.gravity = new Vector3(0, -5f, 0);
-        if (k6) Physics.gravity = new Vector3(0, -6f, 0);
-        if (k7) Physics.gravity = new Vector3(0, -7f, 0);
-        if (k8) Physics.gravity = new Vector3(0, -8f, 0);
-        if (k9) Physics.gravity = new Vector3(0, -9f, 0);
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        switch (other.gameObject.tag)
+        switch (trigger.gameObject.tag)
         {
             case "Recycler_Active":
                 score++;
-                Debug.Log("Score: " + other + " : " + score);
+                Debug.Log("Score: " + trigger + " : " + score);
                 AudioSource.PlayClipAtPoint(bonusSound, transform.position);
                 if (hitPoints < BaseHitPoints) hitPoints++;
                 myRigidbody.mass = DefaultDroneMass;
-                StartCoroutine(ClaimOrb(other));
+                StartCoroutine(ClaimOrb(trigger));
                 break;
             case "Orb":
-                other.gameObject.SetActive(false);
+                trigger.gameObject.SetActive(false);
                 break;
             case "Finish":
                 if (score >= scoreToClear)
@@ -266,22 +188,15 @@ public class DroneController : MonoBehaviour
                     myRigidbody.isKinematic = true;
                     AudioSource.PlayClipAtPoint(finishSound, transform.position);
                     transform.position = 
-                        other.gameObject.transform.position 
+                        trigger.gameObject.transform.position 
                         + new Vector3(0f,-0.2f,-0.3f);
                     Invoke("LoadLevelTwo", FinishDelay);
                 }
                 break;
             default:
-                // Debug.Log("unknown trigger.");
+                Debug.Log("Drone - Trigger - Default - " + trigger);
                 break;
         }
-    }
-
-    private IEnumerator ClaimOrb(Collider other)
-    {
-        other.gameObject.tag = "Recycler_Inactive";
-        yield return new WaitForSeconds(35);
-        other.gameObject.SetActive(false);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -317,10 +232,10 @@ public class DroneController : MonoBehaviour
                     AudioSource.PlayClipAtPoint(collisionSound, transform.position);
                 break;
             case "Recycler_Active":
-                Debug.Log("Recycler collision.");
+                Debug.Log("Drone - Recycler collision - " + collision);
                 break;
             default:
-                // Debug.Log("unknown collision.");
+                 Debug.Log("Drone - Collision - Default - " + collision);
                 break;
         }
     }
@@ -369,50 +284,46 @@ public class DroneController : MonoBehaviour
         }
     }
 
-    private void Warp()
+    private void UpdateGUI()
     {
-        const int wrFactor = 360;
-        const int wsFactor = 90;
+      //  collectibles.material.color = Color.grey;
+        if (GetCount() == 0) collectibles.text = "Find the Exit Portal!";
+        else collectibles.text = GetCount().ToString() + " Orbs remain";
 
-        transform.localScale = 
-            transform.localScale - 
-            ((transform.localScale / 100f) * wsFactor * Time.deltaTime);
+      //  droneLives.material.color = Color.grey;
+        int droneStore = (playerLives - 1);
+        if (droneStore < 0) droneLives.text = "";
+        else if (droneStore == 1) droneLives.text = "1 Stored drone";
+        else droneLives.text = droneStore.ToString() + " Stored drones";
 
-        transform.Rotate(Vector3.back * wrFactor * Time.deltaTime);
-    }
+        if (myRigidbody.mass < 1.2)
+        {
+            mass.color = Color.white;
+      //      mass.material.color = Color.grey;
+        }
+        else
+        {
+            mass.color = Color.red;
+      //      mass.material.color = Color.white;
+        }
+        float mText = Mathf.Round(myRigidbody.mass * 100f) / 100f;
+        mass.text = mText.ToString() + " Drone mass";
 
-    private void RotateSirenLamps()
-    {
-        float sirenRotationBase = 2.2f;
-        float sirenRotationFactor = 0.7f;
-        float sirenSpeed = 120f;
+       // gees.material.color = Color.grey;
+        float tGees = Mathf.Round(-Physics.gravity.y * 100) / 100;
+        gees.text = "You Set the G's at: " + tGees.ToString() + " m/s²";
 
-        // Note: Vector3.up/down are shorthand for y+/y-
-        Transform rSiren = siren_R.transform;
-        rSiren.Rotate
-            (Vector3.up
-            * Time.deltaTime
-            * sirenSpeed
-            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + myRigidbody.mass));
-
-        Transform bSiren = siren_B.transform;
-        bSiren.Rotate
-            (Vector3.down
-            * Time.deltaTime
-            * sirenSpeed
-            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + myRigidbody.mass));
-    }
-
-    private void MonitorExit()
-    {
-        if (score >= scoreToClear && !finish.activeSelf) finish.SetActive(true);
-        if (thisState == State.Transcending) Warp();
+        // TODO: fix this to get health as %.... right now, only results in sattes of 0% or 100%
+        //  float tText = (Mathf.Round(Time.time) * 10f) / 10f;
+        //  gameTime.text = tText.ToString() + " Sec";
+        //  float tHealth = Mathf.Round((hitPoints / BaseHitPoints) * 10000f) / 100f;
+        //  health.text = tHealth.ToString() + "% Health";
     }
 
     private void ProcessMass()
     {
         float driftMassFactor = 70f;
-        float driftMass = Time.deltaTime / driftMassFactor;
+        float driftMass = Time.fixedDeltaTime / driftMassFactor;
 
         myRigidbody.mass += driftMass;
     }
@@ -449,13 +360,76 @@ public class DroneController : MonoBehaviour
         }
     }
 
+    private void ChangeGravity
+        (bool k1, bool k2, bool k3, bool k4, bool k5, bool k6, bool k7, bool k8, bool k9, bool k0)
+    {
+        // Possible to get more than one directive in a frame, therefore, default to highest G:
+        if (k1) Physics.gravity = new Vector3(0, -1f, 0);
+        if (k2) Physics.gravity = new Vector3(0, -2f, 0);
+        if (k3) Physics.gravity = new Vector3(0, -3f, 0);
+        if (k4) Physics.gravity = new Vector3(0, -4f, 0);
+        if (k5) Physics.gravity = new Vector3(0, -5f, 0);
+        if (k6) Physics.gravity = new Vector3(0, -6f, 0);
+        if (k7) Physics.gravity = new Vector3(0, -7f, 0);
+        if (k8) Physics.gravity = new Vector3(0, -8f, 0);
+        if (k9) Physics.gravity = new Vector3(0, -9f, 0);
+        if (k0) Physics.gravity = new Vector3(0, -9.80665f, 0); // "standard" Earth gravity
+    }
+
+    private void RotateSirenLamps()
+    {
+        float sirenRotationBase = 2.2f;
+        float sirenRotationFactor = 0.7f;
+        float sirenSpeed = 120f;
+
+        // Note: Vector3.up/down are shorthand for y+/y-
+        Transform rSiren = siren_R.transform;
+        rSiren.Rotate
+            (Vector3.up
+            * Time.fixedDeltaTime
+            * sirenSpeed
+            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + myRigidbody.mass));
+
+        Transform bSiren = siren_B.transform;
+        bSiren.Rotate
+            (Vector3.down
+            * Time.fixedDeltaTime
+            * sirenSpeed
+            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + myRigidbody.mass));
+    }
+
+    private IEnumerator ClaimOrb(Collider other)
+    {
+        other.gameObject.tag = "Recycler_Inactive";
+        yield return new WaitForSeconds(35);
+        other.gameObject.SetActive(false);
+    }
+
+    private void Warp()
+    {
+        const int wrFactor = 360;
+        const int wsFactor = 90;
+
+        transform.localScale =
+            transform.localScale -
+            ((transform.localScale / 100f) * wsFactor * Time.deltaTime);
+
+        transform.Rotate(Vector3.back * wrFactor * Time.deltaTime);
+    }
+
+    private void MonitorExit()
+    {
+        if (score >= scoreToClear && !finish.activeSelf) finish.SetActive(true);
+        if (thisState == State.Transcending) Warp();
+    }
+
     private void ActivateThrust(int v)
     {
         // Data & calculations
         const int rcsThrust = 200;
         const int mainThrust = 925;
-        float rotationForce = rcsThrust * Time.deltaTime * rcsFactor;
-        float thrustForce = mainThrust * Time.deltaTime * thrustFactor;
+        float rotationForce = rcsThrust * Time.fixedDeltaTime * rcsFactor;
+        float thrustForce = mainThrust * Time.fixedDeltaTime * thrustFactor;
 
         // Thrust and/or rotation activation
         if (v == 0 && thisState == State.Alive)
