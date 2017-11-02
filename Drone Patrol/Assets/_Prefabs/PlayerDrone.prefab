@@ -1464,7 +1464,7 @@ Light:
     m_NearPlane: 0.2
   m_Cookie: {fileID: 0}
   m_DrawHalo: 1
-  m_Flare: {fileID: 0}
+  m_Flare: {fileID: 12100000, guid: 92cd0f8877eff40d3b5e3357384d5f28, type: 2}
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
@@ -1536,7 +1536,7 @@ Light:
     m_NearPlane: 0.2
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
-  m_Flare: {fileID: 0}
+  m_Flare: {fileID: 12100000, guid: 92cd0f8877eff40d3b5e3357384d5f28, type: 2}
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
@@ -1559,23 +1559,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f49823a668ec1ca4191e4b911d7c7d3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bonusSound: {fileID: 8300000, guid: 1dc8557f98e813c49aee5fabf6c62d99, type: 3}
+  bonusSound: {fileID: 8300000, guid: 0b5b7d66367a8264f8e666c2bf18dff7, type: 3}
   collisionSound: {fileID: 8300000, guid: 0cacc97679ab380408a49191f0872d78, type: 3}
   explosionSound: {fileID: 8300000, guid: 35c24da27c48f5244b04abfb5781101e, type: 3}
   finishSound: {fileID: 8300000, guid: c2f82c0c7d3f7c140b1a688cee25e61f, type: 3}
   startSound: {fileID: 8300000, guid: 70cd8fc6dc99e354e918349681d95817, type: 3}
   thrustSound: {fileID: 8300000, guid: d9df2dd9dde9cb34ca3438fc9750018a, type: 3}
-  thrustSmoke: {fileID: 198940730905670714}
   droneBody: {fileID: 1278963839162286}
   explosion: {fileID: 1243518721152074}
   mapMarker: {fileID: 1028893391444378}
   siren_B: {fileID: 1463987021751110}
   siren_R: {fileID: 1928201287193936}
+  thrustSmoke: {fileID: 198940730905670714}
   collectibles: {fileID: 0}
   droneLives: {fileID: 0}
-  gameTime: {fileID: 0}
   gees: {fileID: 0}
   mass: {fileID: 0}
+  invincible: {fileID: 0}
+  gameTime: {fileID: 0}
 --- !u!135 &135829733161716058
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -24,10 +24,11 @@ public class DroneController : MonoBehaviour
     private const int BaseHitPoints = 6;
     private const int CollisionVelocityThreshold = 2;
     private const int DefaultDroneMass = 1;
+    private const int FinalLevelIndex = 5;
+    private const int FirstLevelIndex = 2;
     private const int MaxPlayerLives = 3;
     private const int StandardDelay = 1;
-    private string scene_01 = "_StartMenu";
-    private string scene_02 = "DronePatrol_02";
+    private string scene_01 = "_StartMenu_DP";
 
     // Sound
     [SerializeField] AudioClip bonusSound;
@@ -38,18 +39,21 @@ public class DroneController : MonoBehaviour
     [SerializeField] AudioClip thrustSound;
 
     // Effects
-    [SerializeField] ParticleSystem thrustSmoke;
     [SerializeField] GameObject droneBody;
     [SerializeField] GameObject explosion;
     [SerializeField] GameObject mapMarker;
     [SerializeField] GameObject siren_B;
     [SerializeField] GameObject siren_R;
+    [SerializeField] ParticleSystem thrustSmoke;
+
+    // Gui Texts
     [SerializeField] Text collectibles;
     [SerializeField] Text droneLives;
-    [SerializeField] Text gameTime; // TODO: not in-use at this time
     [SerializeField] Text gees;
-    //[SerializeField] Text health; // TODO: only showing 100% or 0%... huh?
     [SerializeField] Text mass;
+    [SerializeField] Text invincible;
+    [SerializeField] Text gameTime; // TODO: not in-use at this time
+    //[SerializeField] Text health; // TODO: only showing 100% or 0%... huh?
 
     // Member variables
     [Range(-0.5f, 2f)] private float rcsFactor = 1;
@@ -60,9 +64,11 @@ public class DroneController : MonoBehaviour
     private Rigidbody myRigidbody;
     private Vector3 startPosition;
     private RigidbodyConstraints rigidbodyConstraints;
+    private bool debugMode;
+    private bool debugInvulnerable = false;
     private bool doOnce = false;
     private bool finishHaptic = true;
-    private bool thrustAudio;
+    private bool thrustAudio = false;
     private int hitPoints;
     private int playerLives;
     private int score;
@@ -101,6 +107,8 @@ public class DroneController : MonoBehaviour
         StartCoroutine(ResetPlayer(true));
         StartCoroutine(BlinkMapMarker());
         if (finish != null) finish.SetActive(false);
+
+        debugMode = Debug.isDebugBuild;
     }
 
     void Update()
@@ -108,11 +116,11 @@ public class DroneController : MonoBehaviour
         ProcessAudio();
         ProcessVisualEffects();
         UpdateGUI();
-        MonitorExit(); // Reveal exit portal when the time is right.
     }
 
     private void FixedUpdate()
     {
+        MonitorExit(); // Reveal exit portal when the time is right
         ProcessInput(); // Keyboard only ATM
         ProcessMass(); // Drone mass +OverTime
         RotateSirenLamps(); // Faster for higher mass drones: haptics!
@@ -165,6 +173,33 @@ public class DroneController : MonoBehaviour
             if (key_w || key_ua) ActivateThrust(main);
             if (key_a || key_la) { ActivateThrust(port); return; }
             else if (key_d || key_ra) { ActivateThrust(starboard); return; }
+
+            if (debugMode) ProcessDeveloperInput();
+        }
+    }
+
+    void ProcessDeveloperInput()
+    {
+        bool key_i = Input.GetKeyDown(KeyCode.I);
+        bool key_l = Input.GetKeyDown(KeyCode.L);
+        bool key_o = Input.GetKeyDown(KeyCode.O);
+
+        if (key_o) LoadNextLevel();
+        if (key_l) playerLives++;
+        if (key_i)
+        {
+            debugInvulnerable = !debugInvulnerable;
+            if (debugInvulnerable)
+            {
+                invincible.gameObject.SetActive(true);
+                invincible.text = "I'm Invincible!";
+            }
+
+            else
+            {
+                invincible.gameObject.SetActive(false);
+                invincible.text = "";
+            }
         }
     }
 
@@ -194,7 +229,7 @@ public class DroneController : MonoBehaviour
                         transform.position = 
                             trigger.gameObject.transform.position 
                             + new Vector3(0f,-0.2f,-0.3f);
-                        Invoke("LoadLevelTwo", FinishDelay); // TODO: have more than 2 levels
+                        Invoke("LoadNextLevel", FinishDelay); // TODO: have more than 2 levels
                         doOnce = true;
                     }
                 }
@@ -212,7 +247,7 @@ public class DroneController : MonoBehaviour
             case "Obstacle":
                 if (collision.relativeVelocity.magnitude > CollisionVelocityThreshold)
                 {
-                    hitPoints--;
+                    if (!debugInvulnerable) hitPoints--;
                     AudioSource.PlayClipAtPoint(collisionSound, transform.position);
                     if (hitPoints <= 0)
                     {
@@ -224,7 +259,7 @@ public class DroneController : MonoBehaviour
             case "Ground":
                 if (collision.relativeVelocity.magnitude > CollisionVelocityThreshold)
                 {
-                    hitPoints--;
+                    if (!debugInvulnerable) hitPoints--;
                     AudioSource.PlayClipAtPoint(collisionSound, transform.position);
                     if (hitPoints <= 0)
                     {
@@ -315,7 +350,7 @@ public class DroneController : MonoBehaviour
         float tGees = Mathf.Round(-Physics.gravity.y * 100) / 100;
         gees.text = "You Set the G's at: " + tGees.ToString() + " m/s²";
 
-        // TODO: fix this to get health as %.... right now, only results in sattes of 0% or 100%
+        // TODO: fix this to get health as %.... right now, only results in states of 0% or 100%
         //  float tText = (Mathf.Round(Time.time) * 10f) / 10f;
         //  gameTime.text = tText.ToString() + " Sec";
         //  float tHealth = Mathf.Round((hitPoints / BaseHitPoints) * 10000f) / 100f;
@@ -383,6 +418,8 @@ public class DroneController : MonoBehaviour
         float sirenRotationBase = 2.2f;
         float sirenRotationFactor = 0.7f;
         float sirenSpeed = 120f;
+        float massFactor = myRigidbody.mass;
+        if (massFactor > 2.5f) massFactor = 2.5f;
 
         // Note: Vector3.up/down are shorthand for y+/y-
         Transform rSiren = siren_R.transform;
@@ -390,14 +427,14 @@ public class DroneController : MonoBehaviour
             (Vector3.up
             * Time.fixedDeltaTime
             * sirenSpeed
-            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + myRigidbody.mass));
+            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + massFactor));
 
         Transform bSiren = siren_B.transform;
         bSiren.Rotate
             (Vector3.down
             * Time.fixedDeltaTime
             * sirenSpeed
-            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + myRigidbody.mass));
+            * Mathf.Pow(sirenRotationBase, sirenRotationFactor + massFactor));
     }
 
     private void Warp()
@@ -407,9 +444,9 @@ public class DroneController : MonoBehaviour
 
         transform.localScale =
             transform.localScale -
-            ((transform.localScale / 100f) * wsFactor * Time.deltaTime);
+            ((transform.localScale / 100f) * wsFactor * Time.fixedDeltaTime);
 
-        transform.Rotate(Vector3.back * wrFactor * Time.deltaTime);
+        transform.Rotate(Vector3.back * wrFactor * Time.fixedDeltaTime);
     }
 
     private void MonitorExit()
@@ -454,6 +491,16 @@ public class DroneController : MonoBehaviour
         StartCoroutine(ShowFinish());
     }
 
+    private void LoadNextLevel()
+    {
+        int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
+        // If player just finished the "last level", load any random level
+        if (nextScene > FinalLevelIndex) nextScene = 
+                Random.Range(FirstLevelIndex, FinalLevelIndex + 1);
+
+        SceneManager.LoadScene(nextScene);
+    }
+
     private IEnumerator BlinkMapMarker()
     {
         yield return new WaitForSeconds(0.4f);
@@ -464,7 +511,7 @@ public class DroneController : MonoBehaviour
 
     private void BumpBlink() { StartCoroutine(BlinkMapMarker()); }
     private void LoadLevelOne() { SceneManager.LoadScene(scene_01); }
-    private void LoadLevelTwo() { SceneManager.LoadScene(scene_02); }
     private void Quit(bool key_q) { if (key_q) Application.Quit(); }
     private int GetCount() { return scoreToClear - score; }
+    
 }

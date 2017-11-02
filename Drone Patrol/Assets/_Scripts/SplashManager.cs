@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class SplashManager : MonoBehaviour {
 
 	public float autoLoadNextLevelDelay = 4;
+    private string mainMenu = "_StartMenu_DP";
 
 	//private OptionsController optionsController;
 	
@@ -14,8 +15,14 @@ public class SplashManager : MonoBehaviour {
 	//	optionsController.Save ();
 		Invoke("LoadNextLevel", autoLoadNextLevelDelay);
 	}
-	
-	public void LoadNextLevel() {
+
+    void Update()
+    {
+        bool key = Input.anyKeyDown;
+        if (key) SceneManager.LoadScene(mainMenu);
+    }
+
+    public void LoadNextLevel() {
 		Cursor.visible = true;
 		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex +1);
 	}

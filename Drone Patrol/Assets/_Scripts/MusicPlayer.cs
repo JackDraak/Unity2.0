@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class MusicPlayer : MonoBehaviour {
 
@@ -8,6 +7,7 @@ public class MusicPlayer : MonoBehaviour {
 	public AudioClip[] level_;
 
 	private AudioSource music;
+    private int cue = 1;
 
 	void Start () {
 		if (instance != null && instance != this) { Destroy (gameObject); }
@@ -20,13 +20,13 @@ public class MusicPlayer : MonoBehaviour {
 			music.loop = true;
 		}
 	}
-	
-	void OnLevelWasLoaded(int level){
+
+    void OnLevelWasLoaded(int level){
 		if (music) {
 			music.Stop();
 			music.clip = level_[level]; // setup clips-quesheet in the inspector
 			music.loop = true;
-			music.volume = 0.86f;
+			music.volume = 0.15f;
 			music.Play();
 		}
 	}
