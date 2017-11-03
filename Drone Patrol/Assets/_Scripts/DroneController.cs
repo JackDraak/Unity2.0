@@ -4,14 +4,16 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 // Features:
-// TODO: fix GUItext colour issue
+// TODO: give points for ending level in time: X, Y, Z for A, B, C bonus....
+//       need a timer display, prefereably with haptics and bonus info too
+// TODO: if time Z passes, wipe remaining orbs and reveal the exit....
+// TODO: built PreferencesManager() [with volume control....]
+// TODO: build GUImanager()
+// TODO: allow swap of port/starboard numbers if player wants inverted controls.
 // TODO: Game mechanic: something that boosts and/or retards: rcsThrust or mainThrust.
 //       Note: ^ Handles in-place: rcsFactor & thrustFactor 
-// TODO: use ctrl- or alt- keys for Quit and Respawn.
-
 // Bugs
 // TODO: fix lighting issues (i.e. tail not showing until first 3 deaths & reset)
-// TODO: allow swap of port/starboard numbers if player wants inverted controls.
 
 // Demo @ https://jackdraak.itch.io/drone-patrol
 
@@ -67,7 +69,7 @@ public class DroneController : MonoBehaviour
     private bool debugMode;
     private bool debugInvulnerable = false;
     private bool doOnce = false;
-    private bool finishHaptic = true;
+    private bool finished = false;
     private bool thrustAudio = false;
     private int hitPoints;
     private int orbsCollected;
@@ -79,7 +81,7 @@ public class DroneController : MonoBehaviour
     void Start()
     {
         // Components
-        Debug.Log("Start() @ " + Time.time);
+        Debug.Log("DroneController.cs Start() @ " + Time.time);
         bool success;
         success = (levelManager = GameObject.FindObjectOfType<LevelManager>());
             if (!success) Debug.Log("FAIL: levelManager");
@@ -99,7 +101,7 @@ public class DroneController : MonoBehaviour
         startPosition = transform.position;
         startRotation = transform.rotation;
         rigidbodyConstraints = myRigidbody.constraints;
-        orbsCollected = 0;
+        orbsCollected = 0; // orbsToClear - 1; // TODO: set to zero for release, oTC-1 for debug
 
         // Set state & begin
         thisState = State.Resetting;
@@ -144,7 +146,6 @@ public class DroneController : MonoBehaviour
         bool key_lc = Input.GetKeyDown(KeyCode.Comma);
         bool key_rc = Input.GetKeyDown(KeyCode.Period);
         bool key_slash = Input.GetKeyDown(KeyCode.Slash);
-
 
         // Input parsing... parse any time:
         if (key_x) Quit(key_x);
@@ -319,7 +320,6 @@ public class DroneController : MonoBehaviour
 
     private void UpdateGUI()
     {
-        bool finished = false;
         if (GetCount() == 0 && !finished)
         {
             finished = true;
@@ -342,9 +342,9 @@ public class DroneController : MonoBehaviour
         float tGees = Mathf.Round(-Physics.gravity.y * 100) / 100;
         gees.text = "You Set the G's at: " + tGees.ToString() + " m/s²";
 
-        // TODO: fix this to get health as %.... right now, only results in states of 0% or 100%
         //  float tText = (Mathf.Round(Time.time) * 10f) / 10f;
         //  gameTime.text = tText.ToString() + " Sec";
+        // TODO: fix this to get health as %.... right now, only results in states of 0% or 100%
         //  float tHealth = Mathf.Round((hitPoints / BaseHitPoints) * 10000f) / 100f;
         //  health.text = tHealth.ToString() + "% Health";
     }
@@ -398,7 +398,6 @@ public class DroneController : MonoBehaviour
         if (myG.y > 14) myG = new Vector3(0, 14, 0);
         if (k3) myG = myG * -1;
         Physics.gravity = myG;
-        //if (k0) Physics.gravity = new Vector3(0, -9.80665f, 0); // "standard" Earth gravity
     }
 
     private void RotateSirenLamps()
@@ -473,9 +472,8 @@ public class DroneController : MonoBehaviour
 
     private IEnumerator ShowFinish()
     {
-        if (finishHaptic) collectibles.color = Color.green;
+        if (collectibles.color == Color.white) collectibles.color = Color.green;
         else collectibles.color = Color.white;
-        finishHaptic = !finishHaptic;
         yield return new WaitForSeconds(0.5f);
         StartCoroutine(ShowFinish());
     }
@@ -484,7 +482,7 @@ public class DroneController : MonoBehaviour
     {
         int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
         // If player just finished the "last level", load any random level
-        // TODO: can use SceneManager.sceneCountInBuildSettings for index of last scene
+        // TODO: can use SceneManager.sceneCountInBuildSettings for index of last scene?
         if (nextScene > FinalLevelIndex) nextScene = 
                 Random.Range(FirstLevelIndex, FinalLevelIndex + 1);
 
