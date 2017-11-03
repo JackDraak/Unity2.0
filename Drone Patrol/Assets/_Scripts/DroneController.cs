@@ -323,10 +323,9 @@ public class DroneController : MonoBehaviour
         if (GetCount() == 0 && !finished)
         {
             finished = true;
-            collectibles.text = "Find the Exit Portal!";
             StartCoroutine(ShowFinish());
         }
-        else collectibles.text = GetCount().ToString() + " Orbs remain";
+        else if (!finished) collectibles.text = GetCount().ToString() + " Orbs remain";
 
         int droneStore = levelManager.GetPlayerLives() - 1; // -1 for drone in-play
         if (droneStore < 0) droneLives.text = "";
@@ -474,6 +473,7 @@ public class DroneController : MonoBehaviour
     {
         if (collectibles.color == Color.white) collectibles.color = Color.green;
         else collectibles.color = Color.white;
+        collectibles.text = "Find the Exit Portal!";
         yield return new WaitForSeconds(0.5f);
         StartCoroutine(ShowFinish());
     }
