@@ -54,7 +54,7 @@ public class DroneController : MonoBehaviour
     [SerializeField] Text invincible;
     [SerializeField] Text gameTime; // TODO: not in-use at this time
     //[SerializeField] Text health; // TODO: only showing 100% or 0%... huh?
-
+ 
     // Member variables
     [Range(-0.5f, 2f)] private float rcsFactor = 1;
     [Range(-0.5f, 2f)] private float thrustFactor = 1;
@@ -136,36 +136,22 @@ public class DroneController : MonoBehaviour
         // Inputs we care about
         bool key_a = Input.GetKey(KeyCode.A);
         bool key_d = Input.GetKey(KeyCode.D);
-        bool key_q = Input.GetKey(KeyCode.Q);
-        bool key_r = Input.GetKey(KeyCode.R);
+        bool key_x = Input.GetKey(KeyCode.X);
         bool key_w = Input.GetKey(KeyCode.W);
         bool key_la = Input.GetKey(KeyCode.LeftArrow);
         bool key_ra = Input.GetKey(KeyCode.RightArrow);
         bool key_ua = Input.GetKey(KeyCode.UpArrow);
-        bool key_0 = Input.GetKey(KeyCode.Alpha0);
-        bool key_1 = Input.GetKey(KeyCode.Alpha1);
-        bool key_2 = Input.GetKey(KeyCode.Alpha2);
-        bool key_3 = Input.GetKey(KeyCode.Alpha3);
-        bool key_4 = Input.GetKey(KeyCode.Alpha4);
-        bool key_5 = Input.GetKey(KeyCode.Alpha5);
-        bool key_6 = Input.GetKey(KeyCode.Alpha6);
-        bool key_7 = Input.GetKey(KeyCode.Alpha7);
-        bool key_8 = Input.GetKey(KeyCode.Alpha8);
-        bool key_9 = Input.GetKey(KeyCode.Alpha9);
+        bool key_lb = Input.GetKeyDown(KeyCode.LeftBracket);
+        bool key_rb = Input.GetKeyDown(KeyCode.RightBracket);
+
 
         // Input parsing... parse any time:
-        if (key_q) Quit(key_q);
-        if (key_1 || key_2 || key_3 || key_4 || key_5 || key_6 || key_7 || key_8 || key_9 || key_0)
-            ChangeGravity(key_1, key_2, key_3, key_4, key_5, key_6, key_7, key_8, key_9, key_0);
+        if (key_x) Quit(key_x);
+        if (key_lb || key_rb)
+            ChangeGravity(key_lb, key_rb);
         // ...parse these inputs only in .Alive State:
         if (thisState == State.Alive)
         {
-            if (key_r)
-            {
-                thisState = State.Resetting;
-                StartCoroutine(ResetPlayer(key_r));
-            }
-
             // ...Audio cues
             thrustAudio = (key_w || key_a || key_d || key_ua || key_la || key_ra);
 
@@ -183,6 +169,7 @@ public class DroneController : MonoBehaviour
         bool key_i = Input.GetKeyDown(KeyCode.I);
         bool key_l = Input.GetKeyDown(KeyCode.L);
         bool key_o = Input.GetKeyDown(KeyCode.O);
+        bool key_r = Input.GetKeyDown(KeyCode.R);
 
         if (key_o) LoadNextLevel();
         if (key_l) playerLives++;
@@ -201,6 +188,11 @@ public class DroneController : MonoBehaviour
                 invincible.text = "";
             }
         }
+        if (key_r)
+        {
+            thisState = State.Resetting;
+            StartCoroutine(ResetPlayer(key_r));
+        }
     }
 
     void OnTriggerEnter(Collider trigger)
@@ -210,7 +202,7 @@ public class DroneController : MonoBehaviour
             case "Recycler_Active":
                 score++;
                 Debug.Log("Score: " + trigger + " : " + score);
-                AudioSource.PlayClipAtPoint(bonusSound, transform.position);
+                AudioSource.PlayClipAtPoint(bonusSound, transform.position, 0.66f); // TODO setup volume control preferences
                 if (hitPoints < BaseHitPoints) hitPoints++;
                 myRigidbody.mass = DefaultDroneMass;
                 StartCoroutine(ClaimOrb(trigger));
@@ -225,11 +217,11 @@ public class DroneController : MonoBehaviour
                     {
                         thisState = State.Transcending;
                         myRigidbody.isKinematic = true;
-                        AudioSource.PlayClipAtPoint(finishSound, transform.position);
+                        AudioSource.PlayClipAtPoint(finishSound, transform.position, 0.66f);
                         transform.position = 
                             trigger.gameObject.transform.position 
                             + new Vector3(0f,-0.2f,-0.3f);
-                        Invoke("LoadNextLevel", FinishDelay); // TODO: have more than 2 levels
+                        Invoke("LoadNextLevel", FinishDelay);
                         doOnce = true;
                     }
                 }
@@ -248,7 +240,7 @@ public class DroneController : MonoBehaviour
                 if (collision.relativeVelocity.magnitude > CollisionVelocityThreshold)
                 {
                     if (!debugInvulnerable) hitPoints--;
-                    AudioSource.PlayClipAtPoint(collisionSound, transform.position);
+                    AudioSource.PlayClipAtPoint(collisionSound, transform.position, 0.66f);
                     if (hitPoints <= 0)
                     {
                         thisState = State.Dying;
@@ -260,7 +252,7 @@ public class DroneController : MonoBehaviour
                 if (collision.relativeVelocity.magnitude > CollisionVelocityThreshold)
                 {
                     if (!debugInvulnerable) hitPoints--;
-                    AudioSource.PlayClipAtPoint(collisionSound, transform.position);
+                    AudioSource.PlayClipAtPoint(collisionSound, transform.position, 0.66f);
                     if (hitPoints <= 0)
                     {
                         thisState = State.Dying;
@@ -270,7 +262,7 @@ public class DroneController : MonoBehaviour
                 break;
             case "Pad":
                 if (collision.relativeVelocity.magnitude > CollisionVelocityThreshold)
-                    AudioSource.PlayClipAtPoint(collisionSound, transform.position);
+                    AudioSource.PlayClipAtPoint(collisionSound, transform.position, 0.66f);
                 break;
             case "Recycler_Active":
                 // Debug.Log("Drone - Recycler collision - " + collision);
@@ -293,7 +285,7 @@ public class DroneController : MonoBehaviour
             {
                 transform.position = startPosition;
                 transform.rotation = startRotation;
-                AudioSource.PlayClipAtPoint(startSound, transform.position);
+                AudioSource.PlayClipAtPoint(startSound, transform.position, 0.66f);
                 yield return new WaitForSeconds(StartDelay);
             }
             else if (thisState == State.Dying)
@@ -301,7 +293,7 @@ public class DroneController : MonoBehaviour
                 droneBody.SetActive(false);
                 explosion.SetActive(true);
                 playerLives--;
-                AudioSource.PlayClipAtPoint(explosionSound, transform.position);
+                AudioSource.PlayClipAtPoint(explosionSound, transform.position, 0.66f);
                 yield return new WaitForSeconds(ExplosionDelay);
                 if (playerLives <= 0)
                 {
@@ -369,7 +361,7 @@ public class DroneController : MonoBehaviour
     {
         var audioOn = audioSource.isPlaying;
 
-        if (!audioOn && thrustAudio) audioSource.PlayOneShot(thrustSound);
+        if (!audioOn && thrustAudio) audioSource.PlayOneShot(thrustSound, 0.66f);
         else if (audioOn && !thrustAudio) audioSource.Stop();
     }
 
@@ -398,19 +390,15 @@ public class DroneController : MonoBehaviour
     }
 
     private void ChangeGravity
-        (bool k1, bool k2, bool k3, bool k4, bool k5, bool k6, bool k7, bool k8, bool k9, bool k0)
+        (bool k1, bool k2)
     {
-        // Possible to get more than one directive in a frame, therefore, default to highest G:
-        if (k1) Physics.gravity = new Vector3(0, -1f, 0);
-        if (k2) Physics.gravity = new Vector3(0, -2f, 0);
-        if (k3) Physics.gravity = new Vector3(0, -3f, 0);
-        if (k4) Physics.gravity = new Vector3(0, -4f, 0);
-        if (k5) Physics.gravity = new Vector3(0, -5f, 0);
-        if (k6) Physics.gravity = new Vector3(0, -6f, 0);
-        if (k7) Physics.gravity = new Vector3(0, -7f, 0);
-        if (k8) Physics.gravity = new Vector3(0, -8f, 0);
-        if (k9) Physics.gravity = new Vector3(0, -9f, 0);
-        if (k0) Physics.gravity = new Vector3(0, -9.80665f, 0); // "standard" Earth gravity
+        Vector3 myG = Physics.gravity; 
+        if (k1) myG += new Vector3(0, 1f, 0);
+        if (k2) myG -= new Vector3(0, 1f, 0);
+        if (myG.y < -10) myG = new Vector3(0, -10, 0);
+        if (myG.y > 10) myG = new Vector3(0, 10, 0);
+        Physics.gravity = myG;
+        //if (k0) Physics.gravity = new Vector3(0, -9.80665f, 0); // "standard" Earth gravity
     }
 
     private void RotateSirenLamps()

@@ -34,6 +34,7 @@ public class LevelManager : MonoBehaviour {
         levelMap.Add(2, level_01);
         levelMap.Add(3, level_02);
         levelMap.Add(4, level_03);
+
         //		scoreBoard = GameObject.Find ("ScoreBoard").GetComponent<Text>();
         //		ShowMyBalls ();
     }

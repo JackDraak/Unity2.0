@@ -18,8 +18,8 @@ public class SplashManager : MonoBehaviour {
 
     void Update()
     {
-        bool key = Input.anyKeyDown;
-        if (key) SceneManager.LoadScene(mainMenu);
+       // bool key = Input.anyKeyDown;
+       // if (key) SceneManager.LoadScene(mainMenu);
     }
 
     public void LoadNextLevel() {
