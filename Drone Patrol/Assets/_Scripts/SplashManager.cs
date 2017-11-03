@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class SplashManager : MonoBehaviour {
 
-	public float autoLoadNextLevelDelay = 4;
+	public float autoLoadNextLevelDelay = 4.2f;
     private string mainMenu = "_StartMenu_DP";
 
 	//private OptionsController optionsController;

@@ -5,8 +5,30 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class LevelManager : MonoBehaviour {
-	static LevelManager instance = null;
+    //    [SerializeField] Text scoreboard;
+    //    [SerializeField] Text orbboard;
+    private Text scoreboard;
+    private Text orbboard;
+
+    static LevelManager instance = null;
+    const int basePlayerLives = 3;
     private int thisIndex;
+    private static bool doOnce = true;
+    private static float score;
+    private static int dronesDestroyed;
+    private static int orbsCollected;
+    private static int playerLives;
+
+    public int      GetDronesDestroyed()        { return dronesDestroyed; }
+    public int      GetOrbsCollected()          { return orbsCollected; }
+    public int      GetPlayerLives()            { return playerLives; }
+    public float    GetScore()                  { return score; }
+    public void     DecPlayerLives()            { playerLives--; }
+    public void     AddPlayerLife()             { playerLives++; }
+    public void     ResetPlayerLives()          { playerLives = basePlayerLives; }
+    public void     AddOrbCollected()           { orbsCollected++; }
+    public void     AddDroneDestroyed()         { dronesDestroyed++; }
+    public void     AddScore(float newScore)    { score += newScore; }
 
     struct Stats
     {
@@ -16,11 +38,11 @@ public class LevelManager : MonoBehaviour {
         float finishTime;
         string playerInitials;
     }
-    Stats level_01, level_02, level_03, total, unused;
+    static Stats level_01, level_02, level_03, total, unused;
 
     Dictionary<int, Stats> levelMap = new Dictionary<int, Stats>();
     
-	// TODO: droneStore sprites? private SpriteRenderer ball1, ball2, ball3, ball4, ball5;
+	// TODO: droneStore sprites? OLD:private SpriteRenderer ball1, ball2, ball3, ball4, ball5;
 
 	// TODO working on structure to expunge relic effects REE
 	private ArrayList deadEffects = new ArrayList();
@@ -31,12 +53,25 @@ public class LevelManager : MonoBehaviour {
     {
         if (instance != null && instance != this) { Destroy(gameObject); }
         else { instance = this; GameObject.DontDestroyOnLoad(gameObject); }
+
+        if (doOnce) StateInit();
+
         levelMap.Add(2, level_01);
         levelMap.Add(3, level_02);
         levelMap.Add(4, level_03);
 
         //		scoreBoard = GameObject.Find ("ScoreBoard").GetComponent<Text>();
         //		ShowMyBalls ();
+    }
+
+    public void StateInit()
+    {
+        doOnce = false;
+        score = 0;
+        dronesDestroyed = 0;
+        orbsCollected = 0;
+        playerLives = basePlayerLives;
+        thisIndex = SceneManager.GetActiveScene().buildIndex;
     }
 
     public void OrbCollected()
@@ -48,7 +83,6 @@ public class LevelManager : MonoBehaviour {
 
     private Stats FetchStats()
     {
-        thisIndex = SceneManager.GetActiveScene().buildIndex;
      //   if (thisIndex == 1) return levelMap.
         if (thisIndex == 2) return level_01;
         if (thisIndex == 3) return level_02;
@@ -68,11 +102,20 @@ public class LevelManager : MonoBehaviour {
 	//public void HasStartedTrue() { hasStarted = true; }
 
     void Update () {
-		ExpungeDeadEffects();
-	//	if (!scoreBoard) scoreBoard = GameObject.Find ("ScoreBoard").GetComponent<Text>();
+        //	ExpungeDeadEffects();
+		if (!scoreboard) scoreboard = GameObject.Find ("scoreboard").GetComponent<Text>();
+        if (!orbboard) orbboard = GameObject.Find("orbboard").GetComponent<Text>();
+        UpdateGUI();
 	//	if (scoreBoard) scoreBoard.text = ("High: " + score + "  -  [Highest: " + PlayerPrefsManager.GetTopscore() + "]");
 	//	else Debug.LogError ("Levelmanager.cs Update() Unable to update Scoreboard");
 	}
+
+    private void UpdateGUI()
+    {
+        float currentScore = Mathf.Round(score * 100) / 100;
+        scoreboard.text = "score: " + currentScore.ToString();
+        orbboard.text = "collected orbs: " + orbsCollected;
+    }
 
 	public void BallDown() {
 	//	if (ballCount-- <= 0) {
@@ -141,7 +184,7 @@ public class LevelManager : MonoBehaviour {
 	public void LoadLevel(string name){
 		StoreHighs();
 		ConfigureAnyLevel();
-		if (name == "Level_01") ConfigureLevelOne (); 
+	//if (name == "Level_01") ConfigureLevelOne (); 
 		SceneManager.LoadScene(name);
 	}
 	

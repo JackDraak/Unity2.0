@@ -51,3 +51,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bea665fa8575cea47966946ed57248b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scoreboard: {fileID: 0}
+  orbboard: {fileID: 0}

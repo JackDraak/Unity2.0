@@ -13,10 +13,10 @@ using UnityEngine.SceneManagement;
 // TODO: fix lighting issues (i.e. tail not showing until first 3 deaths & reset)
 // TODO: allow swap of port/starboard numbers if player wants inverted controls.
 
-// Demo @ https://jackdraak.itch.io/
+// Demo @ https://jackdraak.itch.io/drone-patrol
 
 public class DroneController : MonoBehaviour
-{
+{ 
     // Data
     private const float ExplosionDelay = 2.222f;
     private const float FinishDelay = 2.075f;
@@ -24,9 +24,8 @@ public class DroneController : MonoBehaviour
     private const int BaseHitPoints = 6;
     private const int CollisionVelocityThreshold = 2;
     private const int DefaultDroneMass = 1;
-    private const int FinalLevelIndex = 5;
-    private const int FirstLevelIndex = 2;
-    private const int MaxPlayerLives = 3;
+    private const int FinalLevelIndex = 5; // TODO: handoff to LevelManager
+    private const int FirstLevelIndex = 2; // TODO: handoff to LevelManager
     private const int StandardDelay = 1;
     private string scene_01 = "_StartMenu_DP";
 
@@ -47,7 +46,7 @@ public class DroneController : MonoBehaviour
     [SerializeField] ParticleSystem thrustSmoke;
 
     // Gui Texts
-    [SerializeField] Text collectibles;
+    [SerializeField] Text collectibles; // TODO: Handoff to GUImanager**, the whole lot: (**unbuilt atm)
     [SerializeField] Text droneLives;
     [SerializeField] Text gees;
     [SerializeField] Text mass;
@@ -60,6 +59,7 @@ public class DroneController : MonoBehaviour
     [Range(-0.5f, 2f)] private float thrustFactor = 1;
     private AudioSource audioSource;
     private GameObject finish = null;
+    private LevelManager levelManager;
     private Quaternion startRotation;
     private Rigidbody myRigidbody;
     private Vector3 startPosition;
@@ -70,37 +70,36 @@ public class DroneController : MonoBehaviour
     private bool finishHaptic = true;
     private bool thrustAudio = false;
     private int hitPoints;
-    private int playerLives;
-    private int score;
-    private int scoreToClear;
+    private int orbsCollected;
+    private int orbsToClear;
     private enum State { Dead, Alive, Dying, Resetting, Transcending }
     private State thisState;
     private GameObject[] pickups = null;
-    private GameObject[] uniquePickups;
 
     void Start()
     {
         // Components
         Debug.Log("Start() @ " + Time.time);
         bool success;
+        success = (levelManager = GameObject.FindObjectOfType<LevelManager>());
+            if (!success) Debug.Log("FAIL: levelManager");
         success = (myRigidbody = GetComponent<Rigidbody>());
             if (!success) Debug.Log("FAIL: rigidbody");
         success = (audioSource = GetComponent<AudioSource>());
             if (!success) Debug.Log("FAIL: audioSource");
         if (GameObject.FindWithTag("Finish") != null) finish = GameObject.FindWithTag("Finish");
         else Debug.Log("FAIL: 'Finish' object not found");
-
+        
         // Collectibles
         pickups = GameObject.FindGameObjectsWithTag("Recycler_Active");
-        scoreToClear = pickups.Length;
+        orbsToClear = pickups.Length;
 
         // Data
         hitPoints = BaseHitPoints;
-        playerLives = MaxPlayerLives; // TODO: put in a LevelManager() to track user data between levels
         startPosition = transform.position;
         startRotation = transform.rotation;
         rigidbodyConstraints = myRigidbody.constraints;
-        score = 0;
+        orbsCollected = 0;
 
         // Set state & begin
         thisState = State.Resetting;
@@ -124,6 +123,7 @@ public class DroneController : MonoBehaviour
         ProcessInput(); // Keyboard only ATM
         ProcessMass(); // Drone mass +OverTime
         RotateSirenLamps(); // Faster for higher mass drones: haptics!
+        GrantScore(); // When alive, give some points to the player based on difficulty
     }
 
     private void ProcessInput()
@@ -141,14 +141,14 @@ public class DroneController : MonoBehaviour
         bool key_la = Input.GetKey(KeyCode.LeftArrow);
         bool key_ra = Input.GetKey(KeyCode.RightArrow);
         bool key_ua = Input.GetKey(KeyCode.UpArrow);
-        bool key_lb = Input.GetKeyDown(KeyCode.LeftBracket);
-        bool key_rb = Input.GetKeyDown(KeyCode.RightBracket);
+        bool key_lc = Input.GetKeyDown(KeyCode.Comma);
+        bool key_rc = Input.GetKeyDown(KeyCode.Period);
+        bool key_slash = Input.GetKeyDown(KeyCode.Slash);
 
 
         // Input parsing... parse any time:
         if (key_x) Quit(key_x);
-        if (key_lb || key_rb)
-            ChangeGravity(key_lb, key_rb);
+        if (key_lc || key_rc || key_slash) ChangeGravity(key_lc, key_rc, key_slash);
         // ...parse these inputs only in .Alive State:
         if (thisState == State.Alive)
         {
@@ -172,7 +172,7 @@ public class DroneController : MonoBehaviour
         bool key_r = Input.GetKeyDown(KeyCode.R);
 
         if (key_o) LoadNextLevel();
-        if (key_l) playerLives++;
+        if (key_l) levelManager.AddPlayerLife();
         if (key_i)
         {
             debugInvulnerable = !debugInvulnerable;
@@ -200,8 +200,8 @@ public class DroneController : MonoBehaviour
         switch (trigger.gameObject.tag)
         {
             case "Recycler_Active":
-                score++;
-                Debug.Log("Score: " + trigger + " : " + score);
+                orbsCollected++;
+                Debug.Log("Score: " + trigger + " : " + orbsCollected);
                 AudioSource.PlayClipAtPoint(bonusSound, transform.position, 0.66f); // TODO setup volume control preferences
                 if (hitPoints < BaseHitPoints) hitPoints++;
                 myRigidbody.mass = DefaultDroneMass;
@@ -211,7 +211,7 @@ public class DroneController : MonoBehaviour
                 trigger.gameObject.SetActive(false);
                 break;
             case "Finish":
-                if (score >= scoreToClear)
+                if (orbsCollected >= orbsToClear)
                 {
                     if (!doOnce)
                     {
@@ -292,10 +292,10 @@ public class DroneController : MonoBehaviour
             {
                 droneBody.SetActive(false);
                 explosion.SetActive(true);
-                playerLives--;
+                levelManager.DecPlayerLives();
                 AudioSource.PlayClipAtPoint(explosionSound, transform.position, 0.66f);
                 yield return new WaitForSeconds(ExplosionDelay);
-                if (playerLives <= 0)
+                if (levelManager.GetPlayerLives() <= 0)
                 {
                     Invoke("LoadLevelOne", StandardDelay);
                     yield return new WaitForSeconds(StandardDelay);
@@ -328,7 +328,7 @@ public class DroneController : MonoBehaviour
         }
         else collectibles.text = GetCount().ToString() + " Orbs remain";
 
-        int droneStore = (playerLives - 1);
+        int droneStore = levelManager.GetPlayerLives() - 1; // -1 for drone in-play
         if (droneStore < 0) droneLives.text = "";
         else if (droneStore == 1) droneLives.text = "1 Stored drone";
         else droneLives.text = droneStore.ToString() + " Stored drones";
@@ -389,14 +389,14 @@ public class DroneController : MonoBehaviour
         }
     }
 
-    private void ChangeGravity
-        (bool k1, bool k2)
+    private void ChangeGravity(bool k1, bool k2, bool k3)
     {
         Vector3 myG = Physics.gravity; 
         if (k1) myG += new Vector3(0, 1f, 0);
         if (k2) myG -= new Vector3(0, 1f, 0);
-        if (myG.y < -10) myG = new Vector3(0, -10, 0);
-        if (myG.y > 10) myG = new Vector3(0, 10, 0);
+        if (myG.y < -14) myG = new Vector3(0, -14, 0);
+        if (myG.y > 14) myG = new Vector3(0, 14, 0);
+        if (k3) myG = myG * -1;
         Physics.gravity = myG;
         //if (k0) Physics.gravity = new Vector3(0, -9.80665f, 0); // "standard" Earth gravity
     }
@@ -439,7 +439,7 @@ public class DroneController : MonoBehaviour
 
     private void MonitorExit()
     {
-        if (score >= scoreToClear && !finish.activeSelf) finish.SetActive(true);
+        if (orbsCollected >= orbsToClear && !finish.activeSelf) finish.SetActive(true);
         if (thisState == State.Transcending) Warp();
     }
 
@@ -466,6 +466,7 @@ public class DroneController : MonoBehaviour
     private IEnumerator ClaimOrb(Collider other)
     {
         other.gameObject.tag = "Recycler_Inactive";
+        levelManager.AddOrbCollected();
         yield return new WaitForSeconds(35);
         other.gameObject.SetActive(false);
     }
@@ -483,6 +484,7 @@ public class DroneController : MonoBehaviour
     {
         int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
         // If player just finished the "last level", load any random level
+        // TODO: can use SceneManager.sceneCountInBuildSettings for index of last scene
         if (nextScene > FinalLevelIndex) nextScene = 
                 Random.Range(FirstLevelIndex, FinalLevelIndex + 1);
 
@@ -497,9 +499,28 @@ public class DroneController : MonoBehaviour
         Invoke("BumpBlink", 0.1f);
     }
 
+    private void LoadLevelOne()
+    {
+        levelManager.StateInit();
+        SceneManager.LoadScene(scene_01);
+    }
+
+    private void GrantScore()
+    {
+        if (thisState != State.Alive) return;
+        int thisLevel = SceneManager.GetActiveScene().buildIndex - 1;
+        float levelFactor = thisLevel;
+        int invertedFactor = 1;
+        float gFactor = Physics.gravity.y;
+        if (float.IsNaN(gFactor)) return;
+        if (gFactor < 0) invertedFactor = 2;
+        gFactor = Mathf.Abs(gFactor);
+        float massFactor = myRigidbody.mass;
+        float thisScore = (massFactor * gFactor * invertedFactor * levelFactor) / 500;
+        levelManager.AddScore(thisScore);
+    }
+
     private void BumpBlink() { StartCoroutine(BlinkMapMarker()); }
-    private void LoadLevelOne() { SceneManager.LoadScene(scene_01); }
     private void Quit(bool key_q) { if (key_q) Application.Quit(); }
-    private int GetCount() { return scoreToClear - score; }
-    
+    private int GetCount() { return orbsToClear - orbsCollected; }
 }

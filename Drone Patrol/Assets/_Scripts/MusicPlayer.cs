@@ -88,17 +88,18 @@ public class MusicPlayer : MonoBehaviour {
         {
             // Code to execute when the game is paused
             Debug.Log("Pause");
-            if (paused && music.isPlaying)
+            if (music.isPlaying)
             {
                 music.Pause();
                 wasPlaying = true;
             }
+            else wasPlaying = false;
+
         }
-        else
+        else if (wasPlaying)
         {
             music.volume = 0.15f;
             music.Play();
-            wasPlaying = true;
             // Code to execute when the game is resumed
             Debug.Log("Resume");
         }

@@ -1743,7 +1743,6 @@ MonoBehaviour:
   mass: {fileID: 0}
   invincible: {fileID: 0}
   gameTime: {fileID: 0}
-  textStatus: {fileID: 102689358602695304}
 --- !u!135 &135829733161716058
 SphereCollider:
   m_ObjectHideFlags: 1
