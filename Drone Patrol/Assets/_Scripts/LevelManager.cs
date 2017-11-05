@@ -5,12 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class LevelManager : MonoBehaviour {
-    //    [SerializeField] Text scoreboard;
-    //    [SerializeField] Text orbboard;
+    static LevelManager instance = null;
     private Text scoreboard;
     private Text orbboard;
-
-    static LevelManager instance = null;
     const int basePlayerLives = 3;
     private int thisIndex;
     private static bool doOnce = true;
@@ -77,8 +74,6 @@ public class LevelManager : MonoBehaviour {
     public void OrbCollected()
     {
         Stats stats = FetchStats();
-        
-
     }
 
     private Stats FetchStats()
@@ -101,7 +96,8 @@ public class LevelManager : MonoBehaviour {
 	//public void HasStartedToggle() { hasStarted = !hasStarted; }
 	//public void HasStartedTrue() { hasStarted = true; }
 
-    void Update () {
+    void Update ()
+    {
         //	ExpungeDeadEffects();
 		if (!scoreboard) scoreboard = GameObject.Find ("scoreboard").GetComponent<Text>();
         if (!orbboard) orbboard = GameObject.Find("orbboard").GetComponent<Text>();
@@ -113,8 +109,8 @@ public class LevelManager : MonoBehaviour {
     private void UpdateGUI()
     {
         float currentScore = Mathf.Round(score * 100) / 100;
-        scoreboard.text = "score: " + currentScore.ToString();
-        orbboard.text = "collected orbs: " + orbsCollected;
+        scoreboard.text = "Credits: " + currentScore.ToString();
+        orbboard.text = "Orbs Collected: " + orbsCollected;
     }
 
 	public void BallDown() {
@@ -140,16 +136,9 @@ public class LevelManager : MonoBehaviour {
 	//	hasStarted = false;
 	}
 
-	void ConfigureLevelOne () {
-	//	ballCount = 2;
-		Cursor.visible = false;
-	//	sceneIndex = 1;
-	//	score = 0;
-		PlayerPrefsManager.SetAward(0);
-	}
-
 	// TODO this is not working as advertised.... the used game objects linger in the effects "folder" game object **some scenes are okay?
-	void ExpungeDeadEffects () {
+	void ExpungeDeadEffects ()
+    {
 		foreach (GameObject de in deadEffects) { // more stuff for REE
 			if (de && !de.GetComponent<ParticleSystem>().IsAlive()) {
 				Destroy (de);
@@ -157,38 +146,16 @@ public class LevelManager : MonoBehaviour {
 		}
 	}
 
-	public void FreeBallin () { // set reward levels where free plays are granted
-		if (PlayerPrefsManager.GetAward() == 0) {
-	//		if (score > 2000 && score < 10000) { // TODO tweak these score thresholds id needed
-			//	ballCount++;
-				ShowMyBalls();
-				PlayerPrefsManager.SetAward(1);
-	//		}
-		}
-		else if (PlayerPrefsManager.GetAward() == 1) {
-	//		if (score > 10000 && score < 25000) {
-			//	ballCount++;
-				ShowMyBalls();
-				PlayerPrefsManager.SetAward(2);
-	//		}
-		}
-		else if (PlayerPrefsManager.GetAward() == 2) {
-	//		if (score > 25000) {
-			//	ballCount++;
-				ShowMyBalls();
-				PlayerPrefsManager.SetAward(3);
-	//		}
-		}
-	}
-
-	public void LoadLevel(string name){
+	public void LoadLevel(string name)
+    {
 		StoreHighs();
 		ConfigureAnyLevel();
 	//if (name == "Level_01") ConfigureLevelOne (); 
 		SceneManager.LoadScene(name);
 	}
 	
-	void LoadNextLevel() {
+	void LoadNextLevel()
+    {
 		StoreHighs();
         // brickcount = 0;
 		//hasStarted = false;
@@ -196,7 +163,8 @@ public class LevelManager : MonoBehaviour {
 		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex +1);
 	}
 
-	public void ShowMyBalls () {
+	public void ShowMyBalls ()
+    {
 	/*	if (GameObject.FindGameObjectWithTag ("ball1")) {
 			ball1 = GameObject.FindGameObjectWithTag ("ball1").GetComponent<SpriteRenderer>();
 			if (ballCount > 0) ball1.color = onColor;
@@ -225,7 +193,8 @@ public class LevelManager : MonoBehaviour {
         */
 	}
 
-	void StoreHighs () {
+	void StoreHighs ()
+    {
 		//if (PlayerPrefsManager.GetTopscore () < score) PlayerPrefsManager.SetTopscore (score);
 	}
 }

@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 // Features:
+// TODO: drone battery mechanic
+// TODO: have orbs fade from view ~1 second (timed with orb sound)
 // TODO: give points for ending level in time: X, Y, Z for A, B, C bonus....
 //       need a timer display, prefereably with haptics and bonus info too
 // TODO: if time Z passes, wipe remaining orbs and reveal the exit....

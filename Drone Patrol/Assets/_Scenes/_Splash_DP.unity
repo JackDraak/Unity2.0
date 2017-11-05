@@ -454,8 +454,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1403282922}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 480.0536, y: 302.07712, z: 0}
-  m_LocalScale: {x: 0.6666667, y: 0.6666667, z: 0.6666667}
+  m_LocalPosition: {x: 0.053588867, y: 2.077118, z: 100}
+  m_LocalScale: {x: 0.14431281, y: 0.14431281, z: 0.14431281}
   m_Children:
   - {fileID: 386003918}
   m_Father: {fileID: 659322275}
@@ -481,7 +481,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1600, y: 900}
-  m_ScreenMatchMode: 2
+  m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
@@ -511,8 +511,8 @@ Canvas:
   m_GameObject: {fileID: 1403282922}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1587519761}
   m_PlaneDistance: 100
   m_PixelPerfect: 1
   m_ReceivesEvents: 1
@@ -1000,6 +1000,34 @@ Prefab:
       propertyPath: ShapeModule.radiusThickness
       value: 1.0000
       objectReference: {fileID: 0}
+    - target: {fileID: 19860450, guid: 5aaa12d0f2b626244973baa34637d4f2, type: 2}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1.0000
+      objectReference: {fileID: 0}
+    - target: {fileID: 19860450, guid: 5aaa12d0f2b626244973baa34637d4f2, type: 2}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1.0000
+      objectReference: {fileID: 0}
+    - target: {fileID: 19860450, guid: 5aaa12d0f2b626244973baa34637d4f2, type: 2}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1.0000
+      objectReference: {fileID: 0}
+    - target: {fileID: 19860450, guid: 5aaa12d0f2b626244973baa34637d4f2, type: 2}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1.0000
+      objectReference: {fileID: 0}
+    - target: {fileID: 19860450, guid: 5aaa12d0f2b626244973baa34637d4f2, type: 2}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1.0000
+      objectReference: {fileID: 0}
+    - target: {fileID: 19860450, guid: 5aaa12d0f2b626244973baa34637d4f2, type: 2}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1.0000
+      objectReference: {fileID: 0}
+    - target: {fileID: 19860450, guid: 5aaa12d0f2b626244973baa34637d4f2, type: 2}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1.0000
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5aaa12d0f2b626244973baa34637d4f2, type: 2}
   m_IsPrefabParent: 0
@@ -1012,7 +1040,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1587519762}
   - component: {fileID: 1587519761}
-  - component: {fileID: 1587519760}
   - component: {fileID: 1587519759}
   - component: {fileID: 1587519758}
   m_Layer: 0
@@ -1030,13 +1057,6 @@ AudioListener:
   m_GameObject: {fileID: 1587519757}
   m_Enabled: 1
 --- !u!124 &1587519759
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1587519757}
-  m_Enabled: 1
---- !u!92 &1587519760
 Behaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -1061,7 +1081,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 66
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
