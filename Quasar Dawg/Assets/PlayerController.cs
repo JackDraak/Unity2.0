@@ -5,7 +5,8 @@ public class PlayerController : MonoBehaviour {
     [Range(1, 100000)][SerializeField] float sFactor = 20000f;
     private bool alive = true;
     private float delta;
-    private float inputX, inputY;
+    private float inputX; 
+    private float inputY;
     private Rigidbody rigidbody;
 
     void Start()        { rigidbody = GetComponent<Rigidbody>(); delta = Time.fixedDeltaTime; }
