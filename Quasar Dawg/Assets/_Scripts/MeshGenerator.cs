@@ -4,19 +4,21 @@ using UnityEngine;
 
 public static class MeshGenerator
 {
-    public static MeshData GenerateTerrainMesh(float[,] heightMap, float heightScale, AnimationCurve heightCurve)
+    public static MeshData GenerateTerrainMesh(float[,] heightMap, float heightScale, AnimationCurve heightCurve, int levelOfDetail)
     {
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
         float topLeftX = (width - 1) / -2f;
         float topLeftZ = (height - 1) / 2f;
+        int meshDetailIncrement = (levelOfDetail == 0)?1 : levelOfDetail * 2;
+        int verticesPerLine = (width - 1) / meshDetailIncrement + 1;
 
-        MeshData meshData = new MeshData(width, height);
+        MeshData meshData = new MeshData(verticesPerLine, verticesPerLine);
         int vertexIndex = 0;
 
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < width; x += meshDetailIncrement)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < height; y += meshDetailIncrement)
             {
                 meshData.vertices[vertexIndex] = 
                     new Vector3(topLeftX + x, heightCurve.Evaluate(heightMap[x, y]) * heightScale, topLeftZ - y);
@@ -27,9 +29,8 @@ public static class MeshGenerator
                     // Entering triangles this way led to the mesh being upside down... reversed order.
                     //    meshData.AddTriangle(vertexIndex, vertexIndex + width + 1, vertexIndex + width);
                     //    meshData.AddTriangle(vertexIndex + width + 1, vertexIndex, vertexIndex + 1);
-                    meshData.AddTriangle(vertexIndex, vertexIndex + width, vertexIndex + width + 1);
-                    meshData.AddTriangle(vertexIndex + width + 1, vertexIndex + 1, vertexIndex);
-
+                    meshData.AddTriangle(vertexIndex, vertexIndex + verticesPerLine, vertexIndex + verticesPerLine + 1);
+                    meshData.AddTriangle(vertexIndex + verticesPerLine + 1, vertexIndex + 1, vertexIndex);
                 }
                 vertexIndex++;
             }
