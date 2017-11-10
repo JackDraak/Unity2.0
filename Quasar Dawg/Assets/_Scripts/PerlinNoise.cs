@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class PerlinNoise : MonoBehaviour {
+public class PerlinNoise : MonoBehaviour
+{
     [Header("Change Me!")][Tooltip("Density of noise.")]public float scale = 20f;
     [Space(10)]
     public int width = 256;

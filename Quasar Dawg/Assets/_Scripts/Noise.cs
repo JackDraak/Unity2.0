@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
-public static class Noise {
+public static class Noise
+{
 
     public static float[,] GenerateNoiseMap
         (int width,         int height,         int seed,           int octaves,
@@ -17,9 +17,6 @@ public static class Noise {
             float offsetY = prng.Next(-100000, 100000) + offset.y;
             octaveOffsets[i] = new Vector2(offsetX, offsetY);
         }
-
-     //   if (scale <= 0) scale = 0.0001f;
-     //   if (octaves <= 0) octaves = 1;
 
         float maxNoiseHeight = float.MinValue;
         float minNoiseHeight = float.MaxValue;
