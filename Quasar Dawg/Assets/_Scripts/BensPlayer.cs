@@ -5,7 +5,6 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class BensPlayer : MonoBehaviour
 {
-
     [Tooltip("Speed in ms^-1")][SerializeField] float speed = 20f;
     [Tooltip("Range of motion in m")][SerializeField] float xRange = 5f;
     [Tooltip("Range of motion in m")][SerializeField] float yRange = 3f;
