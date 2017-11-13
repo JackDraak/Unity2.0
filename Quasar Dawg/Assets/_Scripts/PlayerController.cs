@@ -3,8 +3,9 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class PlayerController : MonoBehaviour {
     [Header("Values to tweak Player facing angles:")]
-    [Range(-12f, 12f)][Tooltip("factor for lateral rotation skew")][SerializeField] float rFactorX = 10f;
-    [Range(-12f, 12f)] [Tooltip("factor for vertical rotation skew")] [SerializeField] float rFactorY = 7f;
+    [Range(-12f, 12f)][Tooltip("factor for lateral rotation skew")][SerializeField] float skewLateral = 10f;
+    [Range(-12f, 12f)] [Tooltip("factor for vertical rotation skew")] [SerializeField] float skewVertical = 7f;
+    [Range(-12f, 12f)] [Tooltip("factor for throw skew")] [SerializeField] float skewThrow = 7f;
     [Space(10)]
     [Header("Generally, leave these alone, they've been dialed-in:")]
     [Tooltip("Range of motion, in m")] [SerializeField] float xRange = 3.7f;
@@ -57,11 +58,11 @@ public class PlayerController : MonoBehaviour {
 
     private void SetLocalAngles()
     {
-        if ((float.IsNaN(rFactorX) && float.IsNaN(rFactorY)) || !alive) return;
+        if ((float.IsNaN(skewLateral) && float.IsNaN(skewVertical)) || !alive) return;
         Vector3 pos = transform.localPosition;
-        float pitch = -pos.y * rFactorX;
-        float yaw = pos.x * rFactorY;
-        float roll = 0; // TODO: roll around corners? roll when maneuvering?
+        float pitch = -pos.y * skewLateral - (inputY * skewThrow);
+        float yaw = pos.x * skewVertical + (inputX * skewThrow);
+        float roll = 0; // pos.z * ; // TODO: roll around corners? roll when maneuvering?
         // X Y Z = Pitch Yaw Roll, respectively.
         transform.localRotation = Quaternion.Euler(pitch, yaw, roll);
     }
