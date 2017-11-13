@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour {
     [Range(0, 9.6f)][Tooltip("Range of motion, in m")][SerializeField] float lateralRange = 4.8f;
     [Range(0, 5.6f)][Tooltip("Range of motion, in m")][SerializeField] float verticalMax = 2.8f;
     [Range(0, 5)][Tooltip("Range of motion, in m")][SerializeField] float verticalMin = 2.5f;
-    [Range(0, 13.2f)][Tooltip("Speed, in ms^-1")][SerializeField] float strafeSpeed = 6.6f;
+    [Range(0, 10.4f)][Tooltip("Speed, in ms^-1")][SerializeField] float strafeSpeed = 5.2f;
 
     private Rigidbody rigidbody;
     private bool alive = true;
@@ -60,17 +60,13 @@ public class PlayerController : MonoBehaviour {
     {
         if ((float.IsNaN(skewVertical) && float.IsNaN(skewHorizontal)) || !alive) return;
 
-        // set a fixed pitch and yaw based on screen position (and controlAxis throw if applicable):
+        // set a desired pitch and yaw based on screen position (and controlAxis throw if applicable):
         Vector3 pos = transform.localPosition;
         float pitch = -pos.y * skewVertical - (controlAxis.y * skewThrow);
         float yaw = pos.x * skewHorizontal + (controlAxis.x * skewThrow);
 
-        // roll left or right when strafing left or right
-        float roll;
-        float gap = Mathf.Abs(controlAxis.x - controlAxis.y);
-        if (controlAxis.x < 0) roll = gap * skewRoll;
-        else if (controlAxis.x > 0) roll = -gap * skewRoll;
-        else roll = 0;
+        // set a desired roll when strafing left or right:
+        float roll = controlAxis.x * -skewRoll;
 
         // Lerp between prior rotation and desired fixed rotation:
         pitch = Mathf.Lerp(priorRotation.x, pitch, delta * skewLerp);
