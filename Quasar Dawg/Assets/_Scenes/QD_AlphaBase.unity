@@ -394,12 +394,27 @@ Prefab:
     - target: {fileID: 114980237874689770, guid: 15f00b54e0ab5244f8c58c8b90580ba8,
         type: 2}
       propertyPath: skewLateral
-      value: 12
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 114980237874689770, guid: 15f00b54e0ab5244f8c58c8b90580ba8,
         type: 2}
       propertyPath: skewVertical
-      value: 12
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114980237874689770, guid: 15f00b54e0ab5244f8c58c8b90580ba8,
+        type: 2}
+      propertyPath: skewThrow
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114980237874689770, guid: 15f00b54e0ab5244f8c58c8b90580ba8,
+        type: 2}
+      propertyPath: skewLerp
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 114980237874689770, guid: 15f00b54e0ab5244f8c58c8b90580ba8,
+        type: 2}
+      propertyPath: skewRoll
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 15f00b54e0ab5244f8c58c8b90580ba8, type: 2}
