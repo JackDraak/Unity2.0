@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23116159254571006}
   - component: {fileID: 114987297779760768}
   m_Layer: 4
-  m_Name: WaterBasicNightime
+  m_Name: AlphaWater
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

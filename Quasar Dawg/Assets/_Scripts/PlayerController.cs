@@ -1,22 +1,25 @@
 ﻿using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
-public class PlayerController : MonoBehaviour {
+[RequireComponent(typeof(AudioSource))]
+public class PlayerController : MonoBehaviour
+{
     [Header("Values to tweak Player facing angles:")]
-    [Range(0, 14)][Tooltip("factor for lateral rotation skew")][SerializeField] float skewVertical = 7f;
-    [Range(0, 12)][Tooltip("factor for vertical rotation skew")][SerializeField] float skewHorizontal = 6f;
+    [Range(0, 18)][Tooltip("factor for lateral rotation skew")][SerializeField] float skewVertical = 9f;
+    [Range(0, 18)][Tooltip("factor for vertical rotation skew")][SerializeField] float skewHorizontal = 9f;
     [Range(0, 60)][Tooltip("factor for roll skew")][SerializeField] float skewRoll = 30f;
     [Range(0, 20)][Tooltip("factor for throw (axis) skew")][SerializeField] float skewThrow = 10f;
     [Range(0, 30)][Tooltip("factor for skew Lerping for pitch and yaw")][SerializeField] float skewLerp = 15f;
     [Range(0, 10)][Tooltip("factor for skew Lerping for roll")][SerializeField] float skewRollLerp = 5f;
-    [Range(0, 3000f)][Tooltip("Weapon audio clip duration, in ms")] float clipDuration = 2066f;
+
     [Space(10)]
     [Header("Player bounds:")]
     [Range(0, 9.6f)][Tooltip("Range of motion, in m")][SerializeField] float lateralRange = 4.8f;
     [Range(0, 5.6f)][Tooltip("Range of motion, in m")][SerializeField] float verticalMax = 2.8f;
     [Range(0, 5)][Tooltip("Range of motion, in m")][SerializeField] float verticalMin = 2.5f;
     [Range(0, 10.4f)][Tooltip("Speed, in ms^-1")][SerializeField] float strafeSpeed = 5.2f;
-    [Range(0, 2000f)][Tooltip("Weapon cooldown time, in ms")] float weaponCooldownTime = 200f;
+    [Range(0, 2000f)][Tooltip("Weapon cooldown time, in ms")][SerializeField] float weaponCooldownTime = 200f;
+
     [Space(10)]
     [Header("Player weapon systems:")]
     [SerializeField] ParticleSystem weapon_0;
@@ -28,31 +31,23 @@ public class PlayerController : MonoBehaviour {
     private bool alive = true;
     private float delta = 0;
     private float coolTime = 0;
-    private float clipTime = 0;
     private int lastWeaponFired = 0;
     private Vector2 controlAxis = Vector2.zero;
     private Vector3 priorRotation = Vector3.zero;
+    private AudioSource audioSource;
 
-    void Start()
-    {
-        clipTime = -clipDuration;
-    }
+    private void Start()            { audioSource = FindObjectOfType<AudioSource>(); coolTime = Time.time + (weaponCooldownTime / 1000f); }
+    private void FixedUpdate()      { UpdatePlayerPosition(); }
+    private void Update()           { if (CrossPlatformInputManager.GetButton("Fire1")) TryDischargeWeapon(); }
+    private void TryPewPew()        { if (audioSource.isPlaying) return; audioSource.Play(); }
 
-    void Update()
-    {
-        if (CrossPlatformInputManager.GetButton("Fire1")) DischargeWeapon();
-    }
-
-    void FixedUpdate()
-    {
-        UpdatePlayerPosition();
-    }
 
     void UpdatePlayerPosition()
     {
         if (!alive) return;
-        delta = Time.deltaTime;
         PollAxis();
+
+        delta = Time.deltaTime;
         SetLocalPosition();
         SetLocalAngles();
     }
@@ -107,45 +102,38 @@ public class PlayerController : MonoBehaviour {
         controlAxis.y = CrossPlatformInputManager.GetAxis("Vertical");
     }
 
-    private void TryPewPew()
+    private void TryDischargeWeapon()
     {
-        float now = Time.time;
-        if (clipTime + clipDuration < now)
+        if (Time.time > coolTime)
         {
-            clipTime = now;
-            AudioSource.PlayClipAtPoint(dischargeSound, transform.localPosition);
-        }
-    }
-
-    private void DischargeWeapon()
-    {
-        if ((coolTime / 1000f) + weaponCooldownTime < Time.time) return;
-        TryPewPew();
-
-        switch (lastWeaponFired)
-        {
-            case 0:
-                weapon_1.Emit(3);
-                coolTime = Time.time;
-                lastWeaponFired = 1;
-                break;
-            case 1:
-                weapon_2.Emit(3);
-                coolTime = Time.time;
-                lastWeaponFired = 2;
-                break;
-            case 2:
-                weapon_3.Emit(3);
-                coolTime = Time.time;
-                lastWeaponFired = 3;
-                break;
-            case 3:
-                weapon_0.Emit(3);
-                coolTime = Time.time;
-                lastWeaponFired = 0;
-                break;
-            default:
-                break;
+            if (float.IsNaN(weaponCooldownTime)) weaponCooldownTime = 0.001f;
+            coolTime = Time.time + (weaponCooldownTime / 1000f);
+            TryPewPew();
+            switch (lastWeaponFired)
+            {
+                case 0:
+                    weapon_1.Emit(3);
+                    coolTime = Time.time + (weaponCooldownTime / 1000f);
+                    lastWeaponFired = 1;
+                    break;
+                case 1:
+                    weapon_2.Emit(3);
+                    coolTime = Time.time + (weaponCooldownTime / 1000f);
+                    lastWeaponFired = 2;
+                    break;
+                case 2:
+                    weapon_3.Emit(3);
+                    coolTime = Time.time + (weaponCooldownTime / 1000f);
+                    lastWeaponFired = 3;
+                    break;
+                case 3:
+                    weapon_0.Emit(3);
+                    coolTime = Time.time + (weaponCooldownTime / 1000f);
+                    lastWeaponFired = 0;
+                    break;
+                default:
+                    break;
+            } 
         }
     }
 }

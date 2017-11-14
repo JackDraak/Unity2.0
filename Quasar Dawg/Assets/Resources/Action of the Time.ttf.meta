@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 2a0ba3b04c1cf5549941f008b848c993
+timeCreated: 1510640024
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Action of the Time
+  fontNames:
+  - Action of the Time
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

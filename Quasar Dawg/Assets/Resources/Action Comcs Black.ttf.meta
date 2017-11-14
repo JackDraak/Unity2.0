@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 4a55832a50a4d0a42b9b4fce1432ec35
+timeCreated: 1510640010
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Action Comcs Black
+  fontNames:
+  - Action Comcs Black
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
