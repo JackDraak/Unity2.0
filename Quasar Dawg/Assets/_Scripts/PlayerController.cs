@@ -9,25 +9,38 @@ public class PlayerController : MonoBehaviour {
     [Range(0, 20)][Tooltip("factor for throw (axis) skew")][SerializeField] float skewThrow = 10f;
     [Range(0, 30)][Tooltip("factor for skew Lerping for pitch and yaw")][SerializeField] float skewLerp = 15f;
     [Range(0, 10)][Tooltip("factor for skew Lerping for roll")][SerializeField] float skewRollLerp = 5f;
+    [Range(0, 3000f)][Tooltip("Weapon audio clip duration, in ms")] float clipDuration = 2066f;
     [Space(10)]
     [Header("Player bounds:")]
     [Range(0, 9.6f)][Tooltip("Range of motion, in m")][SerializeField] float lateralRange = 4.8f;
     [Range(0, 5.6f)][Tooltip("Range of motion, in m")][SerializeField] float verticalMax = 2.8f;
     [Range(0, 5)][Tooltip("Range of motion, in m")][SerializeField] float verticalMin = 2.5f;
     [Range(0, 10.4f)][Tooltip("Speed, in ms^-1")][SerializeField] float strafeSpeed = 5.2f;
+    [Range(0, 2000f)][Tooltip("Weapon cooldown time, in ms")] float weaponCooldownTime = 200f;
+    [Space(10)]
+    [Header("Player weapon systems:")]
+    [SerializeField] ParticleSystem weapon_0;
+    [SerializeField] ParticleSystem weapon_1;
+    [SerializeField] ParticleSystem weapon_2;
+    [SerializeField] ParticleSystem weapon_3;
+    [SerializeField] AudioClip dischargeSound;
 
-    private Rigidbody rigidbody;
     private bool alive = true;
-    private bool shoot = false;
-    private bool pause = false;
-    private float delta;
-    private Vector2 controlAxis;
-    private Vector3 priorRotation;
+    private float delta = 0;
+    private float coolTime = 0;
+    private float clipTime = 0;
+    private int lastWeaponFired = 0;
+    private Vector2 controlAxis = Vector2.zero;
+    private Vector3 priorRotation = Vector3.zero;
 
     void Start()
     {
-        if (!(rigidbody = GetComponent<Rigidbody>()))
-            Debug.Log(this + " Start() failed to attached Player rigidbody!");
+        clipTime = -clipDuration;
+    }
+
+    void Update()
+    {
+        if (CrossPlatformInputManager.GetButton("Fire1")) DischargeWeapon();
     }
 
     void FixedUpdate()
@@ -39,7 +52,7 @@ public class PlayerController : MonoBehaviour {
     {
         if (!alive) return;
         delta = Time.deltaTime;
-        PollControls();
+        PollAxis();
         SetLocalPosition();
         SetLocalAngles();
     }
@@ -47,12 +60,16 @@ public class PlayerController : MonoBehaviour {
     private void SetLocalPosition()
     {
         if ((float.IsNaN(controlAxis.x) && float.IsNaN(controlAxis.y)) || !alive) return;
-        float xOffset = controlAxis.x * strafeSpeed * delta;
-        float yOffset = controlAxis.y * strafeSpeed * delta;
-        float desiredXpos = transform.localPosition.x + xOffset;
-        float desiredYpos = transform.localPosition.y + yOffset;
+
+        // set a desired position based on controlAxis input:
+        float desiredXpos = transform.localPosition.x + controlAxis.x * strafeSpeed * delta;
+        float desiredYpos = transform.localPosition.y + controlAxis.y * strafeSpeed * delta;
+
+        // use bounds to restrain player to play area:
         float clampedXPos = Mathf.Clamp(desiredXpos, -lateralRange, lateralRange);
         float clampedYPos = Mathf.Clamp(desiredYpos, -verticalMin, verticalMax);
+
+        // apply translation:
         transform.localPosition = new Vector3(clampedXPos, clampedYPos, transform.localPosition.z);
     }
 
@@ -73,20 +90,62 @@ public class PlayerController : MonoBehaviour {
         yaw = Mathf.Lerp(priorRotation.y, yaw, delta * skewLerp);
         roll = Mathf.Lerp(priorRotation.z, roll, delta * skewRollLerp);
 
-        // Set rotation to an intermediary this update:
+        // apply rotation for this update:
         transform.localRotation = Quaternion.Euler(pitch, yaw, roll);
 
-        // X Y Z = Pitch Yaw Roll, respectively.
+        // Store this updates' rotations for use next update. (X Y Z = Pitch Yaw Roll, respectively.)
         priorRotation.x = pitch;
         priorRotation.y = yaw;
         priorRotation.z = roll;
     }
 
-    private void PollControls()
+    private void PollAxis()
     {
         if (!alive) return;
+
         controlAxis.x = CrossPlatformInputManager.GetAxis("Horizontal");
         controlAxis.y = CrossPlatformInputManager.GetAxis("Vertical");
-        shoot = CrossPlatformInputManager.GetButton("Fire1");
+    }
+
+    private void TryPewPew()
+    {
+        float now = Time.time;
+        if (clipTime + clipDuration < now)
+        {
+            clipTime = now;
+            AudioSource.PlayClipAtPoint(dischargeSound, transform.localPosition);
+        }
+    }
+
+    private void DischargeWeapon()
+    {
+        if ((coolTime / 1000f) + weaponCooldownTime < Time.time) return;
+        TryPewPew();
+
+        switch (lastWeaponFired)
+        {
+            case 0:
+                weapon_1.Emit(3);
+                coolTime = Time.time;
+                lastWeaponFired = 1;
+                break;
+            case 1:
+                weapon_2.Emit(3);
+                coolTime = Time.time;
+                lastWeaponFired = 2;
+                break;
+            case 2:
+                weapon_3.Emit(3);
+                coolTime = Time.time;
+                lastWeaponFired = 3;
+                break;
+            case 3:
+                weapon_0.Emit(3);
+                coolTime = Time.time;
+                lastWeaponFired = 0;
+                break;
+            default:
+                break;
+        }
     }
 }
