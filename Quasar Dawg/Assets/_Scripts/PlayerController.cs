@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     [Range(0, 5.6f)][Tooltip("Range of motion, in m")][SerializeField] float verticalMax = 2.8f;
     [Range(0, 5)][Tooltip("Range of motion, in m")][SerializeField] float verticalMin = 2.5f;
     [Range(0, 10.4f)][Tooltip("Speed, in ms^-1")][SerializeField] float strafeSpeed = 5.2f;
-    [Range(0, 2000f)][Tooltip("Weapon cooldown time, in ms")][SerializeField] float weaponCooldownTime = 200f;
+    [Range(0, 500f)][Tooltip("Weapon cooldown time, in ms")][SerializeField] float weaponCooldownTime = 75f;
 
     [Space(10)]
     [Header("Player weapon systems:")]
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 priorRotation = Vector3.zero;
     private AudioSource audioSource;
 
-    private void Start()            { audioSource = FindObjectOfType<AudioSource>(); coolTime = Time.time + (weaponCooldownTime / 1000f); }
+    private void Start()            { audioSource = FindObjectOfType<AudioSource>(); }
     private void FixedUpdate()      { UpdatePlayerPosition(); }
     private void Update()           { if (CrossPlatformInputManager.GetButton("Fire1")) TryDischargeWeapon(); }
     private void TryPewPew()        { if (audioSource.isPlaying) return; audioSource.Play(); }
@@ -113,22 +113,18 @@ public class PlayerController : MonoBehaviour
             {
                 case 0:
                     weapon_1.Emit(3);
-                    coolTime = Time.time + (weaponCooldownTime / 1000f);
                     lastWeaponFired = 1;
                     break;
                 case 1:
                     weapon_2.Emit(3);
-                    coolTime = Time.time + (weaponCooldownTime / 1000f);
                     lastWeaponFired = 2;
                     break;
                 case 2:
                     weapon_3.Emit(3);
-                    coolTime = Time.time + (weaponCooldownTime / 1000f);
                     lastWeaponFired = 3;
                     break;
                 case 3:
                     weapon_0.Emit(3);
-                    coolTime = Time.time + (weaponCooldownTime / 1000f);
                     lastWeaponFired = 0;
                     break;
                 default:
