@@ -41,8 +41,7 @@ public class PlayerController : MonoBehaviour
     private void Update()           { if (CrossPlatformInputManager.GetButton("Fire1")) TryDischargeWeapon(); }
     private void TryPewPew()        { if (audioSource.isPlaying) return; audioSource.Play(); }
 
-
-    void UpdatePlayerPosition()
+    private void UpdatePlayerPosition()
     {
         if (!alive) return;
         PollAxis();
