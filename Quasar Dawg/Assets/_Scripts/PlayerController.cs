@@ -1,51 +1,53 @@
 ﻿using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
-[RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Values to tweak Player facing angles:")]
-    [Range(0, 18)][Tooltip("factor for lateral rotation skew")][SerializeField] float skewVertical = 9f;
-    [Range(0, 18)][Tooltip("factor for vertical rotation skew")][SerializeField] float skewHorizontal = 9f;
-    [Range(0, 60)][Tooltip("factor for roll skew")][SerializeField] float skewRoll = 30f;
-    [Range(0, 20)][Tooltip("factor for throw (axis) skew")][SerializeField] float skewThrow = 10f;
-    [Range(0, 30)][Tooltip("factor for skew Lerping for pitch and yaw")][SerializeField] float skewLerp = 15f;
-    [Range(0, 10)][Tooltip("factor for skew Lerping for roll")][SerializeField] float skewRollLerp = 5f;
+    [Range(0f, 18f)][Tooltip("factor for lateral rotation skew")]           [SerializeField] float skewVertical = 9f;
+    [Range(0f, 18f)][Tooltip("factor for vertical rotation skew")]          [SerializeField] float skewHorizontal = 9f;
+    [Range(0f, 60f)][Tooltip("factor for roll skew")]                       [SerializeField] float skewRoll = 30f;
+    [Range(0f, 20f)][Tooltip("factor for throw (axis) skew")]               [SerializeField] float skewThrow = 10f;
+    [Range(0f, 30f)][Tooltip("factor for skew Lerping for pitch and yaw")]  [SerializeField] float skewLerp = 15f;
+    [Range(0f, 10f)][Tooltip("factor for skew Lerping for roll")]           [SerializeField] float skewRollLerp = 5f;
 
-    [Space(10)]
-    [Header("Player bounds:")]
-    [Range(0, 9.6f)][Tooltip("Range of motion, in m")][SerializeField] float lateralRange = 4.8f;
-    [Range(0, 5.6f)][Tooltip("Range of motion, in m")][SerializeField] float verticalMax = 2.8f;
-    [Range(0, 5)][Tooltip("Range of motion, in m")][SerializeField] float verticalMin = 2.5f;
-    [Range(0, 10.4f)][Tooltip("Speed, in ms^-1")][SerializeField] float strafeSpeed = 5.2f;
-    [Range(0, 500f)][Tooltip("Weapon cooldown time, in ms")][SerializeField] float weaponCooldownTime = 75f;
+    [Space(10)][Header("Player bounds:")]
+    [Range(0f, 9.600f)][Tooltip("Range of drift, in m")]                   [SerializeField] float lateralRange = 4.8f;
+    [Range(0f, 5.600f)][Tooltip("Range of drift, in m")]                   [SerializeField] float verticalMax = 2.8f;
+    [Range(0f, 5.000f)][Tooltip("Range of drift, in m")]                   [SerializeField] float verticalMin = 2.5f;
+    [Range(0f, 10.40f)][Tooltip("Speed, in ms^-1")]                         [SerializeField] float strafeSpeed = 5.2f;
+    [Range(0f, 500.0f)][Tooltip("Weapon cooldown time, in ms")]             [SerializeField] float weaponCooldownTime = 75f;
 
-    [Space(10)]
-    [Header("Player weapon systems:")]
+    [Space(10)][Header("Player weapon components:")]
     [SerializeField] ParticleSystem weapon_0;
     [SerializeField] ParticleSystem weapon_1;
     [SerializeField] ParticleSystem weapon_2;
     [SerializeField] ParticleSystem weapon_3;
     [SerializeField] AudioClip dischargeSound;
 
-    private bool alive = true;
-    private float delta = 0;
-    private float coolTime = 0;
-    private int lastWeaponFired = 0;
-    private Vector2 controlAxis = Vector2.zero;
-    private Vector3 priorRotation = Vector3.zero;
-    private AudioSource audioSource;
+    private bool            alive = true;
+    private float           delta = 0;
+    private float           coolTime = 0;
+    private int             lastWeaponFired = 0;
+    private Vector2         controlAxis = Vector2.zero;
+    private Vector3         priorRotation = Vector3.zero;
+    private AudioSource     audioSource;
 
-    private void Start()            { audioSource = FindObjectOfType<AudioSource>(); }
+    private void Start()
+    {
+        audioSource = GameObject.FindGameObjectWithTag("PlayerAudioSource").GetComponent<AudioSource>();
+        if (!audioSource) Debug.Log("ERROR no audioSource.");
+    }
+
     private void FixedUpdate()      { UpdatePlayerPosition(); }
-    private void Update()           { if (CrossPlatformInputManager.GetButton("Fire1")) TryDischargeWeapon(); }
+    private void Update()           { TryDischargeWeapon(); }
     private void TryPewPew()        { if (audioSource.isPlaying) return; audioSource.Play(); }
 
     private void UpdatePlayerPosition()
     {
         if (!alive) return;
-        PollAxis();
 
+        PollAxis();
         delta = Time.deltaTime;
         SetLocalPosition();
         SetLocalAngles();
@@ -103,9 +105,10 @@ public class PlayerController : MonoBehaviour
 
     private void TryDischargeWeapon()
     {
+        if (!(CrossPlatformInputManager.GetButton("Fire1"))) return;
+
         if (Time.time > coolTime)
         {
-            if (float.IsNaN(weaponCooldownTime)) weaponCooldownTime = 0.001f;
             coolTime = Time.time + (weaponCooldownTime / 1000f);
             TryPewPew();
             switch (lastWeaponFired)

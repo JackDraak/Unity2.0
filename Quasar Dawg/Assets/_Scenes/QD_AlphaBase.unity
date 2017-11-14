@@ -473,6 +473,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1463390884694400, guid: 15f00b54e0ab5244f8c58c8b90580ba8, type: 2}
+      propertyPath: m_TagString
+      value: PlayerAudioSource
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 15f00b54e0ab5244f8c58c8b90580ba8, type: 2}
   m_IsPrefabParent: 0
