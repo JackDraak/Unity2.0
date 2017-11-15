@@ -2,6 +2,25 @@
 using UnityEngine.UI;
 using UnityStandardAssets.CrossPlatformInput;
 
+/* Development notes: Lots of place-holder assets, many that I created myself, others from the asset
+ * store or elsewhere (i.e. from the Udemy course).  While I publish this source on GitHub and am glad
+ * if people find utility in it, please be careful to not grab/use something here in a way you may not
+ * be allowed to. (In general, anything here can be used freely for personal use, but again, please be
+ * informed before you go rummaging for treasure.) Cheers. -Jack D.
+ * 
+ * TODO: use Q, E or shoulder buttons for barrell-roll dodge.
+ * 
+ * TODO: have enemy weapons sap battery (shields) before destruction.
+ * 
+ * TODO: have player controller take control of camera/waypoint script in order to stop (slow/speed-up?)
+ *       waypoint patrol for Boss battles or something?
+ *       
+ * TODO: have torus rings to fly thru(?) for battery recharge (and/or other boosters or downers)....
+ * 
+ *     ... i.e. handles in-place to boost or retard discharge-rate, volley-size, battery capacity, 
+ *     etc., player maneuverability factors aplenty....
+ */
+
 public class PlayerController : MonoBehaviour
 {
     [Header("Values to tweak Player facing angles:")]
@@ -19,11 +38,15 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 10.4f)]  [Tooltip("Speed, in ms^-1")]                        [SerializeField] float strafeSpeed = 5.2f;
     [Range(0f, 500.0f)] [Tooltip("Weapon cooldown time, in ms")]            [SerializeField] float weaponCooldownTime = 75f;
     [Range(1, 12)]      [Tooltip("Weapon volley, in particles/discharge")]  [SerializeField] int volley = 3;
+
     [Range(1, 40)]      [Tooltip("Weapon battery charge-rate, in p/s")]     [SerializeField] int chargeRate = 20;
     [Range(1, 1200)]    [Tooltip("Weapon battery capacity")]                [SerializeField] int capacity = 600;
     [Range(0, 16)]      [Tooltip("Weapon battery use-rate, in p/volley")]   [SerializeField] int useRate = 8;
 
     [Space(10)] [Header("Player weapon components:")]
+    [Tooltip("Battery slider")]                         [SerializeField] Slider slider;
+    [Tooltip("Battery slider colours")]                 [SerializeField] Color charged, discharged;
+    [Tooltip("Battery slider fill for colour control")] [SerializeField] Image fill;
     [SerializeField] AudioClip dischargeSound;
     [SerializeField] GameObject dischargeLight_0;
     [SerializeField] GameObject dischargeLight_1;
@@ -33,13 +56,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] ParticleSystem weapon_1;
     [SerializeField] ParticleSystem weapon_2;
     [SerializeField] ParticleSystem weapon_3;
-    [SerializeField] Slider slider;
 
     private bool            alive = true;
     private float           delta = 0;
     private float           battery = 0;
     private float           coolTime = 0;
     private int             lastWeaponFired = 0;
+    private Color           colour = Color.white;
     private Vector2         controlAxis = Vector2.zero;
     private Vector3         priorRotation = Vector3.zero;
     private AudioSource     audioSource;
@@ -48,13 +71,22 @@ public class PlayerController : MonoBehaviour
     {
         audioSource = GameObject.FindGameObjectWithTag("PlayerAudioSource").GetComponent<AudioSource>();
         if (!audioSource) Debug.Log("ERROR no audioSource.");
-        battery = capacity;
+        ChargeBattery(true);
     }
 
     private void FixedUpdate()          { UpdatePlayerPosition(); }
     private void Update()               { UpdateWeaponState(); }
     private void TryPewPew()            { if (audioSource.isPlaying) return; audioSource.Play(); }
-    private void UpdateWeaponSlider()   { slider.value = battery / capacity; }
+
+    private void UpdateWeaponSlider()
+    {
+        slider.value = battery / capacity;
+        colour.r = Mathf.Lerp(charged.r, discharged.r, 1 - slider.value);
+        colour.g = Mathf.Lerp(charged.g, discharged.g, 1 - slider.value);
+        colour.b = Mathf.Lerp(charged.b, discharged.b, 1 - slider.value);
+        colour.a = Mathf.Lerp(charged.a, discharged.a, 1 - slider.value);
+        fill.color = colour;
+    }
 
     private void UpdatePlayerPosition()
     {
@@ -124,11 +156,24 @@ public class PlayerController : MonoBehaviour
         UpdateWeaponSlider();
     }
 
-    private void ChargeBattery()
+    private void ChargeBattery(float percentage) // i.e. percentage=0.25 means boost battery by: 0.25 * capacity, at most.
+    {
+        if (battery < 0) battery = 0;
+        battery += (percentage * capacity);
+        if (battery > capacity) battery = capacity;
+    }
+
+    private void ChargeBattery() // No argument: do standard charge over time.
     {
         if (battery < 0) battery = 0;
         battery += (chargeRate * Time.deltaTime);
         if (battery > capacity) battery = capacity;
+    }
+
+    private void ChargeBattery(bool torf) // If true, fill battery, if false, discharge.
+    {
+        if (torf) battery = capacity;
+        else battery = 0;
     }
 
     private void TryDischargeWeapon()

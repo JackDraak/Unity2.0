@@ -770,6 +770,10 @@ MonoBehaviour:
   chargeRate: 20
   capacity: 600
   useRate: 8
+  slider: {fileID: 0}
+  charged: {r: 0.25399995, g: 1, b: 0, a: 0.684}
+  discharged: {r: 1, g: 0, b: 0, a: 0.68235296}
+  fill: {fileID: 0}
   dischargeSound: {fileID: 8300000, guid: f85516d66fd2ea247a079ed264283f8d, type: 3}
   dischargeLight_0: {fileID: 1597645212064286}
   dischargeLight_1: {fileID: 1848239762792892}
@@ -779,7 +783,6 @@ MonoBehaviour:
   weapon_1: {fileID: 198420002096703932}
   weapon_2: {fileID: 198065249158750440}
   weapon_3: {fileID: 198492736787386096}
-  slider: {fileID: 0}
 --- !u!136 &136181036948814670
 CapsuleCollider:
   m_ObjectHideFlags: 1
