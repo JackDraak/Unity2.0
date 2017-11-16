@@ -43,10 +43,12 @@ public class PlayerController : MonoBehaviour
     [Range(1, 1200)]    [Tooltip("Weapon battery capacity")]                [SerializeField] int capacity = 600;
     [Range(0, 16)]      [Tooltip("Weapon battery use-rate, in p/volley")]   [SerializeField] int useRate = 8;
 
-    [Space(10)] [Header("Player weapon components:")]
+    [Space(10)] [Header("Player components:")]
     [Tooltip("Battery slider")]                         [SerializeField] Slider slider;
     [Tooltip("Battery slider colours")]                 [SerializeField] Color charged, discharged;
     [Tooltip("Battery slider fill for colour control")] [SerializeField] Image fill;
+    [SerializeField] AudioClip bummerSound;
+    [SerializeField] AudioClip bonusSound;
     [SerializeField] AudioClip dischargeSound;
     [SerializeField] GameObject dischargeLight_0;
     [SerializeField] GameObject dischargeLight_1;
@@ -57,6 +59,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] ParticleSystem weapon_2;
     [SerializeField] ParticleSystem weapon_3;
 
+    private bool            debugMode = false;
     private bool            alive = true;
     private float           delta = 0;
     private float           battery = 0;
@@ -65,18 +68,51 @@ public class PlayerController : MonoBehaviour
     private Color           colour = Color.white;
     private Vector2         controlAxis = Vector2.zero;
     private Vector3         priorRotation = Vector3.zero;
+    private Vector3         startPos;
+    private Quaternion      startRot;
     private AudioSource     audioSource;
 
     private void Start()
     {
         audioSource = GameObject.FindGameObjectWithTag("PlayerAudioSource").GetComponent<AudioSource>();
         if (!audioSource) Debug.Log("ERROR no audioSource.");
+
+        debugMode = Debug.isDebugBuild;
+
         ChargeBattery(true);
+
+        startPos = transform.localPosition;
+        startRot = transform.rotation;
+    }
+
+    public void ChargeBattery(float percentage) // i.e. percentage=0.25 means boost battery by: 0.25 * capacity, at most.
+    {
+        if (battery < 0) battery = 0;
+        battery += (percentage * capacity);
+        if (battery > capacity) battery = capacity;
+    }
+
+    public void ChargeBattery() // No argument: do standard charge over time.
+    {
+        if (battery < 0) battery = 0;
+        battery += (chargeRate * Time.deltaTime);
+        if (battery > capacity) battery = capacity;
+    }
+
+    public void ChargeBattery(bool torf) // If true, fill battery, if false, discharge.
+    {
+        if (torf) battery = capacity;
+        else battery = 0;
     }
 
     private void FixedUpdate()          { UpdatePlayerPosition(); }
     private void Update()               { UpdateWeaponState(); }
     private void TryPewPew()            { if (audioSource.isPlaying) return; audioSource.Play(); }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("COLLISION: " + collision.gameObject.tag);
+    }
 
     private void UpdateWeaponSlider()
     {
@@ -154,26 +190,6 @@ public class PlayerController : MonoBehaviour
         ChargeBattery();
         TryDischargeWeapon();
         UpdateWeaponSlider();
-    }
-
-    private void ChargeBattery(float percentage) // i.e. percentage=0.25 means boost battery by: 0.25 * capacity, at most.
-    {
-        if (battery < 0) battery = 0;
-        battery += (percentage * capacity);
-        if (battery > capacity) battery = capacity;
-    }
-
-    private void ChargeBattery() // No argument: do standard charge over time.
-    {
-        if (battery < 0) battery = 0;
-        battery += (chargeRate * Time.deltaTime);
-        if (battery > capacity) battery = capacity;
-    }
-
-    private void ChargeBattery(bool torf) // If true, fill battery, if false, discharge.
-    {
-        if (torf) battery = capacity;
-        else battery = 0;
     }
 
     private void TryDischargeWeapon()

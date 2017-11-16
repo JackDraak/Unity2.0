@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23128496507539426}
   m_Layer: 0
   m_Name: Ship_04
-  m_TagString: Untagged
+  m_TagString: EnemyCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50,14 +50,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1196039470210352}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -56.2, y: 57.01, z: 70.46}
+  m_LocalRotation: {x: -0.60876137, y: 0, z: 0, w: 0.7933534}
+  m_LocalPosition: {x: -104.94881, y: -18.416496, z: 41.554596}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 4894481759409354}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -75, y: 0, z: 0}
 --- !u!4 &4894481759409354
 Transform:
   m_ObjectHideFlags: 1
