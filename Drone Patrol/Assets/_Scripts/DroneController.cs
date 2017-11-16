@@ -67,7 +67,7 @@ public class DroneController : MonoBehaviour
     private Quaternion startRotation;
     private Rigidbody myRigidbody;
     private Vector3 startPosition;
-    private RigidbodyConstraints rigidbodyConstraints;
+    // private RigidbodyConstraints rigidbodyConstraints;
     private bool debugMode;
     private bool debugInvulnerable = false;
     private bool doOnce = false;
@@ -102,7 +102,7 @@ public class DroneController : MonoBehaviour
         hitPoints = BaseHitPoints;
         startPosition = transform.position;
         startRotation = transform.rotation;
-        rigidbodyConstraints = myRigidbody.constraints;
+        // rigidbodyConstraints = myRigidbody.constraints;
         orbsCollected = 0; // orbsToClear - 1; // TODO: set to zero for release, oTC-1 for debug
 
         // Set state & begin
@@ -173,6 +173,7 @@ public class DroneController : MonoBehaviour
         bool key_l = Input.GetKeyDown(KeyCode.L);
         bool key_o = Input.GetKeyDown(KeyCode.O);
         bool key_r = Input.GetKeyDown(KeyCode.R);
+        bool key_p = Input.GetKeyDown(KeyCode.P);
 
         if (key_o) LoadNextLevel();
         if (key_l) levelManager.AddPlayerLife();
@@ -195,6 +196,11 @@ public class DroneController : MonoBehaviour
         {
             thisState = State.Resetting;
             StartCoroutine(ResetPlayer(key_r));
+        }
+        if (key_p)
+        {
+            orbsCollected += pickups.Length;
+            finish.SetActive(true);
         }
     }
 
@@ -282,7 +288,8 @@ public class DroneController : MonoBehaviour
         {
             hitPoints = BaseHitPoints;
             thrustAudio = false;
-            myRigidbody.freezeRotation = true;
+            // myRigidbody.freezeRotation = true;
+            myRigidbody.angularVelocity = Vector3.zero;
             myRigidbody.isKinematic = true;
             if (thisState == State.Resetting)
             {
@@ -314,8 +321,8 @@ public class DroneController : MonoBehaviour
             }
             myRigidbody.mass = DefaultDroneMass;
             myRigidbody.isKinematic = false;
-            myRigidbody.freezeRotation = false;
-            myRigidbody.constraints = rigidbodyConstraints;
+            // myRigidbody.freezeRotation = false;
+            // myRigidbody.constraints = rigidbodyConstraints;
             thisState = State.Alive;
         }
     }
@@ -455,11 +462,12 @@ public class DroneController : MonoBehaviour
         if (v == 0 && thisState == State.Alive)
             myRigidbody.AddRelativeForce(Vector3.up * thrustForce);
         else if (thisState == State.Alive)
-        { 
-            myRigidbody.freezeRotation = true;
+        {
+            // myRigidbody.freezeRotation = true;
+            myRigidbody.angularVelocity = Vector3.zero;
             transform.Rotate((-v) * Vector3.forward * rotationForce);
-            myRigidbody.freezeRotation = false;
-            myRigidbody.constraints = rigidbodyConstraints;
+            // myRigidbody.freezeRotation = false;
+            // myRigidbody.constraints = rigidbodyConstraints;
         }
     }
 

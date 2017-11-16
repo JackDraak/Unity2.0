@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4463178421477386}
   - component: {fileID: 108525099851298962}
+  - component: {fileID: 95694989293025670}
   m_Layer: 0
   m_Name: Area Light
   m_TagString: Untagged
@@ -38,7 +39,7 @@ GameObject:
   - component: {fileID: 114019932762109826}
   - component: {fileID: 135921857151936984}
   m_Layer: 0
-  m_Name: Bonus
+  m_Name: Bonus Copy
   m_TagString: Recycler_Active
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72,6 +73,7 @@ GameObject:
   - component: {fileID: 33132794332537214}
   - component: {fileID: 135698238789727802}
   - component: {fileID: 23414344907989722}
+  - component: {fileID: 95744307719614250}
   m_Layer: 0
   m_Name: Orb
   m_TagString: Orb
@@ -125,7 +127,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1703167742003744}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.5, y: 14.49, z: 0}
+  m_LocalPosition: {x: -26.89, y: 12.44, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_Children:
   - {fileID: 4286592040161638}
@@ -175,6 +177,40 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1966163300112784}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!95 &95694989293025670
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1532072992308892}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3af3e94e2f17f2a4ca4bdc0de4b03227, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+--- !u!95 &95744307719614250
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1966163300112784}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 106f5e3d2269ed043a420ca861c78fc9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!108 &108525099851298962
 Light:
   m_ObjectHideFlags: 1
@@ -186,7 +222,7 @@ Light:
   m_Type: 2
   m_Color: {r: 0.36017412, g: 0.8014706, b: 0.2769788, a: 1}
   m_Intensity: 1
-  m_Range: 12.33
+  m_Range: 11.9
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -308,7 +344,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 1325685
+  randomSeed: 1563294471
   InitialModule:
     serializedVersion: 3
     enabled: 1

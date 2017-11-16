@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 59098585f7d48b040ae3873d812ee2ed
+timeCreated: 1509401248
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Drone Tracker Halftone
+  fontNames:
+  - Drone Tracker Halftone
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
