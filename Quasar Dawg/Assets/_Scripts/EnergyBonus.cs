@@ -2,8 +2,11 @@
 
 public class EnergyBonus : MonoBehaviour
 {
-    [SerializeField] GameObject orb;
-    [SerializeField] GameObject parentBonus;
+    [SerializeField] GameObject parentBonusObject;
+    [SerializeField] GameObject orbObject;
+    [SerializeField] GameObject mainEffect;
+    [SerializeField] GameObject collectEffect;
+    [SerializeField] AudioClip collectSound;
 
     PlayerController playerController;
     AudioSource audioSource;
@@ -21,14 +24,30 @@ public class EnergyBonus : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("EnergyBonus.cs TRIGGER tag: " + other.gameObject.tag);
+        switch (other.gameObject.tag)
+        {
+            case "ShipCollider":
+                CollectOrb();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void CollectOrb()
+    {
         playerController.ChargeBattery(.5f);
         audioSource.Stop();
-        Invoke("DestroySelf", 10f);
-        orb.SetActive(false);
+        audioSource.PlayOneShot(collectSound);
+        mainEffect.SetActive(false);
+        collectEffect.SetActive(true);
+        orbObject.SetActive(false);
+        Invoke("DestroySelf", 3f);
     }
 
     private void DestroySelf()
     {
-        Destroy(parentBonus.gameObject);
+        Destroy(parentBonusObject.gameObject);
     }
 }

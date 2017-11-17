@@ -51,9 +51,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fbc8db30b0079c4b9a6924313cb98d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameObjectToSpawn: {fileID: 1703167742003744, guid: deee55520f6eddf428fb2aaa51ef3cf2,
+  gameObjectToSpawn: {fileID: 1716543149235696, guid: deee55520f6eddf428fb2aaa51ef3cf2,
     type: 2}
-  delayBetweenSpawn: 1
-  delayBetweenRespawn: 1
-  delayBetweenWaves: 1
+  delayBetweenSpawn: 0.2
+  delayBetweenRespawn: 0.2
+  delayBetweenWaves: 0.2
   numberOfWaves: 0
+  simplified: 1
+  simpleSpan: 3

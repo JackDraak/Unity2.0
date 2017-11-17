@@ -8,6 +8,10 @@ using UnityStandardAssets.CrossPlatformInput;
  * be allowed to. (In general, anything here can be used freely for personal use, but again, please be
  * informed before you go rummaging for treasure.) Cheers. -Jack D.
  * 
+ * TODO: Get ship damage/reset working
+ * TODO: Get player weapon working
+ * TODO: Get enemies working
+ * 
  * TODO: use Q, E or shoulder buttons for barrell-roll dodge.
  * 
  * TODO: have enemy weapons sap battery (shields) before destruction.
@@ -15,7 +19,7 @@ using UnityStandardAssets.CrossPlatformInput;
  * TODO: have player controller take control of camera/waypoint script in order to stop (slow/speed-up?)
  *       waypoint patrol for Boss battles or something?
  *       
- * TODO: have torus rings to fly thru(?) for battery recharge (and/or other boosters or downers)....
+ * TODO: have collectibles for and/or other boosters or downers....
  * 
  *     ... i.e. handles in-place to boost or retard discharge-rate, volley-size, battery capacity, 
  *     etc., player maneuverability factors aplenty....
