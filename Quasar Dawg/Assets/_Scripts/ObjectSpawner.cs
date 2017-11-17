@@ -162,7 +162,7 @@ public class ObjectSpawner : MonoBehaviour
 
     private void FillPosition(Transform position)
     {
-        Debug.Log(Time.time + " :ObjectSpawner.cs: FillPosition(" + position + ")");
+        // Debug.Log(Time.time + " :ObjectSpawner.cs: FillPosition(" + position + ")");
 
         var a = gameObjectToSpawn;
         var b = position.transform.position;

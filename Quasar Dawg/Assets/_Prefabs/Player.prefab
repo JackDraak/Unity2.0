@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4541376996933916}
   - component: {fileID: 198462787058802378}
   - component: {fileID: 199485401151545618}
+  - component: {fileID: 114289209220601084}
   m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
@@ -53,6 +54,7 @@ GameObject:
   - component: {fileID: 4318624677459378}
   - component: {fileID: 198420002096703932}
   - component: {fileID: 199599847072931552}
+  - component: {fileID: 114677292358270744}
   m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
@@ -101,6 +103,7 @@ GameObject:
   - component: {fileID: 4550479101269588}
   - component: {fileID: 198065249158750440}
   - component: {fileID: 199042433679080862}
+  - component: {fileID: 114703014552321282}
   m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
@@ -149,8 +152,6 @@ GameObject:
   - component: {fileID: 4167209667695206}
   - component: {fileID: 33785361088808334}
   - component: {fileID: 23677125526004924}
-  - component: {fileID: 136181036948814670}
-  - component: {fileID: 136596676668118878}
   - component: {fileID: 54208208802585712}
   - component: {fileID: 65175484964260934}
   m_Layer: 0
@@ -201,6 +202,7 @@ GameObject:
   - component: {fileID: 4622971269266256}
   - component: {fileID: 198492736787386096}
   - component: {fileID: 199102446649730372}
+  - component: {fileID: 114403786507584464}
   m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
@@ -728,6 +730,58 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114289209220601084
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1034558763608946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cce614f613f50442858e3c77c30c6c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponHitEffect: {fileID: 1863164327328012, guid: f87fdfedb6bdf6348916d241646f0b2e,
+    type: 2}
+--- !u!114 &114403786507584464
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1832547921013562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cce614f613f50442858e3c77c30c6c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponHitEffect: {fileID: 1863164327328012, guid: f87fdfedb6bdf6348916d241646f0b2e,
+    type: 2}
+--- !u!114 &114677292358270744
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1196817839084794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cce614f613f50442858e3c77c30c6c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponHitEffect: {fileID: 1863164327328012, guid: f87fdfedb6bdf6348916d241646f0b2e,
+    type: 2}
+--- !u!114 &114703014552321282
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1578522131788590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cce614f613f50442858e3c77c30c6c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponHitEffect: {fileID: 1863164327328012, guid: f87fdfedb6bdf6348916d241646f0b2e,
+    type: 2}
 --- !u!114 &114980237874689770
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -769,32 +823,8 @@ MonoBehaviour:
   weapon_1: {fileID: 198420002096703932}
   weapon_2: {fileID: 198065249158750440}
   weapon_3: {fileID: 198492736787386096}
---- !u!136 &136181036948814670
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1650624773716144}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 0.23
-  m_Height: 2.79
-  m_Direction: 0
-  m_Center: {x: 0, y: -0.02, z: -0.89}
---- !u!136 &136596676668118878
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1650624773716144}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 0.24
-  m_Height: 3.44
-  m_Direction: 2
-  m_Center: {x: 0, y: -0.2, z: -0.07}
+  weaponHitEffect: {fileID: 1863164327328012, guid: f87fdfedb6bdf6348916d241646f0b2e,
+    type: 2}
 --- !u!198 &198065249158750440
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -855,7 +885,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1395476407
+  randomSeed: -1572841098
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3162,14 +3192,14 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 3
-    type: 0
+    type: 1
     collisionMode: 0
     colliderForce: 0
     multiplyColliderForceByParticleSize: 0
     multiplyColliderForceByParticleSpeed: 0
-    multiplyColliderForceByCollisionAngle: 1
+    multiplyColliderForceByCollisionAngle: 0
     plane0: {fileID: 0}
     plane1: {fileID: 0}
     plane2: {fileID: 0}
@@ -3220,7 +3250,7 @@ ParticleSystem:
     m_Bounce:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.6
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3261,7 +3291,7 @@ ParticleSystem:
     m_EnergyLossOnCollision:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.2
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3299,7 +3329,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    minKillSpeed: 0
+    minKillSpeed: 50
     maxKillSpeed: 10000
     radiusScale: 1
     collidesWith:
@@ -3308,7 +3338,7 @@ ParticleSystem:
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
-    collisionMessages: 0
+    collisionMessages: 1
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
@@ -4172,7 +4202,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -139944446
+  randomSeed: 1926785262
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6479,14 +6509,14 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 3
-    type: 0
+    type: 1
     collisionMode: 0
     colliderForce: 0
     multiplyColliderForceByParticleSize: 0
     multiplyColliderForceByParticleSpeed: 0
-    multiplyColliderForceByCollisionAngle: 1
+    multiplyColliderForceByCollisionAngle: 0
     plane0: {fileID: 0}
     plane1: {fileID: 0}
     plane2: {fileID: 0}
@@ -6537,7 +6567,7 @@ ParticleSystem:
     m_Bounce:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.6
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -6578,7 +6608,7 @@ ParticleSystem:
     m_EnergyLossOnCollision:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.2
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -6616,7 +6646,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    minKillSpeed: 0
+    minKillSpeed: 50
     maxKillSpeed: 10000
     radiusScale: 1
     collidesWith:
@@ -6625,7 +6655,7 @@ ParticleSystem:
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
-    collisionMessages: 0
+    collisionMessages: 1
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
@@ -7489,7 +7519,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 765952974
+  randomSeed: 90711201
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -9796,14 +9826,14 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 3
-    type: 0
+    type: 1
     collisionMode: 0
     colliderForce: 0
     multiplyColliderForceByParticleSize: 0
     multiplyColliderForceByParticleSpeed: 0
-    multiplyColliderForceByCollisionAngle: 1
+    multiplyColliderForceByCollisionAngle: 0
     plane0: {fileID: 0}
     plane1: {fileID: 0}
     plane2: {fileID: 0}
@@ -9854,7 +9884,7 @@ ParticleSystem:
     m_Bounce:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.6
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -9895,7 +9925,7 @@ ParticleSystem:
     m_EnergyLossOnCollision:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.2
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -9933,7 +9963,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    minKillSpeed: 0
+    minKillSpeed: 50
     maxKillSpeed: 10000
     radiusScale: 1
     collidesWith:
@@ -9942,7 +9972,7 @@ ParticleSystem:
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
-    collisionMessages: 0
+    collisionMessages: 1
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
@@ -10806,7 +10836,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -2101109137
+  randomSeed: 1466414988
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -13113,14 +13143,14 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 3
-    type: 0
+    type: 1
     collisionMode: 0
     colliderForce: 0
     multiplyColliderForceByParticleSize: 0
     multiplyColliderForceByParticleSpeed: 0
-    multiplyColliderForceByCollisionAngle: 1
+    multiplyColliderForceByCollisionAngle: 0
     plane0: {fileID: 0}
     plane1: {fileID: 0}
     plane2: {fileID: 0}
@@ -13171,7 +13201,7 @@ ParticleSystem:
     m_Bounce:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.6
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -13212,7 +13242,7 @@ ParticleSystem:
     m_EnergyLossOnCollision:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.2
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -13250,7 +13280,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    minKillSpeed: 0
+    minKillSpeed: 50
     maxKillSpeed: 10000
     radiusScale: 1
     collidesWith:
@@ -13259,7 +13289,7 @@ ParticleSystem:
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
-    collisionMessages: 0
+    collisionMessages: 1
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:

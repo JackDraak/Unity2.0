@@ -115,7 +115,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("COLLISION: " + collision.gameObject.tag);
+        Debug.Log("PlayerController.cs COLLISION tag: " + collision.gameObject.tag);
     }
 
     private void UpdateWeaponSlider()
