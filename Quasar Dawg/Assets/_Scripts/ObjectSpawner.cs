@@ -40,6 +40,8 @@ public class ObjectSpawner : MonoBehaviour
         var a = spawnPoints.Length;
         var b = tagForSpawnPoints;
         Debug.Log("ObjectSpawner.cs report: " + a + " spawn-points registered with tag '" + b + "'.");
+
+        TriggerRespawn();
     }
 
     private void Update()

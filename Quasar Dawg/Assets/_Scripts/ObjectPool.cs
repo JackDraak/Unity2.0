@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-internal class ObjectPool : MonoBehaviour
+public class ObjectPool : MonoBehaviour
 {
     // TODO: make a 'public bool dynamic;' where dynamic mode allows the pool to grow as needed.
 

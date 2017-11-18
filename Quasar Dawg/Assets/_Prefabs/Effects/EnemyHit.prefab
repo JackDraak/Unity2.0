@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198093081147780178}
   - component: {fileID: 199426916665083174}
   m_Layer: 0
-  m_Name: TargetHit
+  m_Name: EnemyHit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101,14 +101,14 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1223611610
+  randomSeed: -1467833518
   InitialModule:
     serializedVersion: 3
     enabled: 1
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 1
+      scalar: 0.5
       minScalar: 0.1
       maxCurve:
         serializedVersion: 2
@@ -167,7 +167,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 1, g: 0.9983529, b: 0.58823526, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -437,7 +437,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 300
+    maxNumParticles: 20
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -506,7 +506,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 1
+      value: 0.01
       mode: 0
       spread: 0
       speed:
@@ -3364,7 +3364,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: a53831880f7cf4d80978fb06165403e5, type: 2}
+  - {fileID: 2100000, guid: 527027c8baf2f0540be3104a3ec38a99, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0

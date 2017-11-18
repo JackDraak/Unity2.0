@@ -34,7 +34,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1552170459138836}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -100, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -53,10 +53,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tagForSpawnPoints: SpawnPoint
   simplified: 1
-  simpleSpan: 3
+  simpleSpan: 10
   gameObjectsToSpawn:
   - {fileID: 1716543149235696, guid: deee55520f6eddf428fb2aaa51ef3cf2, type: 2}
-  delayBetweenSpawn: 0.2
-  delayBetweenRespawn: 0.2
-  delayBetweenWaves: 0.2
+  delayBetweenSpawn: 5
+  delayBetweenRespawn: 5
+  delayBetweenWaves: 5
   numberOfWaves: 0
