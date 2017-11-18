@@ -24,7 +24,7 @@ public class EnergyBonus : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("EnergyBonus.cs TRIGGER tag: " + other.gameObject.tag);
+        // Debug.Log("EnergyBonus.cs TRIGGER tag: " + other.gameObject.tag);
         switch (other.gameObject.tag)
         {
             case "ShipCollider":

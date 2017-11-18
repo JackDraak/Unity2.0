@@ -69,7 +69,6 @@ public class PlayerController : MonoBehaviour
     private float           battery = 0;
     private float           coolTime = 0;
     private int             lastWeaponFired = 0;
-    private Color           colour = Color.white;
     private Vector2         controlAxis = Vector2.zero;
     private Vector3         priorRotation = Vector3.zero;
     private Vector3         startPos;
@@ -89,21 +88,21 @@ public class PlayerController : MonoBehaviour
         startRot = transform.rotation;
     }
 
-    public void ChargeBattery(float percentage) // i.e. percentage=0.25 means boost battery by: 0.25 * capacity, at most.
+    public void ChargeBattery(float percentage)
     {
         if (battery < 0) battery = 0;
         battery += (percentage * capacity);
         if (battery > capacity) battery = capacity;
     }
 
-    public void ChargeBattery() // No argument: do standard charge over time.
+    public void ChargeBattery()
     {
         if (battery < 0) battery = 0;
         battery += (chargeRate * Time.deltaTime);
         if (battery > capacity) battery = capacity;
     }
 
-    public void ChargeBattery(bool torf) // If true, fill battery, if false, discharge.
+    public void ChargeBattery(bool torf)
     {
         if (torf) battery = capacity;
         else battery = 0;
@@ -120,6 +119,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateWeaponSlider()
     {
+        Color colour = Color.white;
         slider.value = battery / capacity;
         colour.r = Mathf.Lerp(charged.r, discharged.r, 1 - slider.value);
         colour.g = Mathf.Lerp(charged.g, discharged.g, 1 - slider.value);

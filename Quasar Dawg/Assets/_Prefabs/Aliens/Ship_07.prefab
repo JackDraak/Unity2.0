@@ -35,8 +35,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4387005484353034}
+  - component: {fileID: 114767586587192908}
   - component: {fileID: 33433712225903298}
   - component: {fileID: 23118305485983508}
+  - component: {fileID: 65677372732270716}
   m_Layer: 0
   m_Name: Ship_07
   m_TagString: EnemyCollider
@@ -50,27 +52,27 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1449813886445736}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -58.07, y: 57.042, z: 62.929}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalRotation: {x: -0.57571906, y: 0, z: 0, w: 0.81764764}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children:
   - {fileID: 4389561090068576}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -70.3, y: 0, z: 0}
 --- !u!4 &4389561090068576
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1191860328861266}
-  m_LocalRotation: {x: 1, y: -0, z: -0, w: 0}
-  m_LocalPosition: {x: 0, y: -0, z: 0.742}
+  m_LocalRotation: {x: 0.9613579, y: -0, z: -0, w: -0.27530178}
+  m_LocalPosition: {x: 0, y: -0.2882, z: 0.2262}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4387005484353034}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 211.96, y: 0, z: 0}
 --- !u!23 &23118305485983508
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -112,6 +114,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1449813886445736}
   m_Mesh: {fileID: 4300008, guid: ec2ed6fafcc53c64ba923b9ef7d5749f, type: 3}
+--- !u!65 &65677372732270716
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1449813886445736}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.38938537, y: 0.650808, z: 0.10090969}
+  m_Center: {x: 0, y: 0, z: -0.000000005587935}
 --- !u!108 &108583808640030628
 Light:
   m_ObjectHideFlags: 1
@@ -123,8 +137,8 @@ Light:
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6
-  m_Range: 2.89
-  m_SpotAngle: 61.3
+  m_Range: 3.9
+  m_SpotAngle: 91
   m_CookieSize: 10
   m_Shadows:
     m_Type: 0
@@ -148,3 +162,17 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114767586587192908
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1449813886445736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e298795dc36634847b48af59aabae3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponHitEffect: {fileID: 1124713913404850, guid: cf0d49a1790b5a04085d746f35831b95,
+    type: 2}
+  destroyDelay: 3
