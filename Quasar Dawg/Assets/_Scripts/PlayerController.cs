@@ -114,7 +114,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("PlayerController.cs COLLISION tag: " + collision.gameObject.tag);
+        // TODO: we're obviously colliding with things... why no log messages?
+        Debug.Log("PlayerController.cs COLLISION tag: " + collision.gameObject.tag); 
     }
 
     private void UpdateWeaponSlider()

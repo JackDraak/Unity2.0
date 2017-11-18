@@ -2,9 +2,11 @@
 
 internal class HitPool : MonoBehaviour
 {
+    // TODO: make a 'public bool dynamic;' where dynamic mode allows the pool to grow as needed.
+
     static HitPool instance = null;
 
-    public int poolSize = 100;
+    public int poolSize = 20;
     public float effectDuration = 1;
     public GameObject explosion;
 
@@ -51,18 +53,18 @@ internal class HitPool : MonoBehaviour
         }
     }
 
-    public GameObject HitEffect(Transform transform)
+    public void HitEffect(Transform transform)
     {
         poolPosition++;
-        if (poolPosition > poolSize) poolPosition = 0;
+        if (poolPosition >= poolSize) poolPosition = 0;
 
-        if (effects[poolPosition].on) return null;
+        if (effects[poolPosition].on) return;
         else
         {
             effects[poolPosition].on = true;
             effects[poolPosition].onTime = Time.time;
             effects[poolPosition].gameObject.transform.position = transform.position;
-            return effects[poolPosition].gameObject;
+            effects[poolPosition].gameObject.SetActive(true);
         }
     }
 }
