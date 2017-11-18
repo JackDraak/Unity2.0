@@ -173,6 +173,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e298795dc36634847b48af59aabae3aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponHitEffect: {fileID: 1124713913404850, guid: cf0d49a1790b5a04085d746f35831b95,
-    type: 2}
-  destroyDelay: 3
+  hitPoints: 5

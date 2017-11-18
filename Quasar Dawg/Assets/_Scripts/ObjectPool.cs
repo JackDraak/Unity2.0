@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 
-internal class HitPool : MonoBehaviour
+internal class ObjectPool : MonoBehaviour
 {
     // TODO: make a 'public bool dynamic;' where dynamic mode allows the pool to grow as needed.
-
-    static HitPool instance = null;
 
     public int poolSize = 20;
     public float effectDuration = 1;
@@ -23,9 +21,6 @@ internal class HitPool : MonoBehaviour
 
     private void Start()
     {
-        if (instance != null && instance != this) { Destroy(gameObject); }
-        else { instance = this; GameObject.DontDestroyOnLoad(gameObject); }
-
         poolPosition = poolSize;
         effects = new Effect[poolSize];
 
@@ -53,7 +48,7 @@ internal class HitPool : MonoBehaviour
         }
     }
 
-    public void HitEffect(Transform transform)
+    public void PopEffect(Transform transform)
     {
         poolPosition++;
         if (poolPosition >= poolSize) poolPosition = 0;
