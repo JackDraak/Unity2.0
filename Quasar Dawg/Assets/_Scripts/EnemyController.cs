@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviour
     private ObjectPool killPool;
     private ScoreController scoreController;
     private PlayerController playerController;
+    private PlayerManager playerManager;
     private float firetime;
 
     private void Start()
@@ -28,12 +29,17 @@ public class EnemyController : MonoBehaviour
             if (!success) Debug.Log("EnemyController.cs: ScoreController ERROR.");
         success = (playerController = GameObject.FindObjectOfType<PlayerController>());
             if (!success) Debug.Log("EnemyController.cs: PlayerController ERROR.");
+        success = (playerManager = FindObjectOfType<PlayerManager>());
+            if (!playerManager) Debug.Log("EnemyController.cs: no playerManager ERROR.");
     }
 
     private void Update()
     {
+        if (playerManager.IsAlive())
+        {
             transform.LookAt(playerController.transform);
             TryShoot();
+        }
     }
 
     private void TryShoot()

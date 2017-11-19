@@ -19,6 +19,7 @@ public class PlayerManager : MonoBehaviour
         if (!success) Debug.Log("LevelManager.cs: PlayerController ERROR.");
     }
 
+    public bool IsAlive() { return playerController.enabled; }
     public void SetPlayerPosition(Vector3 position) { playerStartPosition = position; }
     public void SetPlayerRotation(Quaternion rotation) { playerStartRotation = rotation; }
 

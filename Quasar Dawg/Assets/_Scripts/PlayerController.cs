@@ -8,18 +8,20 @@ using UnityStandardAssets.CrossPlatformInput;
  * be allowed to. (In general, anything here can be used freely for personal use, but again, please be
  * informed before you go rummaging for treasure.) Cheers. -Jack D.
  * 
- * TODO: Get ship damage/reset working
- * TODO: Get player weapon working
- * TODO: Get enemies working
+ * TODO: Prevent spawning while player resetting 
+ *      (stopping EnemyController.cs LookAt() while player is not active 
+ *      seems to have resolved bad object reference issue)
+ *      
+ * TODO: Improve ship damage/reset 
+ * TODO: Make enemies more interesting / animated
+ * TODO: Add pause button
  * 
- * TODO: use Q, E or shoulder buttons for barrell-roll dodge.
+ * TODO: Use Q, E or shoulder buttons for barrell-roll dodge.
  * 
- * TODO: have enemy weapons sap battery (shields) before destruction.
- * 
- * TODO: have player controller take control of camera/waypoint script in order to stop (slow/speed-up?)
+ * TODO: Have player controller take control of camera/waypoint script in order to stop (slow/speed-up?)
  *       waypoint patrol for Boss battles or something?
  *       
- * TODO: have collectibles for and/or other boosters or downers....
+ * TODO: Have other collectible boosters or downers....
  * 
  *     ... i.e. handles in-place to boost or retard discharge-rate, volley-size, battery capacity, 
  *     etc., player maneuverability factors aplenty....
@@ -27,7 +29,7 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class PlayerController : MonoBehaviour
 {
-    // DEVNOTE: These debugging commands work in the editor or on "debug" builds. 
+    // DEVNOTE: These debugging commands work in the editor or on "development" builds. 
     // Assign them to keys not in-use [in the Start() method]:
     private bool rechargeWeaponCommand;
     private bool rechargeShieldCommand;
@@ -107,7 +109,8 @@ public class PlayerController : MonoBehaviour
 
         playerManager.SetPlayerPosition(transform.localPosition);
         playerManager.SetPlayerRotation(transform.localRotation);
-        playerManager.ResetPlayer();
+        ChargeShieldBattery(true);
+        ChargeWeaponBattery(true);
     }
 
     private void FixedUpdate()  { UpdatePlayerPosition(); }
