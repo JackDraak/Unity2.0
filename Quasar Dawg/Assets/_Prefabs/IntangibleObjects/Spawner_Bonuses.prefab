@@ -53,10 +53,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tagForSpawnPoints: SpawnPoint
   simplified: 1
-  simpleSpan: 10
+  simpleDelay: 10
   gameObjectsToSpawn:
   - {fileID: 1716543149235696, guid: deee55520f6eddf428fb2aaa51ef3cf2, type: 2}
-  delayBetweenSpawn: 5
-  delayBetweenRespawn: 5
-  delayBetweenWaves: 5
+  delayBetweenSpawn: 10
+  delayBetweenRespawn: 10
+  delayBetweenWaves: 10
   numberOfWaves: 0

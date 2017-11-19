@@ -3,7 +3,7 @@
 public class ObjectPool : MonoBehaviour
 {
     [SerializeField] int initialPoolSize = 20;
-    [SerializeField][Tooltip("Allow pool to grow as needed (if checked)")] bool dynamicPool = false;
+    [Tooltip("Allow pool to grow as needed (if checked)")][SerializeField] bool dynamicPool = false;
     [SerializeField][Range(1, 50)] int poolGrowthRate = 5;
     [SerializeField] GameObject explosion;
     [SerializeField] float effectDuration = 1;

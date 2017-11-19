@@ -2,11 +2,11 @@
 
 public class ObjectSpawner : MonoBehaviour
 {
-    // DEVNOTE: You can run multiple ObjectSpawners in your scene(? untested). They can share the same 
+    // DEVNOTE: You can run multiple ObjectSpawners in your scene. They can share the same 
     // spawn-points(? untested) or you can setup different (groups of) spawn-points with different tags... 
     // adjust tag string here:
     [Tooltip("Tag used to denote spawn-points for this ObjectSpawner:")]
-    [SerializeField] string  tagForSpawnPoints = "SpawnPoint";
+    [SerializeField] string tagForSpawnPoints = "SpawnPoint";
 
     // DEVNOTE: These debugging commands work in the editor or on "debug" builds. 
     // Assign them to keys not in-use [in the Start() method]:
@@ -15,15 +15,15 @@ public class ObjectSpawner : MonoBehaviour
     private bool spawnRandomCommand;
 
     // DEVNOTE: simplified mode, i.e. fill a random empty spawn-point every N seconds:
-    [Tooltip("Fills a random empty spawn-point, every N")]  [SerializeField] bool simplified = true;
-    [Tooltip("time between simple spawn, in s")]            [SerializeField] float simpleSpan = 10;
+    [Tooltip("Fills a random empty spawn-point, every N")] [SerializeField] bool simplified = true;
+    [Tooltip("time between simple spawn, in s")] [SerializeField] float simpleDelay = 10;
 
     // DEVNOTE: Not all features are fully implemented, sorry. Feel free to fork and suggest improvements.
     [Tooltip("Drop GameObject prefab-to-be-spawned here:")] [SerializeField] GameObject[] gameObjectsToSpawn;
-    [Tooltip("Delay between spawn, in s")]                  [SerializeField] float delayBetweenSpawn = 1;
-    [Tooltip("Delay between re-spawn, in s")]               [SerializeField] float delayBetweenRespawn = 1;
-    [Tooltip("Delay between waves, in s")]                  [SerializeField] float delayBetweenWaves = 1;
-    [Tooltip("Number of waves, 0 = infinite")]              [SerializeField] int numberOfWaves = 0;
+    [Tooltip("Delay between spawn, in s")] [SerializeField] float delayBetweenSpawn = 1;
+    [Tooltip("Delay between re-spawn, in s")] [SerializeField] float delayBetweenRespawn = 1;
+    [Tooltip("Delay between waves, in s")] [SerializeField] float delayBetweenWaves = 1;
+    [Tooltip("Number of waves, 0 = infinite")] [SerializeField] int numberOfWaves = 0;
 
     private GameObject[] spawnPoints;
     private int thisWave = 1;
@@ -55,7 +55,7 @@ public class ObjectSpawner : MonoBehaviour
     private void SimplifiedUpdate()
     {
         var timeNow = Time.time;
-        if (timeNow > spawnTime + simpleSpan)
+        if (timeNow > spawnTime + simpleDelay)
         {
             SpawnRandomSpawnpoint();
             spawnTime = timeNow;
@@ -180,10 +180,11 @@ public class ObjectSpawner : MonoBehaviour
     {
         // Debug.Log(Time.time + " :ObjectSpawner.cs: FillPosition(" + position + ")");
         var n = gameObjectsToSpawn.Length;
-        var a = gameObjectsToSpawn[Random.Range(0,n)];
+        var a = gameObjectsToSpawn[Random.Range(0, n)];
         var b = position.transform.position;
         var c = Quaternion.identity;
         GameObject spawnedObject = Instantiate(a, b, c) as GameObject;
         spawnedObject.transform.parent = position;
+        spawnedObject.SetActive(true);
     }
 }

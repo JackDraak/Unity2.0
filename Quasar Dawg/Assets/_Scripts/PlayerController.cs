@@ -29,9 +29,10 @@ public class PlayerController : MonoBehaviour
 {
     // DEVNOTE: These debugging commands work in the editor or on "debug" builds. 
     // Assign them to keys not in-use [in the Start() method]:
-    private bool rechargeCommand;
+    private bool rechargeWeaponCommand;
+    private bool rechargeShieldCommand;
 
-
+#region So many things to set in the inspector....
     [Header("Values to tweak Player facing angles:")]
     [Range(0f, 18f)][Tooltip("factor for lateral rotation skew")]           [SerializeField] float skewVertical = 9f;
     [Range(0f, 18f)][Tooltip("factor for vertical rotation skew")]          [SerializeField] float skewHorizontal = 9f;
@@ -48,15 +49,25 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 500.0f)] [Tooltip("Weapon cooldown time, in ms")]            [SerializeField] float weaponCooldownTime = 75f;
     [Range(1, 12)]      [Tooltip("Weapon volley, in particles/discharge")]  [SerializeField] int volley = 3;
 
-    [Range(1, 40)]      [Tooltip("Weapon battery charge-rate, in p/s")]     [SerializeField] int chargeRate = 20;
-    [Range(1, 1200)]    [Tooltip("Weapon battery capacity")]                [SerializeField] int capacity = 600;
-    [Range(0, 16)]      [Tooltip("Weapon battery use-rate, in p/volley")]   [SerializeField] int useRate = 8;
+    [Range(1, 40)]      [Tooltip("Shield battery charge-rate, in p/s")]     [SerializeField] int shieldChargeRate = 20;
+    [Range(1, 1200)]    [Tooltip("Shield battery capacity")]                [SerializeField] int shieldCapacity = 600;
+    [Range(0, 16)]      [Tooltip("Shield battery use-rate, in p/volley")]   [SerializeField] int shieldUseRate = 8;
 
-    [Space(10)] [Header("Player components:")]
-    [Tooltip("Battery slider")]                         [SerializeField] Slider slider;
-    [Tooltip("Battery slider colours")]                 [SerializeField] Color charged, discharged;
-    [Tooltip("Battery slider fill for colour control")] [SerializeField] Image fill;
-    [SerializeField] AudioClip bummerSound;
+    [Range(1, 40)]      [Tooltip("Weapon battery charge-rate, in p/s")]     [SerializeField] int weaponChargeRate = 20;
+    [Range(1, 1200)]    [Tooltip("Weapon battery capacity")]                [SerializeField] int weaponCapacity = 600;
+    [Range(0, 16)]      [Tooltip("Weapon battery use-rate, in p/volley")]   [SerializeField] int weaponUseRate = 8;
+
+    [Space(10)][Header("Player components:")]
+    [Tooltip("Weapon battery slider")]                                  [SerializeField] Slider weaponSlider;
+    [Tooltip("Weapon battery slider colours")]                          [SerializeField] Color weaponCharged, weaponDischarged;
+    [Tooltip("Weapon battery slider fill for colour control")]          [SerializeField] Image weaponFill;
+    [Space(5)]
+    [Tooltip("Shield battery slider")]                                  [SerializeField] Slider shieldSlider;
+    [Tooltip("Shield battery slider colours")]                          [SerializeField] Color shieldCharged, shieldDischarged;
+    [Tooltip("Shield battery slider fill for colour control")]          [SerializeField] Image shieldFill;
+    [Space(5)]
+    [SerializeField] AudioClip hitSound;
+    [SerializeField] AudioClip explodeSound;
     [SerializeField] AudioClip bonusSound;
     [SerializeField] AudioClip dischargeSound;
     [SerializeField] GameObject dischargeLight_0;
@@ -67,11 +78,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] ParticleSystem weapon_1;
     [SerializeField] ParticleSystem weapon_2;
     [SerializeField] ParticleSystem weapon_3;
+#endregion
 
+#region More member variables... but shhh... these ones are pirvate!
     private bool            debugMode = false;
     private bool            alive = true;
     private float           delta = 0;
-    private float           battery = 0;
+    private float           weaponBattery = 0;
+    private float           shieldBattery = 0;
     private float           coolTime = 0;
     private int             lastWeaponFired = 0;
     private Vector2         controlAxis = Vector2.zero;
@@ -79,65 +93,120 @@ public class PlayerController : MonoBehaviour
     private Vector3         startPos;
     private Quaternion      startRot;
     private AudioSource     audioSource;
+    private LevelManager    levelManager;
+#endregion
 
     private void Start()
     {
         audioSource = GameObject.FindGameObjectWithTag("PlayerAudioSource").GetComponent<AudioSource>();
-        if (!audioSource) Debug.Log("ERROR no audioSource.");
+            if (!audioSource) Debug.Log("PlayerController.cs ERROR no audioSource.");
+        levelManager = FindObjectOfType<LevelManager>();
+            if (!levelManager) Debug.Log("PlayerController.cs ERROR no levelManager.");
 
         debugMode = Debug.isDebugBuild;
 
-        ChargeBattery(true);
+        ChargeWeaponBattery(true);
+        ChargeShieldBattery(true);
 
-        startPos = transform.localPosition;
-        startRot = transform.rotation;
+        levelManager.SetPlayerPosition(transform.localPosition);
+        levelManager.SetPlayerRotation(transform.localRotation);
     }
 
-    public void ChargeBattery(float percentage)
+    private void FixedUpdate()  { UpdatePlayerPosition(); }
+    private void Update()       { UpdatePlayerState(); if (debugMode) TryDebug(); }
+
+#region Battery Maintenance...
+    public void ChargeWeaponBattery(float percentage)
     {
-        if (battery < 0) battery = 0;
-        battery += (percentage * capacity);
-        if (battery > capacity) battery = capacity;
+        if (weaponBattery < 0) weaponBattery = 0;
+        weaponBattery += (percentage * weaponCapacity);
+        if (weaponBattery > weaponCapacity) weaponBattery = weaponCapacity;
     }
 
-    public void ChargeBattery()
+    public void ChargeWeaponBattery()
     {
-        if (battery < 0) battery = 0;
-        battery += (chargeRate * Time.deltaTime);
-        if (battery > capacity) battery = capacity;
+        if (weaponBattery < 0) weaponBattery = 0;
+        weaponBattery += (weaponChargeRate * Time.deltaTime);
+        if (weaponBattery > weaponCapacity) weaponBattery = weaponCapacity;
     }
 
-    public void ChargeBattery(bool torf)
+    public void ChargeWeaponBattery(bool torf)
     {
-        if (torf) battery = capacity;
-        else battery = 0;
+        if (torf) weaponBattery = weaponCapacity;
+        else weaponBattery = 0;
     }
 
-    private void FixedUpdate()          { UpdatePlayerPosition(); }
-    private void Update()               { UpdateWeaponState(); if (debugMode) TryDebug(); }
-    private void TryPewPew()            { if (audioSource.isPlaying) return; audioSource.Play(); }
+    public void ChargeShieldBattery(float percentage)
+    {
+        if (shieldBattery < 0) shieldBattery = 0;
+        shieldBattery += (percentage * shieldCapacity);
+        if (shieldBattery > shieldCapacity) shieldBattery = shieldCapacity;
+    }
 
+    public void ChargeShieldBattery()
+    {
+        if (shieldBattery < 0) shieldBattery = 0;
+        shieldBattery += (shieldChargeRate * Time.deltaTime);
+        if (shieldBattery > shieldCapacity) shieldBattery = shieldCapacity;
+    }
+
+    public void ChargeShieldBattery(bool torf)
+    {
+        if (torf) shieldBattery = shieldCapacity;
+        else shieldBattery = 0;
+    }
+    #endregion
+
+#region Collision events...
     private void OnCollisionEnter(Collision collision)
     {
         // TODO: we're obviously colliding with things... why no log messages?
         Debug.Log("PlayerController.cs COLLISION tag: " + collision.gameObject.tag); 
     }
 
-    private void TryDebug()
+    private void OnParticleCollision(GameObject other)
     {
-        rechargeCommand = Input.GetKeyDown(KeyCode.U);
-        if (rechargeCommand) ChargeBattery(true);
+        //Debug.Log(other.gameObject.tag);
+        switch (other.gameObject.tag)
+        {
+            case "EnemyPinkWeapon":
+                AudioSource.PlayClipAtPoint(hitSound, transform.position);
+                // TODO: have a visual effect here?
+                shieldBattery -= 40; // TODO: make this adjustbale in the inspector?
+                if (shieldBattery < 0)
+                {
+                    AudioSource.PlayClipAtPoint(explodeSound, transform.position);
+                    // TODO: have a visual effect here too!
+                    levelManager.ResetPlayer();
+                }
+                break;
+            default:
+                break;
+        }
     }
+    #endregion
 
+#region Other updates...
     private void UpdateWeaponSlider()
     {
         Color colour = Color.white;
-        slider.value = battery / capacity;
-        colour.r = Mathf.Lerp(charged.r, discharged.r, 1 - slider.value);
-        colour.g = Mathf.Lerp(charged.g, discharged.g, 1 - slider.value);
-        colour.b = Mathf.Lerp(charged.b, discharged.b, 1 - slider.value);
-        colour.a = Mathf.Lerp(charged.a, discharged.a, 1 - slider.value);
-        fill.color = colour;
+        weaponSlider.value = weaponBattery / weaponCapacity;
+        colour.r = Mathf.Lerp(weaponCharged.r, weaponDischarged.r, 1 - weaponSlider.value);
+        colour.g = Mathf.Lerp(weaponCharged.g, weaponDischarged.g, 1 - weaponSlider.value);
+        colour.b = Mathf.Lerp(weaponCharged.b, weaponDischarged.b, 1 - weaponSlider.value);
+        colour.a = Mathf.Lerp(weaponCharged.a, weaponDischarged.a, 1 - weaponSlider.value);
+        weaponFill.color = colour;
+    }
+
+    private void UpdateShieldSlider()
+    {
+        Color colour = Color.white;
+        shieldSlider.value = shieldBattery / shieldCapacity;
+        colour.r = Mathf.Lerp(shieldCharged.r, shieldDischarged.r, 1 - shieldSlider.value);
+        colour.g = Mathf.Lerp(shieldCharged.g, shieldDischarged.g, 1 - shieldSlider.value);
+        colour.b = Mathf.Lerp(shieldCharged.b, shieldDischarged.b, 1 - shieldSlider.value);
+        colour.a = Mathf.Lerp(shieldCharged.a, shieldDischarged.a, 1 - shieldSlider.value);
+        shieldFill.color = colour;
     }
 
     private void UpdatePlayerPosition()
@@ -192,21 +261,28 @@ public class PlayerController : MonoBehaviour
         priorRotation.z = roll;
     }
 
-    private void PollAxis()
-    {
-        if (!alive) return;
-
-        controlAxis.x = CrossPlatformInputManager.GetAxis("Horizontal");
-        controlAxis.y = CrossPlatformInputManager.GetAxis("Vertical");
-    }
-
-    private void UpdateWeaponState()
+    private void UpdatePlayerState()
     {
         ClearDischargeEffects();
-        ChargeBattery();
+        ChargeWeaponBattery();
+        ChargeShieldBattery();
         TryDischargeWeapon();
         UpdateWeaponSlider();
+        UpdateShieldSlider();
     }
+    #endregion
+
+#region All the rest...
+    private void TryDebug()
+    {
+        rechargeWeaponCommand = Input.GetKeyDown(KeyCode.U);
+        rechargeShieldCommand = Input.GetKeyDown(KeyCode.Y);
+
+        if (rechargeWeaponCommand) ChargeWeaponBattery(true);
+        if (rechargeShieldCommand) ChargeShieldBattery(true);
+    }
+
+    private void TryPewPew() { if (audioSource.isPlaying) return; audioSource.Play(); }
 
     private void TryDischargeWeapon()
     {
@@ -214,8 +290,8 @@ public class PlayerController : MonoBehaviour
 
         if (Time.time > coolTime)
         {
-            battery -= useRate;
-            if (battery < 0) return;
+            weaponBattery -= weaponUseRate;
+            if (weaponBattery < 0) return;
 
             coolTime = Time.time + (weaponCooldownTime / 1000f);
             TryPewPew();
@@ -254,4 +330,13 @@ public class PlayerController : MonoBehaviour
         dischargeLight_2.SetActive(false);
         dischargeLight_3.SetActive(false);
     }
+
+    private void PollAxis()
+    {
+        if (!alive) return;
+
+        controlAxis.x = CrossPlatformInputManager.GetAxis("Horizontal");
+        controlAxis.y = CrossPlatformInputManager.GetAxis("Vertical");
+    }
+#endregion
 }

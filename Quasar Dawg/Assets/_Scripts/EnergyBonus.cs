@@ -36,7 +36,7 @@ public class EnergyBonus : MonoBehaviour
 
     private void CollectOrb()
     {
-        playerController.ChargeBattery(.5f);
+        playerController.ChargeWeaponBattery(.5f);
         audioSource.Stop();
         audioSource.PlayOneShot(collectSound);
         mainEffect.SetActive(false);
