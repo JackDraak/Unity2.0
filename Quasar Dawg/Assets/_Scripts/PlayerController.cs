@@ -31,15 +31,16 @@ public class PlayerController : MonoBehaviour
 {
     // DEVNOTE: These debugging commands work in the editor or on "development" builds. 
     // Assign them to keys not in-use [in the Start() method]:
-    private bool rechargeWeaponCommand;
     private bool rechargeShieldCommand;
+    private bool rechargeWeaponCommand;
 
 #region So many things to set in the inspector....
     [Header("Values to tweak Player facing angles:")]
-    [Range(0f, 18f)][Tooltip("factor for lateral rotation skew")]           [SerializeField] float skewVertical = 9f;
     [Range(0f, 18f)][Tooltip("factor for vertical rotation skew")]          [SerializeField] float skewHorizontal = 9f;
     [Range(0f, 90f)][Tooltip("factor for roll skew, in degrees")]           [SerializeField] float skewRoll = 45f;
     [Range(0f, 20f)][Tooltip("factor for throw (axis) skew")]               [SerializeField] float skewThrow = 10f;
+    [Range(0f, 18f)][Tooltip("factor for lateral rotation skew")]           [SerializeField] float skewVertical = 9f;
+    [Space(6)]
     [Range(0f, 30f)][Tooltip("factor for skew Lerping for pitch and yaw")]  [SerializeField] float skewLerp = 15f;
     [Range(0f, 10f)][Tooltip("factor for skew Lerping for roll")]           [SerializeField] float skewRollLerp = 5f;
 
@@ -47,31 +48,32 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 9.6f)]   [Tooltip("Range of drift, in m")]                   [SerializeField] float lateralRange = 4.8f;
     [Range(0f, 5.6f)]   [Tooltip("Range of drift, in m")]                   [SerializeField] float verticalMax = 2.8f;
     [Range(0f, 5.0f)]   [Tooltip("Range of drift, in m")]                   [SerializeField] float verticalMin = 2.5f;
+    [Space(6)]
     [Range(0f, 10.4f)]  [Tooltip("Speed, in ms^-1")]                        [SerializeField] float strafeSpeed = 5.2f;
-    [Range(0f, 500.0f)] [Tooltip("Weapon cooldown time, in ms")]            [SerializeField] float weaponCooldownTime = 75f;
     [Range(1, 12)]      [Tooltip("Weapon volley, in particles/discharge")]  [SerializeField] int volley = 3;
-
-    [Range(1, 40)]      [Tooltip("Shield battery charge-rate, in p/s")]     [SerializeField] int shieldChargeRate = 20;
+    [Range(0f, 500.0f)] [Tooltip("Weapon cooldown time, in ms")]            [SerializeField] float weaponCooldownTime = 75f;
+    [Space(6)]
     [Range(1, 1200)]    [Tooltip("Shield battery capacity")]                [SerializeField] int shieldCapacity = 600;
+    [Range(1, 40)]      [Tooltip("Shield battery charge-rate, in p/s")]     [SerializeField] int shieldChargeRate = 20;
     [Range(0, 16)]      [Tooltip("Shield battery use-rate, in p/volley")]   [SerializeField] int shieldUseRate = 8;
-
-    [Range(1, 40)]      [Tooltip("Weapon battery charge-rate, in p/s")]     [SerializeField] int weaponChargeRate = 20;
+    [Space(6)]
     [Range(1, 1200)]    [Tooltip("Weapon battery capacity")]                [SerializeField] int weaponCapacity = 600;
+    [Range(1, 40)]      [Tooltip("Weapon battery charge-rate, in p/s")]     [SerializeField] int weaponChargeRate = 20;
     [Range(0, 16)]      [Tooltip("Weapon battery use-rate, in p/volley")]   [SerializeField] int weaponUseRate = 8;
 
     [Space(10)][Header("Player components:")]
     [Tooltip("Weapon battery slider")]                                  [SerializeField] Slider weaponSlider;
     [Tooltip("Weapon battery slider colours")]                          [SerializeField] Color weaponCharged, weaponDischarged;
     [Tooltip("Weapon battery slider fill for colour control")]          [SerializeField] Image weaponFill;
-    [Space(5)]
+    [Space(6)]
     [Tooltip("Shield battery slider")]                                  [SerializeField] Slider shieldSlider;
     [Tooltip("Shield battery slider colours")]                          [SerializeField] Color shieldCharged, shieldDischarged;
     [Tooltip("Shield battery slider fill for colour control")]          [SerializeField] Image shieldFill;
-    [Space(5)]
-    [SerializeField] AudioClip hitSound;
-    [SerializeField] AudioClip explodeSound;
+    [Space(6)]
     [SerializeField] AudioClip bonusSound;
     [SerializeField] AudioClip dischargeSound;
+    [SerializeField] AudioClip explodeSound;
+    [SerializeField] AudioClip hitSound;
     [SerializeField] GameObject dischargeLight_0;
     [SerializeField] GameObject dischargeLight_1;
     [SerializeField] GameObject dischargeLight_2;
@@ -83,19 +85,19 @@ public class PlayerController : MonoBehaviour
 #endregion
 
 #region More member variables... but shhh... these ones are pirvate!
-    private bool            debugMode = false;
+    private AudioSource     audioSource;
     private bool            alive = true;
-    private float           delta = 0;
-    private float           weaponBattery = 0;
-    private float           shieldBattery = 0;
+    private bool            debugMode = false;
     private float           coolTime = 0;
+    private float           delta = 0;
+    private float           shieldBattery = 0;
+    private float           weaponBattery = 0;
     private int             lastWeaponFired = 0;
     private Vector2         controlAxis = Vector2.zero;
     private Vector3         priorRotation = Vector3.zero;
     private Vector3         startPos;
-    private Quaternion      startRot;
-    private AudioSource     audioSource;
     private PlayerManager   playerManager;
+    private Quaternion      startRot;
 #endregion
 
     private void Start()
@@ -117,11 +119,11 @@ public class PlayerController : MonoBehaviour
     private void Update()       { UpdatePlayerState(); if (debugMode) TryDebug(); }
 
 #region Battery Maintenance...
-    public void ChargeWeaponBattery(float percentage)
+    public void ChargeShieldBattery()
     {
-        if (weaponBattery < 0) weaponBattery = 0;
-        weaponBattery += (percentage * weaponCapacity);
-        if (weaponBattery > weaponCapacity) weaponBattery = weaponCapacity;
+        if (shieldBattery < 0) shieldBattery = 0;
+        shieldBattery += (shieldChargeRate * Time.deltaTime);
+        if (shieldBattery > shieldCapacity) shieldBattery = shieldCapacity;
     }
 
     public void ChargeWeaponBattery()
@@ -129,6 +131,12 @@ public class PlayerController : MonoBehaviour
         if (weaponBattery < 0) weaponBattery = 0;
         weaponBattery += (weaponChargeRate * Time.deltaTime);
         if (weaponBattery > weaponCapacity) weaponBattery = weaponCapacity;
+    }
+
+    public void ChargeShieldBattery(bool torf)
+    {
+        if (torf) shieldBattery = shieldCapacity;
+        else shieldBattery = 0;
     }
 
     public void ChargeWeaponBattery(bool torf)
@@ -144,17 +152,11 @@ public class PlayerController : MonoBehaviour
         if (shieldBattery > shieldCapacity) shieldBattery = shieldCapacity;
     }
 
-    public void ChargeShieldBattery()
+    public void ChargeWeaponBattery(float percentage)
     {
-        if (shieldBattery < 0) shieldBattery = 0;
-        shieldBattery += (shieldChargeRate * Time.deltaTime);
-        if (shieldBattery > shieldCapacity) shieldBattery = shieldCapacity;
-    }
-
-    public void ChargeShieldBattery(bool torf)
-    {
-        if (torf) shieldBattery = shieldCapacity;
-        else shieldBattery = 0;
+        if (weaponBattery < 0) weaponBattery = 0;
+        weaponBattery += (percentage * weaponCapacity);
+        if (weaponBattery > weaponCapacity) weaponBattery = weaponCapacity;
     }
     #endregion
 
@@ -188,54 +190,6 @@ public class PlayerController : MonoBehaviour
     #endregion
 
 #region Other updates...
-    private void UpdateWeaponSlider()
-    {
-        Color colour = Color.white;
-        weaponSlider.value = weaponBattery / weaponCapacity;
-        colour.r = Mathf.Lerp(weaponCharged.r, weaponDischarged.r, 1 - weaponSlider.value);
-        colour.g = Mathf.Lerp(weaponCharged.g, weaponDischarged.g, 1 - weaponSlider.value);
-        colour.b = Mathf.Lerp(weaponCharged.b, weaponDischarged.b, 1 - weaponSlider.value);
-        colour.a = Mathf.Lerp(weaponCharged.a, weaponDischarged.a, 1 - weaponSlider.value);
-        weaponFill.color = colour;
-    }
-
-    private void UpdateShieldSlider()
-    {
-        Color colour = Color.white;
-        shieldSlider.value = shieldBattery / shieldCapacity;
-        colour.r = Mathf.Lerp(shieldCharged.r, shieldDischarged.r, 1 - shieldSlider.value);
-        colour.g = Mathf.Lerp(shieldCharged.g, shieldDischarged.g, 1 - shieldSlider.value);
-        colour.b = Mathf.Lerp(shieldCharged.b, shieldDischarged.b, 1 - shieldSlider.value);
-        colour.a = Mathf.Lerp(shieldCharged.a, shieldDischarged.a, 1 - shieldSlider.value);
-        shieldFill.color = colour;
-    }
-
-    private void UpdatePlayerPosition()
-    {
-        if (!alive) return;
-
-        PollAxis();
-        delta = Time.deltaTime;
-        SetLocalPosition();
-        SetLocalAngles();
-    }
-
-    private void SetLocalPosition()
-    {
-        if ((float.IsNaN(controlAxis.x) && float.IsNaN(controlAxis.y)) || !alive) return;
-
-        // set a desired position based on controlAxis input:
-        float desiredXpos = transform.localPosition.x + controlAxis.x * strafeSpeed * delta;
-        float desiredYpos = transform.localPosition.y + controlAxis.y * strafeSpeed * delta;
-
-        // use bounds to restrain player to play area:
-        float clampedXPos = Mathf.Clamp(desiredXpos, -lateralRange, lateralRange);
-        float clampedYPos = Mathf.Clamp(desiredYpos, -verticalMin, verticalMax);
-
-        // apply translation:
-        transform.localPosition = new Vector3(clampedXPos, clampedYPos, transform.localPosition.z);
-    }
-
     private void SetLocalAngles()
     {
         if ((float.IsNaN(skewVertical) && float.IsNaN(skewHorizontal)) || !alive) return;
@@ -262,6 +216,54 @@ public class PlayerController : MonoBehaviour
         priorRotation.z = roll;
     }
 
+    private void SetLocalPosition()
+    {
+        if ((float.IsNaN(controlAxis.x) && float.IsNaN(controlAxis.y)) || !alive) return;
+
+        // set a desired position based on controlAxis input:
+        float desiredXpos = transform.localPosition.x + controlAxis.x * strafeSpeed * delta;
+        float desiredYpos = transform.localPosition.y + controlAxis.y * strafeSpeed * delta;
+
+        // use bounds to restrain player to play area:
+        float clampedXPos = Mathf.Clamp(desiredXpos, -lateralRange, lateralRange);
+        float clampedYPos = Mathf.Clamp(desiredYpos, -verticalMin, verticalMax);
+
+        // apply translation:
+        transform.localPosition = new Vector3(clampedXPos, clampedYPos, transform.localPosition.z);
+    }
+
+    private void UpdatePlayerPosition()
+    {
+        if (!alive) return;
+
+        PollAxis();
+        delta = Time.deltaTime;
+        SetLocalPosition();
+        SetLocalAngles();
+    }
+
+    private void UpdateShieldSlider()
+    {
+        Color colour = Color.white;
+        shieldSlider.value = shieldBattery / shieldCapacity;
+        colour.r = Mathf.Lerp(shieldCharged.r, shieldDischarged.r, 1 - shieldSlider.value);
+        colour.g = Mathf.Lerp(shieldCharged.g, shieldDischarged.g, 1 - shieldSlider.value);
+        colour.b = Mathf.Lerp(shieldCharged.b, shieldDischarged.b, 1 - shieldSlider.value);
+        colour.a = Mathf.Lerp(shieldCharged.a, shieldDischarged.a, 1 - shieldSlider.value);
+        shieldFill.color = colour;
+    }
+
+    private void UpdateWeaponSlider()
+    {
+        Color colour = Color.white;
+        weaponSlider.value = weaponBattery / weaponCapacity;
+        colour.r = Mathf.Lerp(weaponCharged.r, weaponDischarged.r, 1 - weaponSlider.value);
+        colour.g = Mathf.Lerp(weaponCharged.g, weaponDischarged.g, 1 - weaponSlider.value);
+        colour.b = Mathf.Lerp(weaponCharged.b, weaponDischarged.b, 1 - weaponSlider.value);
+        colour.a = Mathf.Lerp(weaponCharged.a, weaponDischarged.a, 1 - weaponSlider.value);
+        weaponFill.color = colour;
+    }
+
     private void UpdatePlayerState()
     {
         ClearDischargeEffects();
@@ -274,6 +276,22 @@ public class PlayerController : MonoBehaviour
     #endregion
 
 #region All the rest...
+    private void ClearDischargeEffects()
+    {
+        dischargeLight_0.SetActive(false);
+        dischargeLight_1.SetActive(false);
+        dischargeLight_2.SetActive(false);
+        dischargeLight_3.SetActive(false);
+    }
+
+    private void PollAxis()
+    {
+        if (!alive) return;
+
+        controlAxis.x = CrossPlatformInputManager.GetAxis("Horizontal");
+        controlAxis.y = CrossPlatformInputManager.GetAxis("Vertical");
+    }
+
     private void TryDebug()
     {
         rechargeWeaponCommand = Input.GetKeyDown(KeyCode.U);
@@ -282,8 +300,6 @@ public class PlayerController : MonoBehaviour
         if (rechargeWeaponCommand) ChargeWeaponBattery(true);
         if (rechargeShieldCommand) ChargeShieldBattery(true);
     }
-
-    private void TryPewPew() { if (audioSource.isPlaying) return; audioSource.Play(); }
 
     private void TryDischargeWeapon()
     {
@@ -324,20 +340,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void ClearDischargeEffects()
-    {
-        dischargeLight_0.SetActive(false);
-        dischargeLight_1.SetActive(false);
-        dischargeLight_2.SetActive(false);
-        dischargeLight_3.SetActive(false);
-    }
-
-    private void PollAxis()
-    {
-        if (!alive) return;
-
-        controlAxis.x = CrossPlatformInputManager.GetAxis("Horizontal");
-        controlAxis.y = CrossPlatformInputManager.GetAxis("Vertical");
-    }
+    private void TryPewPew() { if (audioSource.isPlaying) return; audioSource.Play(); }
 #endregion
 }

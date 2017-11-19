@@ -3,8 +3,9 @@
 public class SplashManager : MonoBehaviour
 {
     [SerializeField] GameObject subtitle;
-    [SerializeField] float loadDelay = 3;
     [SerializeField] float blinkSpeed = .333f;
+    [SerializeField] float loadDelay = 3;
+
     private bool aglow = false;
     private float blinkTime = 0;
 

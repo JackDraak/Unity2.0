@@ -20,16 +20,16 @@ public class ObjectSpawner : MonoBehaviour
 
     // DEVNOTE: Not all features are fully implemented, sorry. Feel free to fork and suggest improvements.
     [Tooltip("Drop GameObject prefab-to-be-spawned here:")] [SerializeField] GameObject[] gameObjectsToSpawn;
-    [Tooltip("Delay between spawn, in s")] [SerializeField] float delayBetweenSpawn = 1;
     [Tooltip("Delay between re-spawn, in s")] [SerializeField] float delayBetweenRespawn = 1;
+    [Tooltip("Delay between spawn, in s")] [SerializeField] float delayBetweenSpawn = 1;
     [Tooltip("Delay between waves, in s")] [SerializeField] float delayBetweenWaves = 1;
     [Tooltip("Number of waves, 0 = infinite")] [SerializeField] int numberOfWaves = 0;
 
-    private GameObject[] spawnPoints;
-    private int thisWave = 1;
-    private bool respawn = false;
     private bool debugMode = false;
+    private bool respawn = false;
     private float spawnTime = 0;
+    private int thisWave = 1;
+    private GameObject[] spawnPoints;
 
     private void Start()
     {
@@ -44,6 +44,7 @@ public class ObjectSpawner : MonoBehaviour
         Invoke("SpawnAllSpawnpointsInstantly", 2);
     }
 
+ #region Updates...
     private void Update()
     {
         if (debugMode) TryDebug();
@@ -67,13 +68,29 @@ public class ObjectSpawner : MonoBehaviour
         if (SpawnPointsAreEmpty() && !respawn) TriggerRespawn();
         if (SpawnPointsAreFull()) respawn = false;
     }
+#endregion
 
-    private void TryDebug()
+    public void DespawnAll()
     {
-        PollDebugKeys();
-        if (despawnCommand) DespawnAll();
-        if (spawnRandomCommand) SpawnRandomSpawnpoint();
-        if (spawnAllCommand) SpawnAllSpawnpointsInstantly();
+        foreach (GameObject spawnPoint in spawnPoints)
+        {
+            if (spawnPoint.transform.childCount != 0)
+            {
+                Destroy(spawnPoint.transform.GetChild(0).gameObject);
+            }
+        }
+    }
+
+    private void FillPosition(Transform position)
+    {
+        // Debug.Log(Time.time + " :ObjectSpawner.cs: FillPosition(" + position + ")");
+        var n = gameObjectsToSpawn.Length;
+        var a = gameObjectsToSpawn[Random.Range(0, n)];
+        var b = position.transform.position;
+        var c = Quaternion.identity;
+        GameObject spawnedObject = Instantiate(a, b, c) as GameObject;
+        spawnedObject.transform.parent = position;
+        spawnedObject.SetActive(true);
     }
 
     // DEVNOTE: to enable / disable various debug features, swap the desired lines and keys here:
@@ -90,28 +107,20 @@ public class ObjectSpawner : MonoBehaviour
         // spawnRandomCommand = false;
     }
 
-    public bool SpawnPointsAreEmpty()
+    private GameObject RandomFreePosition()
     {
+        GameObject[] emptySpawnPoints = new GameObject[spawnPoints.Length];
+        int inCount = 0;
         foreach (GameObject spawnPoint in spawnPoints)
         {
-            if (spawnPoint.transform.childCount > 0) return false;
+            if (spawnPoint.transform.childCount == 0)
+            {
+                emptySpawnPoints[inCount] = spawnPoint;
+                inCount++;
+            }
         }
-        return true;
-    }
-
-    public bool SpawnPointsAreFull()
-    {
-        foreach (GameObject spawnPoint in spawnPoints)
-        {
-            if (spawnPoint.transform.childCount == 0) return false;
-        }
-        return true;
-    }
-
-    public void SpawnRandomSpawnpoint()
-    {
-        GameObject freePos = RandomFreePosition();
-        if (freePos) FillPosition(freePos.transform);
+        if (inCount > 0) return emptySpawnPoints[Random.Range(0, inCount)];
+        else return null;
     }
 
     public void SpawnAllSpawnpoints()
@@ -140,15 +149,28 @@ public class ObjectSpawner : MonoBehaviour
         }
     }
 
-    public void DespawnAll()
+    public bool SpawnPointsAreEmpty()
     {
         foreach (GameObject spawnPoint in spawnPoints)
         {
-            if (spawnPoint.transform.childCount != 0)
-            {
-                Destroy(spawnPoint.transform.GetChild(0).gameObject);
-            }
+            if (spawnPoint.transform.childCount > 0) return false;
         }
+        return true;
+    }
+
+    public bool SpawnPointsAreFull()
+    {
+        foreach (GameObject spawnPoint in spawnPoints)
+        {
+            if (spawnPoint.transform.childCount == 0) return false;
+        }
+        return true;
+    }
+
+    public void SpawnRandomSpawnpoint()
+    {
+        GameObject freePos = RandomFreePosition();
+        if (freePos) FillPosition(freePos.transform);
     }
 
     public void TriggerRespawn()
@@ -160,31 +182,11 @@ public class ObjectSpawner : MonoBehaviour
         }
     }
 
-    private GameObject RandomFreePosition()
+    private void TryDebug()
     {
-        GameObject[] emptySpawnPoints = new GameObject[spawnPoints.Length];
-        int inCount = 0;
-        foreach (GameObject spawnPoint in spawnPoints)
-        {
-            if (spawnPoint.transform.childCount == 0)
-            {
-                emptySpawnPoints[inCount] = spawnPoint;
-                inCount++;
-            }
-        }
-        if (inCount > 0) return emptySpawnPoints[Random.Range(0, inCount)];
-        else return null;
-    }
-
-    private void FillPosition(Transform position)
-    {
-        // Debug.Log(Time.time + " :ObjectSpawner.cs: FillPosition(" + position + ")");
-        var n = gameObjectsToSpawn.Length;
-        var a = gameObjectsToSpawn[Random.Range(0, n)];
-        var b = position.transform.position;
-        var c = Quaternion.identity;
-        GameObject spawnedObject = Instantiate(a, b, c) as GameObject;
-        spawnedObject.transform.parent = position;
-        spawnedObject.SetActive(true);
+        PollDebugKeys();
+        if (despawnCommand) DespawnAll();
+        if (spawnRandomCommand) SpawnRandomSpawnpoint();
+        if (spawnAllCommand) SpawnAllSpawnpointsInstantly();
     }
 }

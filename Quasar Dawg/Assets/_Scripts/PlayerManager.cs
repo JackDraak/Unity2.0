@@ -7,8 +7,8 @@ public class PlayerManager : MonoBehaviour
 
     private PlayerController playerController;
 
-    private Vector3 playerStartPosition = Vector3.zero;
     private Quaternion playerStartRotation;
+    private Vector3 playerStartPosition = Vector3.zero;
 
     private void Start()
     {
@@ -20,14 +20,6 @@ public class PlayerManager : MonoBehaviour
     }
 
     public bool IsAlive() { return playerController.enabled; }
-    public void SetPlayerPosition(Vector3 position) { playerStartPosition = position; }
-    public void SetPlayerRotation(Quaternion rotation) { playerStartRotation = rotation; }
-
-    public void ResetPlayer()
-    {
-        playerController.gameObject.SetActive(false);
-        StartCoroutine(LaunchPlayer());
-    }
 
     private IEnumerator LaunchPlayer()
     {
@@ -38,4 +30,13 @@ public class PlayerManager : MonoBehaviour
         playerController.transform.localRotation = playerStartRotation;
         playerController.gameObject.SetActive(true);
     }
+
+    public void ResetPlayer()
+    {
+        playerController.gameObject.SetActive(false);
+        StartCoroutine(LaunchPlayer());
+    }
+
+    public void SetPlayerPosition(Vector3 position) { playerStartPosition = position; }
+    public void SetPlayerRotation(Quaternion rotation) { playerStartRotation = rotation; }
 }

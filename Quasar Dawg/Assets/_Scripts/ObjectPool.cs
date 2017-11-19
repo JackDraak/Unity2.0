@@ -2,20 +2,20 @@
 
 public class ObjectPool : MonoBehaviour
 {
-    [SerializeField] int initialPoolSize = 20;
     [Tooltip("Allow pool to grow as needed (if checked)")][SerializeField] bool dynamicPool = false;
-    [SerializeField][Range(1, 50)] int poolGrowthRate = 5;
-    [SerializeField] GameObject explosion;
+    [SerializeField] int initialPoolSize = 20;
+    [SerializeField][Range(1, 10)] int poolGrowthRate = 5;
     [SerializeField] float effectDuration = 1;
+    [SerializeField] GameObject explosion;
 
-    private int poolPosition;
     private int dynamicPoolSize;
+    private int poolPosition;
 
     struct Effect
     {
-        public GameObject gameObject;
-        public float onTime;
         public bool on;
+        public float onTime;
+        public GameObject gameObject;
     }
 
     Effect[] effects;
@@ -27,14 +27,6 @@ public class ObjectPool : MonoBehaviour
         effects = new Effect[initialPoolSize];
 
         for (int i = 0; i < initialPoolSize; i++) CreateEffect(i);
-    }
-
-    private void CreateEffect(int i)
-    {
-        effects[i].gameObject = Instantiate(explosion, transform.position, Quaternion.identity, transform);
-        effects[i].onTime = 0;
-        effects[i].on = false;
-        effects[i].gameObject.SetActive(false);
     }
 
     private void Update()
@@ -50,6 +42,14 @@ public class ObjectPool : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void CreateEffect(int i)
+    {
+        effects[i].gameObject = Instantiate(explosion, transform.position, Quaternion.identity, transform);
+        effects[i].onTime = 0;
+        effects[i].on = false;
+        effects[i].gameObject.SetActive(false);
     }
 
     private void GrowPool()

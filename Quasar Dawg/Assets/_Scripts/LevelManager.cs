@@ -11,7 +11,7 @@ public class LevelManager : MonoBehaviour
         else { instance = this; GameObject.DontDestroyOnLoad(gameObject); }
     }
 
-    public void LoadSplash()        { SceneManager.LoadScene(0); }
     public void LoadLevelOne()      { SceneManager.LoadScene(1); }
     public void LoadNextLevel()     { SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); }
+    public void LoadSplash()        { SceneManager.LoadScene(0); }
 }

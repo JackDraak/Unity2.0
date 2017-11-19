@@ -2,24 +2,23 @@
 
 public class EnergyBonus : MonoBehaviour
 {
-    [SerializeField] GameObject parentBonusObject;
-    [SerializeField] GameObject orbObject;
-    [SerializeField] GameObject mainEffect;
-    [SerializeField] GameObject collectEffect;
     [SerializeField] AudioClip collectSound;
+    [SerializeField] GameObject collectEffect;
+    [SerializeField] GameObject mainEffect;
+    [SerializeField] GameObject orbObject;
+    [SerializeField] GameObject parentBonusObject;
 
-    PlayerController playerController;
     AudioSource audioSource;
+    PlayerController playerController;
 
     private void Start()
     {
         bool success;
 
-        success = (playerController = GameObject.FindObjectOfType<PlayerController>());
-        if (!success) Debug.Log("EnergyBonus.cs: PlayerController ERROR.");
-
         success = (audioSource = gameObject.GetComponent<AudioSource>());
-        if (!success) Debug.Log("EnergyBonus.cs: AudioSource ERROR.");
+            if (!success) Debug.Log("EnergyBonus.cs: AudioSource ERROR.");
+        success = (playerController = GameObject.FindObjectOfType<PlayerController>());
+            if (!success) Debug.Log("EnergyBonus.cs: PlayerController ERROR.");
     }
 
     private void OnTriggerEnter(Collider other)
