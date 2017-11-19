@@ -32,8 +32,8 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        transform.LookAt(playerController.transform);
-        TryShoot();
+            transform.LookAt(playerController.transform);
+            TryShoot();
     }
 
     private void TryShoot()

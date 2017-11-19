@@ -93,23 +93,21 @@ public class PlayerController : MonoBehaviour
     private Vector3         startPos;
     private Quaternion      startRot;
     private AudioSource     audioSource;
-    private LevelManager    levelManager;
+    private PlayerManager   playerManager;
 #endregion
 
     private void Start()
     {
         audioSource = GameObject.FindGameObjectWithTag("PlayerAudioSource").GetComponent<AudioSource>();
             if (!audioSource) Debug.Log("PlayerController.cs ERROR no audioSource.");
-        levelManager = FindObjectOfType<LevelManager>();
-            if (!levelManager) Debug.Log("PlayerController.cs ERROR no levelManager.");
+        playerManager = FindObjectOfType<PlayerManager>();
+            if (!playerManager) Debug.Log("PlayerController.cs ERROR no playerManager.");
 
         debugMode = Debug.isDebugBuild;
 
-        ChargeWeaponBattery(true);
-        ChargeShieldBattery(true);
-
-        levelManager.SetPlayerPosition(transform.localPosition);
-        levelManager.SetPlayerRotation(transform.localRotation);
+        playerManager.SetPlayerPosition(transform.localPosition);
+        playerManager.SetPlayerRotation(transform.localRotation);
+        playerManager.ResetPlayer();
     }
 
     private void FixedUpdate()  { UpdatePlayerPosition(); }
@@ -177,7 +175,7 @@ public class PlayerController : MonoBehaviour
                 {
                     AudioSource.PlayClipAtPoint(explodeSound, transform.position);
                     // TODO: have a visual effect here too!
-                    levelManager.ResetPlayer();
+                    playerManager.ResetPlayer();
                 }
                 break;
             default:

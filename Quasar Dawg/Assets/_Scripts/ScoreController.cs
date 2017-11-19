@@ -1,7 +1,8 @@
 ﻿using TMPro;
 using UnityEngine;
 
-public class ScoreController : MonoBehaviour {
+public class ScoreController : MonoBehaviour
+{
 
     [SerializeField] TextMeshProUGUI scorebox;
     private int score;
