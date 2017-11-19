@@ -27,6 +27,11 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class PlayerController : MonoBehaviour
 {
+    // DEVNOTE: These debugging commands work in the editor or on "debug" builds. 
+    // Assign them to keys not in-use [in the Start() method]:
+    private bool rechargeCommand;
+
+
     [Header("Values to tweak Player facing angles:")]
     [Range(0f, 18f)][Tooltip("factor for lateral rotation skew")]           [SerializeField] float skewVertical = 9f;
     [Range(0f, 18f)][Tooltip("factor for vertical rotation skew")]          [SerializeField] float skewHorizontal = 9f;
@@ -109,13 +114,19 @@ public class PlayerController : MonoBehaviour
     }
 
     private void FixedUpdate()          { UpdatePlayerPosition(); }
-    private void Update()               { UpdateWeaponState(); }
+    private void Update()               { UpdateWeaponState(); if (debugMode) TryDebug(); }
     private void TryPewPew()            { if (audioSource.isPlaying) return; audioSource.Play(); }
 
     private void OnCollisionEnter(Collision collision)
     {
         // TODO: we're obviously colliding with things... why no log messages?
         Debug.Log("PlayerController.cs COLLISION tag: " + collision.gameObject.tag); 
+    }
+
+    private void TryDebug()
+    {
+        rechargeCommand = Input.GetKeyDown(KeyCode.U);
+        if (rechargeCommand) ChargeBattery(true);
     }
 
     private void UpdateWeaponSlider()

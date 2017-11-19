@@ -41,7 +41,7 @@ public class ObjectSpawner : MonoBehaviour
         var b = tagForSpawnPoints;
         Debug.Log("ObjectSpawner.cs report: " + a + " spawn-points registered with tag '" + b + "'.");
 
-        TriggerRespawn();
+        Invoke("SpawnAllSpawnpointsInstantly", 2);
     }
 
     private void Update()
@@ -73,7 +73,7 @@ public class ObjectSpawner : MonoBehaviour
         PollDebugKeys();
         if (despawnCommand) DespawnAll();
         if (spawnRandomCommand) SpawnRandomSpawnpoint();
-        if (spawnAllCommand) SpawnAllSpawnpoints();
+        if (spawnAllCommand) SpawnAllSpawnpointsInstantly();
     }
 
     // DEVNOTE: to enable / disable various debug features, swap the desired lines and keys here:
@@ -120,6 +120,19 @@ public class ObjectSpawner : MonoBehaviour
         if (freePos) FillPosition(freePos.transform);
 
         if (RandomFreePosition()) Invoke("SpawnAllSpawnpoints", delayBetweenSpawn);
+        else if (SpawnPointsAreFull() && thisWave <= numberOfWaves)
+        {
+            thisWave++;
+            respawn = false;
+        }
+    }
+
+    public void SpawnAllSpawnpointsInstantly()
+    {
+        GameObject freePos = RandomFreePosition();
+        if (freePos) FillPosition(freePos.transform);
+
+        if (RandomFreePosition()) Invoke("SpawnAllSpawnpointsInstantly", 0.01f);
         else if (SpawnPointsAreFull() && thisWave <= numberOfWaves)
         {
             thisWave++;

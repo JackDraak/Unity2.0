@@ -2,13 +2,14 @@
 
 public class ObjectPool : MonoBehaviour
 {
-    // TODO: make a 'public bool dynamic;' where dynamic mode allows the pool to grow as needed.
-
-    public int poolSize = 20;
-    public float effectDuration = 1;
-    public GameObject explosion;
+    [SerializeField] int initialPoolSize = 20;
+    [SerializeField][Tooltip("Allow pool to grow as needed (if checked)")] bool dynamicPool = false;
+    [SerializeField][Range(1, 50)] int poolGrowthRate = 5;
+    [SerializeField] GameObject explosion;
+    [SerializeField] float effectDuration = 1;
 
     private int poolPosition;
+    private int dynamicPoolSize;
 
     struct Effect
     {
@@ -21,21 +22,24 @@ public class ObjectPool : MonoBehaviour
 
     private void Start()
     {
-        poolPosition = poolSize;
-        effects = new Effect[poolSize];
+        poolPosition = initialPoolSize;
+        dynamicPoolSize = initialPoolSize;
+        effects = new Effect[initialPoolSize];
 
-        for (int i = 0; i < poolSize; i++)
-        {
-            effects[i].gameObject = Instantiate(explosion, transform.position, Quaternion.identity, transform);
-            effects[i].onTime = 0;
-            effects[i].on = false;
-            effects[i].gameObject.SetActive(false);
-        }
+        for (int i = 0; i < initialPoolSize; i++) CreateEffect(i);
+    }
+
+    private void CreateEffect(int i)
+    {
+        effects[i].gameObject = Instantiate(explosion, transform.position, Quaternion.identity, transform);
+        effects[i].onTime = 0;
+        effects[i].on = false;
+        effects[i].gameObject.SetActive(false);
     }
 
     private void Update()
     {
-        for (int i = 0; i < poolSize; i++)
+        for (int i = 0; i < dynamicPoolSize; i++)
         {
             if (effects[i].on)
             {
@@ -48,18 +52,44 @@ public class ObjectPool : MonoBehaviour
         }
     }
 
+    private void GrowPool()
+    {
+        Effect[] temp = new Effect[dynamicPoolSize];
+        for (int i = 0; i < dynamicPoolSize; i++)
+        {
+            temp[i] = effects[i];
+        }
+        dynamicPoolSize += poolGrowthRate;
+
+        effects = new Effect[dynamicPoolSize];
+        for (int i = 0; i < dynamicPoolSize - poolGrowthRate; i++)
+        {
+            effects[i] = temp[i];
+        }
+        for (int i = 0; i < poolGrowthRate; i++)
+        {
+            CreateEffect(i + dynamicPoolSize - poolGrowthRate);
+        }
+    }
+
     public void PopEffect(Transform transform)
     {
         poolPosition++;
-        if (poolPosition >= poolSize) poolPosition = 0;
+        if (poolPosition >= dynamicPoolSize) poolPosition = 0;
 
-        if (effects[poolPosition].on) return;
-        else
+        if (effects[poolPosition].on && dynamicPool)
         {
-            effects[poolPosition].on = true;
-            effects[poolPosition].onTime = Time.time;
-            effects[poolPosition].gameObject.transform.position = transform.position;
-            effects[poolPosition].gameObject.SetActive(true);
+            GrowPool();
+            poolPosition++;
         }
+        RecycleEffect(transform, poolPosition);
+    }
+
+    private void RecycleEffect(Transform transform, int position)
+    {
+        effects[position].on = true;
+        effects[position].onTime = Time.time;
+        effects[position].gameObject.transform.position = transform.position;
+        effects[position].gameObject.SetActive(true);
     }
 }
