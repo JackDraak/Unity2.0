@@ -19,7 +19,7 @@ public class PlayerManager : MonoBehaviour
         if (!success) Debug.Log("LevelManager.cs: PlayerController ERROR.");
     }
 
-    public bool IsAlive() { return playerController.enabled; }
+    public bool IsAlive() { return playerController.isActiveAndEnabled; }
 
     private IEnumerator LaunchPlayer()
     {
