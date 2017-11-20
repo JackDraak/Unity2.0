@@ -13,6 +13,9 @@ public class ObjectSpawner : MonoBehaviour
     private bool despawnCommand;
     private bool spawnAllCommand;
     private bool spawnRandomCommand;
+    private KeyCode despawnKey;
+    private KeyCode spawnAllKey;
+    private KeyCode spawnRandomKey;
 
     // DEVNOTE: simplified mode, i.e. fill a random empty spawn-point every N seconds:
     [Tooltip("Fills a random empty spawn-point, every N")] [SerializeField] bool simplified = true;
@@ -30,11 +33,16 @@ public class ObjectSpawner : MonoBehaviour
     private float spawnTime = 0;
     private int thisWave = 1;
     private GameObject[] spawnPoints;
+    private KeyManager keyManager;
 
     private void Start()
     {
         debugMode = Debug.isDebugBuild;
 
+        if (!(keyManager = FindObjectOfType<KeyManager>())) Debug.Log("MusicPlayer.cs keyManager ERROR.");
+        despawnKey = keyManager.GetKey("ObjectSpawner-DespawnCommand");
+        spawnAllKey = keyManager.GetKey("ObjectSpawner-SpawnAllCommand");
+        spawnRandomKey = keyManager.GetKey("ObjectSpawner-SpawnRandomCommand");
         spawnPoints = GameObject.FindGameObjectsWithTag(tagForSpawnPoints);
 
         var a = spawnPoints.Length;
@@ -97,9 +105,9 @@ public class ObjectSpawner : MonoBehaviour
     private void PollDebugKeys()
     {
         // Set keys here for enabled commands, comment-out and replace with '*Command = false' line to disable.
-        despawnCommand = Input.GetKeyDown(KeyCode.P);
-        spawnAllCommand = Input.GetKeyDown(KeyCode.I);
-        spawnRandomCommand = Input.GetKeyDown(KeyCode.O);
+        despawnCommand = Input.GetKeyDown(despawnKey);
+        spawnAllCommand = Input.GetKeyDown(spawnAllKey);
+        spawnRandomCommand = Input.GetKeyDown(spawnRandomKey);
 
         // Set commands to false to fully disable them
         // despawnCommand = false;

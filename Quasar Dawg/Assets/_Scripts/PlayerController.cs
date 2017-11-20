@@ -31,6 +31,8 @@ public class PlayerController : MonoBehaviour
 {
     // DEVNOTE: These debugging commands work in the editor or on "development" builds. 
     // Assign them to keys not in-use [in the Start() method]:
+    private KeyCode shieldKey;
+    private KeyCode weaponKey;
     private bool rechargeShieldCommand;
     private bool rechargeWeaponCommand;
 
@@ -96,6 +98,7 @@ public class PlayerController : MonoBehaviour
     private Vector2         controlAxis = Vector2.zero;
     private Vector3         priorRotation = Vector3.zero;
     private Vector3         startPos;
+    private KeyManager      keyManager;
     private PlayerManager   playerManager;
     private Quaternion      startRot;
 #endregion
@@ -106,6 +109,11 @@ public class PlayerController : MonoBehaviour
             if (!audioSource) Debug.Log("PlayerController.cs ERROR no audioSource.");
         playerManager = FindObjectOfType<PlayerManager>();
             if (!playerManager) Debug.Log("PlayerController.cs ERROR no playerManager.");
+
+        if (!(keyManager = FindObjectOfType<KeyManager>())) Debug.Log("MusicPlayer.cs keyManager ERROR.");
+
+        shieldKey = keyManager.GetKey("PlayerController-ShieldCharge");
+        weaponKey = keyManager.GetKey("PlayerController-WeaponCharge");
 
         debugMode = Debug.isDebugBuild;
 
@@ -294,8 +302,8 @@ public class PlayerController : MonoBehaviour
 
     private void TryDebug()
     {
-        rechargeWeaponCommand = Input.GetKeyDown(KeyCode.U);
-        rechargeShieldCommand = Input.GetKeyDown(KeyCode.Y);
+        rechargeWeaponCommand = Input.GetKeyDown(weaponKey);
+        rechargeShieldCommand = Input.GetKeyDown(shieldKey);
 
         if (rechargeWeaponCommand) ChargeWeaponBattery(true);
         if (rechargeShieldCommand) ChargeShieldBattery(true);

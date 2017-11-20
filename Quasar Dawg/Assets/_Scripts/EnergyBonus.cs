@@ -20,8 +20,8 @@ public class EnergyBonus : MonoBehaviour
             if (!success) Debug.Log("EnergyBonus.cs: audioSource ERROR.");
         success = (playerController = GameObject.FindObjectOfType<PlayerController>());
             if (!success) Debug.Log("EnergyBonus.cs: playerController ERROR.");
-        playerManager = FindObjectOfType<PlayerManager>();
-            if (!playerManager) Debug.Log("EnergyBonus.cs: playerManager ERROR.");
+        success = (playerManager = FindObjectOfType<PlayerManager>());
+            if (!success) Debug.Log("EnergyBonus.cs: playerManager ERROR.");
     }
 
     private void OnTriggerEnter(Collider other)
@@ -40,7 +40,7 @@ public class EnergyBonus : MonoBehaviour
     {
         if (playerController == null)
         {
-            Debug.Log("EB.cs playerController REUP:");
+            // Debug.Log("EB.cs playerController REUP:");
             playerController = GameObject.FindObjectOfType<PlayerController>();
             if (!playerController) Debug.Log("EB.cs playerController REUP-FAIL.");
         }

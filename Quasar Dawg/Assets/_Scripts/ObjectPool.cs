@@ -90,7 +90,7 @@ public class ObjectPool : MonoBehaviour
         effects[position].on = true;
         effects[position].onTime = Time.time;
         effects[position].gameObject.transform.position = transform.position;
-        effects[position].gameObject.SetActive(false); // safetey for when pool isn't dynamic
+        effects[position].gameObject.SetActive(false);
         effects[position].gameObject.SetActive(true);
     }
 }

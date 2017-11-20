@@ -25,11 +25,11 @@ public class EnemyController : MonoBehaviour
             if (!success) Debug.Log("EnemyController.cs: HitPool ERROR.");
         success = (killPool = GameObject.FindGameObjectWithTag("KillPool").GetComponent<ObjectPool>());
             if (!success) Debug.Log("EnemyController.cs: KillPool ERROR.");
-        success = (playerController = GameObject.FindObjectOfType<PlayerController>());
+        success = (playerController = FindObjectOfType<PlayerController>());
             if (!success) Debug.Log("EnemyController.cs: PlayerController ERROR.");
         success = (playerManager = FindObjectOfType<PlayerManager>());
             if (!playerManager) Debug.Log("EnemyController.cs: no playerManager ERROR.");
-        success = (scoreController = GameObject.FindObjectOfType<ScoreController>());
+        success = (scoreController = FindObjectOfType<ScoreController>());
             if (!success) Debug.Log("EnemyController.cs: ScoreController ERROR.");
     }
 
@@ -39,7 +39,7 @@ public class EnemyController : MonoBehaviour
         {
             if (playerController == null) 
             {
-                Debug.Log("EC.cs playerController REUP:");
+                // Debug.Log("EC.cs playerController REUP:");
                 playerController = GameObject.FindObjectOfType<PlayerController>();
                 if (!playerController) Debug.Log("EC.cs playerController REUP-FAIL.");
             }
