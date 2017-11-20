@@ -35,8 +35,14 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        if (playerManager.IsAlive())
+        if (playerManager.PlayerIsAlive())
         {
+            if (playerController == null) 
+            {
+                Debug.Log("EC.cs playerController REUP:");
+                playerController = GameObject.FindObjectOfType<PlayerController>();
+                if (!playerController) Debug.Log("EC.cs playerController REUP-FAIL.");
+            }
             transform.LookAt(playerController.transform);
             TryShoot();
         }

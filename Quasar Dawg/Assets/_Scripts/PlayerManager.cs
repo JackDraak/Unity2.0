@@ -6,7 +6,7 @@ public class PlayerManager : MonoBehaviour
     static PlayerManager instance = null;
 
     private PlayerController playerController;
-
+    private bool alive = true;
     private Quaternion playerStartRotation;
     private Vector3 playerStartPosition = Vector3.zero;
 
@@ -19,7 +19,7 @@ public class PlayerManager : MonoBehaviour
         if (!success) Debug.Log("LevelManager.cs: PlayerController ERROR.");
     }
 
-    public bool IsAlive() { return playerController.isActiveAndEnabled; }
+    public bool PlayerIsAlive() { return alive; }
 
     private IEnumerator LaunchPlayer()
     {
@@ -29,10 +29,12 @@ public class PlayerManager : MonoBehaviour
         playerController.transform.localPosition = playerStartPosition;
         playerController.transform.localRotation = playerStartRotation;
         playerController.gameObject.SetActive(true);
+        alive = true;
     }
 
     public void ResetPlayer()
     {
+        alive = false;
         playerController.gameObject.SetActive(false);
         StartCoroutine(LaunchPlayer());
     }

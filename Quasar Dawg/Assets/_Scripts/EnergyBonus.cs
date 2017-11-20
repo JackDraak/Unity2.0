@@ -8,17 +8,20 @@ public class EnergyBonus : MonoBehaviour
     [SerializeField] GameObject orbObject;
     [SerializeField] GameObject parentBonusObject;
 
-    AudioSource audioSource;
-    PlayerController playerController;
+    private AudioSource audioSource;
+    private PlayerController playerController;
+    private PlayerManager playerManager;
 
-    private void Start()
+        private void Start()
     {
         bool success;
 
         success = (audioSource = gameObject.GetComponent<AudioSource>());
-            if (!success) Debug.Log("EnergyBonus.cs: AudioSource ERROR.");
+            if (!success) Debug.Log("EnergyBonus.cs: audioSource ERROR.");
         success = (playerController = GameObject.FindObjectOfType<PlayerController>());
-            if (!success) Debug.Log("EnergyBonus.cs: PlayerController ERROR.");
+            if (!success) Debug.Log("EnergyBonus.cs: playerController ERROR.");
+        playerManager = FindObjectOfType<PlayerManager>();
+            if (!playerManager) Debug.Log("EnergyBonus.cs: playerManager ERROR.");
     }
 
     private void OnTriggerEnter(Collider other)
@@ -35,6 +38,12 @@ public class EnergyBonus : MonoBehaviour
 
     private void CollectOrb()
     {
+        if (playerController == null)
+        {
+            Debug.Log("EB.cs playerController REUP:");
+            playerController = GameObject.FindObjectOfType<PlayerController>();
+            if (!playerController) Debug.Log("EB.cs playerController REUP-FAIL.");
+        }
         playerController.ChargeWeaponBattery(.5f);
         audioSource.Stop();
         audioSource.PlayOneShot(collectSound);
