@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class SplashManager : MonoBehaviour
+public class SplashController : MonoBehaviour
 {
     [SerializeField] GameObject subtitle;
     [SerializeField] float blinkSpeed = .333f;
@@ -9,12 +9,12 @@ public class SplashManager : MonoBehaviour
     private bool aglow = false;
     private float blinkTime = 0;
 
-    LevelManager levelManager;
+    LevelValet levelValet;
 
-    private void Start()            { levelManager = FindObjectOfType<LevelManager>(); }
+    private void Start()            { levelValet = FindObjectOfType<LevelValet>(); }
     private void OnEnable()         { Invoke("LoadNextLevel", loadDelay); }
     private void Update()           { if (subtitle) Blink(subtitle); }
-    private void LoadNextLevel()    { levelManager.LoadNextLevel(); }
+    private void LoadNextLevel()    { levelValet.LoadNextLevel(); }
 
     private void Blink(GameObject GUItext)
     {

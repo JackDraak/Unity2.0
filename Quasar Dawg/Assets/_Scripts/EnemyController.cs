@@ -14,7 +14,7 @@ public class EnemyController : MonoBehaviour
     private ObjectPool hitPool;
     private ObjectPool killPool;
     private PlayerController playerController;
-    private PlayerManager playerManager;
+    private PlayerHandler playerHandler;
     private ScoreController scoreController;
 
     private void Start()
@@ -27,15 +27,15 @@ public class EnemyController : MonoBehaviour
             if (!success) Debug.Log("EnemyController.cs: KillPool ERROR.");
         success = (playerController = FindObjectOfType<PlayerController>());
             if (!success) Debug.Log("EnemyController.cs: PlayerController ERROR.");
-        success = (playerManager = FindObjectOfType<PlayerManager>());
-            if (!playerManager) Debug.Log("EnemyController.cs: no playerManager ERROR.");
+        success = (playerHandler = FindObjectOfType<PlayerHandler>());
+            if (!playerHandler) Debug.Log("EnemyController.cs: playerHandler ERROR.");
         success = (scoreController = FindObjectOfType<ScoreController>());
             if (!success) Debug.Log("EnemyController.cs: ScoreController ERROR.");
     }
 
     private void Update()
     {
-        if (playerManager.PlayerIsAlive())
+        if (playerHandler.PlayerIsAlive())
         {
             if (playerController == null) 
             {

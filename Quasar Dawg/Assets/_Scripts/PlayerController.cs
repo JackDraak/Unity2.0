@@ -9,8 +9,6 @@ using UnityStandardAssets.CrossPlatformInput;
  * informed before you go rummaging for treasure.) Cheers. -Jack D.
  * 
  * TODO: Prevent spawning while player resetting 
- *      (stopping EnemyController.cs LookAt() while player is not active 
- *      seems to have resolved bad object reference issue)
  *      
  * TODO: Improve ship damage/reset 
  * TODO: Make enemies more interesting / animated
@@ -98,27 +96,27 @@ public class PlayerController : MonoBehaviour
     private Vector2         controlAxis = Vector2.zero;
     private Vector3         priorRotation = Vector3.zero;
     private Vector3         startPos;
-    private KeyManager      keyManager;
-    private PlayerManager   playerManager;
+    private KeyValet        keyValet;
+    private PlayerHandler   playerHandler;
     private Quaternion      startRot;
 #endregion
 
     private void Start()
     {
         if (!(audioSource = GameObject.FindGameObjectWithTag("PlayerAudioSource").GetComponent<AudioSource>()))
-            Debug.Log("PlayerController.cs ERROR no audioSource.");
-        if (!(playerManager = FindObjectOfType<PlayerManager>()))
-            Debug.Log("PlayerController.cs ERROR no playerManager.");
-        if (!(keyManager = FindObjectOfType<KeyManager>()))
-            Debug.Log("MusicPlayer.cs keyManager ERROR.");
+            Debug.Log("PlayerController.cs audioSource ERROR.");
+        if (!(playerHandler = FindObjectOfType<PlayerHandler>()))
+            Debug.Log("PlayerController.cs playerHandler ERROR.");
+        if (!(keyValet = FindObjectOfType<KeyValet>()))
+            Debug.Log("PlayerController.cs keyValet ERROR.");
 
-        shieldKey = keyManager.GetKey("PlayerController-ShieldCharge");
-        weaponKey = keyManager.GetKey("PlayerController-WeaponCharge");
+        shieldKey = keyValet.GetKey("PlayerController-ShieldCharge");
+        weaponKey = keyValet.GetKey("PlayerController-WeaponCharge");
 
         debugMode = Debug.isDebugBuild;
 
-        playerManager.SetPlayerPosition(transform.localPosition);
-        playerManager.SetPlayerRotation(transform.localRotation);
+        playerHandler.SetPlayerPosition(transform.localPosition);
+        playerHandler.SetPlayerRotation(transform.localRotation);
         ChargeShieldBattery(true);
         ChargeWeaponBattery(true);
     }
@@ -188,7 +186,7 @@ public class PlayerController : MonoBehaviour
                 {
                     AudioSource.PlayClipAtPoint(explodeSound, transform.position);
                     // TODO: have a visual effect here too!
-                    playerManager.ResetPlayer();
+                    playerHandler.ResetPlayer();
                 }
                 break;
             default:

@@ -51,8 +51,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 409f3a557e384254c9075f31f00d801c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialPoolSize: 2
   dynamicPool: 1
+  initialPoolSize: 2
   poolGrowthRate: 1
-  explosion: {fileID: 1266557749185880, guid: 585e7c09dd96cd44cabfbfbdf7ac1679, type: 2}
   effectDuration: 3.1
+  explosion: {fileID: 1266557749185880, guid: 585e7c09dd96cd44cabfbfbdf7ac1679, type: 2}

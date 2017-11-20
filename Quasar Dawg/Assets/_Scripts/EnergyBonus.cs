@@ -10,7 +10,7 @@ public class EnergyBonus : MonoBehaviour
 
     private AudioSource audioSource;
     private PlayerController playerController;
-    private PlayerManager playerManager;
+    private PlayerHandler playerManager;
 
         private void Start()
     {
@@ -20,7 +20,7 @@ public class EnergyBonus : MonoBehaviour
             if (!success) Debug.Log("EnergyBonus.cs: audioSource ERROR.");
         success = (playerController = FindObjectOfType<PlayerController>());
             if (!success) Debug.Log("EnergyBonus.cs: playerController ERROR.");
-        success = (playerManager = FindObjectOfType<PlayerManager>());
+        success = (playerManager = FindObjectOfType<PlayerHandler>());
             if (!success) Debug.Log("EnergyBonus.cs: playerManager ERROR.");
     }
 

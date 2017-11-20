@@ -6,7 +6,7 @@ public class MusicPlayer : MonoBehaviour
 
     private bool music = true;
     private AudioSource audioSource;
-    private KeyManager keyManager;
+    private KeyValet keyManager;
     private KeyCode musicKey;
 
     private void OnEnable()
@@ -19,7 +19,7 @@ public class MusicPlayer : MonoBehaviour
     {
         if (!(audioSource = GetComponent<AudioSource>())) Debug.Log("MusicPlayer.cs audioSource ERROR.");
 
-        if (!(keyManager = FindObjectOfType<KeyManager>())) Debug.Log("MusicPlayer.cs keyManager ERROR.");
+        if (!(keyManager = FindObjectOfType<KeyValet>())) Debug.Log("MusicPlayer.cs keyManager ERROR.");
         musicKey = keyManager.GetKey("MusicPlayer-MusicToggle");
     }
 

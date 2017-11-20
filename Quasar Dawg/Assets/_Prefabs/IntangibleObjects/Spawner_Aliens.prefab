@@ -56,7 +56,7 @@ MonoBehaviour:
   simpleDelay: 10
   gameObjectsToSpawn:
   - {fileID: 1196039470210352, guid: 6ec21dcd6058f9f439b82279f8433f85, type: 2}
-  delayBetweenSpawn: 10
   delayBetweenRespawn: 10
+  delayBetweenSpawn: 10
   delayBetweenWaves: 10
   numberOfWaves: 0

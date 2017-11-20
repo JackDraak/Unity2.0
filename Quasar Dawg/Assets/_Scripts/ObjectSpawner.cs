@@ -33,16 +33,16 @@ public class ObjectSpawner : MonoBehaviour
     private float spawnTime = 0;
     private int thisWave = 1;
     private GameObject[] spawnPoints;
-    private KeyManager keyManager;
+    private KeyValet keyValet;
 
     private void Start()
     {
         debugMode = Debug.isDebugBuild;
 
-        if (!(keyManager = FindObjectOfType<KeyManager>())) Debug.Log("MusicPlayer.cs keyManager ERROR.");
-        despawnKey = keyManager.GetKey("ObjectSpawner-DespawnCommand");
-        spawnAllKey = keyManager.GetKey("ObjectSpawner-SpawnAllCommand");
-        spawnRandomKey = keyManager.GetKey("ObjectSpawner-SpawnRandomCommand");
+        if (!(keyValet = FindObjectOfType<KeyValet>())) Debug.Log("ObjectSpawner.cs keyValet ERROR.");
+        despawnKey = keyValet.GetKey("ObjectSpawner-DespawnCommand");
+        spawnAllKey = keyValet.GetKey("ObjectSpawner-SpawnAllCommand");
+        spawnRandomKey = keyValet.GetKey("ObjectSpawner-SpawnRandomCommand");
 
         spawnPoints = GameObject.FindGameObjectsWithTag(tagForSpawnPoints);
         var a = spawnPoints.Length;

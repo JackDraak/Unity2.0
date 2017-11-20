@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class LevelManager : MonoBehaviour
+public class LevelValet : MonoBehaviour
 {
-    static LevelManager instance = null;
+    static LevelValet instance = null;
 
     private void Start()
     {

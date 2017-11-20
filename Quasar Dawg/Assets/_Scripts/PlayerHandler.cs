@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerHandler : MonoBehaviour
 {
-    static PlayerManager instance = null;
+    static PlayerHandler instance = null;
 
     private PlayerController playerController;
     private bool alive = true;
@@ -16,7 +16,7 @@ public class PlayerManager : MonoBehaviour
         else { instance = this; DontDestroyOnLoad(gameObject); }
 
         bool success = (playerController = FindObjectOfType<PlayerController>());
-        if (!success) Debug.Log("LevelManager.cs: PlayerController ERROR.");
+        if (!success) Debug.Log("PlayerHandler.cs: PlayerController ERROR.");
     }
 
     public bool PlayerIsAlive() { return alive; }

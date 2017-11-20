@@ -1,11 +1,22 @@
 ﻿using UnityEngine;
 
-public class KeyManager : MonoBehaviour
+public class KeyValet : MonoBehaviour
 {
     // DEVNOTE: Super-simple key-manager to consolidate key-bindings to once place.
     // TODO: extend functionality to allow for re-asignments or other features.
+    /*  
+     * Use Case:
+     * ---------  
+       KeyValet keyValet;
+       if (!(keyValet = FindObjectOfType<KeyValet>())) Debug.Log("Scriptname.cs keyValet not found - ERROR.");
+        
+       KeyCode commandKey;
+       commandKey = keyValet.GetKey("Scriptname-Command");
+        
+       if (Input.GetKeyDown(commandKey)) IssueCommand();
+     */
 
-    static KeyManager instance = null;
+    static KeyValet instance = null;
 
     private void OnEnable()
     {
