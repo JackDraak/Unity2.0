@@ -90,6 +90,8 @@ public class ObjectPool : MonoBehaviour
         effects[position].on = true;
         effects[position].onTime = Time.time;
         effects[position].gameObject.transform.position = transform.position;
+
+        // doing a pre-emtive toggle-off ensures that even non-dynamic use gives a more dynamic appearance
         effects[position].gameObject.SetActive(false);
         effects[position].gameObject.SetActive(true);
     }

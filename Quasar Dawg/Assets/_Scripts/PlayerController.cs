@@ -105,12 +105,12 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        audioSource = GameObject.FindGameObjectWithTag("PlayerAudioSource").GetComponent<AudioSource>();
-            if (!audioSource) Debug.Log("PlayerController.cs ERROR no audioSource.");
-        playerManager = FindObjectOfType<PlayerManager>();
-            if (!playerManager) Debug.Log("PlayerController.cs ERROR no playerManager.");
-
-        if (!(keyManager = FindObjectOfType<KeyManager>())) Debug.Log("MusicPlayer.cs keyManager ERROR.");
+        if (!(audioSource = GameObject.FindGameObjectWithTag("PlayerAudioSource").GetComponent<AudioSource>()))
+            Debug.Log("PlayerController.cs ERROR no audioSource.");
+        if (!(playerManager = FindObjectOfType<PlayerManager>()))
+            Debug.Log("PlayerController.cs ERROR no playerManager.");
+        if (!(keyManager = FindObjectOfType<KeyManager>()))
+            Debug.Log("MusicPlayer.cs keyManager ERROR.");
 
         shieldKey = keyManager.GetKey("PlayerController-ShieldCharge");
         weaponKey = keyManager.GetKey("PlayerController-WeaponCharge");
@@ -302,11 +302,11 @@ public class PlayerController : MonoBehaviour
 
     private void TryDebug()
     {
-        rechargeWeaponCommand = Input.GetKeyDown(weaponKey);
         rechargeShieldCommand = Input.GetKeyDown(shieldKey);
+        rechargeWeaponCommand = Input.GetKeyDown(weaponKey);
 
-        if (rechargeWeaponCommand) ChargeWeaponBattery(true);
         if (rechargeShieldCommand) ChargeShieldBattery(true);
+        if (rechargeWeaponCommand) ChargeWeaponBattery(true);
     }
 
     private void TryDischargeWeapon()

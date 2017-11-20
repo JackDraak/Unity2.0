@@ -13,9 +13,9 @@ public class PlayerManager : MonoBehaviour
     private void Start()
     {
         if (instance != null && instance != this) { Destroy(gameObject); }
-        else { instance = this; GameObject.DontDestroyOnLoad(gameObject); }
+        else { instance = this; DontDestroyOnLoad(gameObject); }
 
-        bool success = (playerController = GameObject.FindObjectOfType<PlayerController>());
+        bool success = (playerController = FindObjectOfType<PlayerController>());
         if (!success) Debug.Log("LevelManager.cs: PlayerController ERROR.");
     }
 

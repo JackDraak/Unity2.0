@@ -40,7 +40,7 @@ public class EnemyController : MonoBehaviour
             if (playerController == null) 
             {
                 // Debug.Log("EC.cs playerController REUP:");
-                playerController = GameObject.FindObjectOfType<PlayerController>();
+                playerController = FindObjectOfType<PlayerController>();
                 if (!playerController) Debug.Log("EC.cs playerController REUP-FAIL.");
             }
             transform.LookAt(playerController.transform);

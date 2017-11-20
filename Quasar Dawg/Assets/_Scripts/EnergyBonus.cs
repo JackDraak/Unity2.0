@@ -18,7 +18,7 @@ public class EnergyBonus : MonoBehaviour
 
         success = (audioSource = gameObject.GetComponent<AudioSource>());
             if (!success) Debug.Log("EnergyBonus.cs: audioSource ERROR.");
-        success = (playerController = GameObject.FindObjectOfType<PlayerController>());
+        success = (playerController = FindObjectOfType<PlayerController>());
             if (!success) Debug.Log("EnergyBonus.cs: playerController ERROR.");
         success = (playerManager = FindObjectOfType<PlayerManager>());
             if (!success) Debug.Log("EnergyBonus.cs: playerManager ERROR.");
@@ -41,7 +41,7 @@ public class EnergyBonus : MonoBehaviour
         if (playerController == null)
         {
             // Debug.Log("EB.cs playerController REUP:");
-            playerController = GameObject.FindObjectOfType<PlayerController>();
+            playerController = FindObjectOfType<PlayerController>();
             if (!playerController) Debug.Log("EB.cs playerController REUP-FAIL.");
         }
         playerController.ChargeWeaponBattery(.5f);

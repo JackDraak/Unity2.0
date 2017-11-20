@@ -43,8 +43,8 @@ public class ObjectSpawner : MonoBehaviour
         despawnKey = keyManager.GetKey("ObjectSpawner-DespawnCommand");
         spawnAllKey = keyManager.GetKey("ObjectSpawner-SpawnAllCommand");
         spawnRandomKey = keyManager.GetKey("ObjectSpawner-SpawnRandomCommand");
-        spawnPoints = GameObject.FindGameObjectsWithTag(tagForSpawnPoints);
 
+        spawnPoints = GameObject.FindGameObjectsWithTag(tagForSpawnPoints);
         var a = spawnPoints.Length;
         var b = tagForSpawnPoints;
         Debug.Log("ObjectSpawner.cs report: " + a + " spawn-points registered with tag '" + b + "'.");

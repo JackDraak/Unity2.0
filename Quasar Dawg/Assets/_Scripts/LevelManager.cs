@@ -8,7 +8,7 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         if (instance != null && instance != this) { Destroy(gameObject); }
-        else { instance = this; GameObject.DontDestroyOnLoad(gameObject); }
+        else { instance = this; DontDestroyOnLoad(gameObject); }
     }
 
     public void LoadLevelOne()      { SceneManager.LoadScene(1); }
