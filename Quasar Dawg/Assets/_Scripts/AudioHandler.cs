@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MusicPlayer : MonoBehaviour
+public class AudioHandler : MonoBehaviour
 {
     private AudioSource audioSource;
     private bool music = true;
@@ -11,8 +11,8 @@ public class MusicPlayer : MonoBehaviour
     private void OnEnable()
     {
         // Singleton pattern, preferred over making the class static:
-        MusicPlayer[] checker;
-        checker = FindObjectsOfType<MusicPlayer>();
+        AudioHandler[] checker;
+        checker = FindObjectsOfType<AudioHandler>();
         if (checker.Length > 1) Destroy(gameObject);
         else DontDestroyOnLoad(gameObject);
     }
