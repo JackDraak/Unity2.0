@@ -9,30 +9,30 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1862645384884438}
+  m_RootGameObject: {fileID: 1491149193326786}
   m_IsPrefabParent: 1
---- !u!1 &1862645384884438
+--- !u!1 &1491149193326786
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4038823242083374}
-  - component: {fileID: 114385174148741330}
+  - component: {fileID: 4337606989535756}
+  - component: {fileID: 114233377637159600}
   m_Layer: 0
-  m_Name: KillPool
-  m_TagString: KillPool
+  m_Name: Difficulty Regulator
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4038823242083374
+--- !u!4 &4337606989535756
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1862645384884438}
+  m_GameObject: {fileID: 1491149193326786}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -40,19 +40,14 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114385174148741330
+--- !u!114 &114233377637159600
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1862645384884438}
+  m_GameObject: {fileID: 1491149193326786}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e80c6b10985cd724c85c3f37eba5ee4c, type: 3}
+  m_Script: {fileID: 11500000, guid: d5704fc6d4f068c449cf1b92d9e92396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dynamicPool: 1
-  initialPoolSize: 2
-  poolGrowthRate: 1
-  effect: {fileID: 1266557749185880, guid: 585e7c09dd96cd44cabfbfbdf7ac1679, type: 2}
-  effectDuration: 3.1

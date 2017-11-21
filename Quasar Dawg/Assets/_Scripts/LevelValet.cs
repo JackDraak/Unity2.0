@@ -3,12 +3,13 @@ using UnityEngine.SceneManagement;
 
 public class LevelValet : MonoBehaviour
 {
-    static LevelValet instance = null;
-
-    private void Start()
+    private void OnEnable()
     {
-        if (instance != null && instance != this) { Destroy(gameObject); }
-        else { instance = this; DontDestroyOnLoad(gameObject); }
+        // Singleton pattern, preferred over making the class static:
+        LevelValet[] checker;
+        checker = FindObjectsOfType<LevelValet>();
+        if (checker.Length > 1) Destroy(gameObject);
+        else DontDestroyOnLoad(gameObject);
     }
 
     public void LoadLevelOne()      { SceneManager.LoadScene(1); }

@@ -3,23 +3,25 @@ using UnityEngine;
 
 public class PlayerHandler : MonoBehaviour
 {
-    static PlayerHandler instance = null;
-
-    private PlayerController playerController;
     private bool alive = true;
+    private PlayerController playerController;
     private Quaternion playerStartRotation;
     private Vector3 playerStartPosition = Vector3.zero;
 
-    private void Start()
+    private void OnEnable()
     {
-        if (instance != null && instance != this) { Destroy(gameObject); }
-        else { instance = this; DontDestroyOnLoad(gameObject); }
-
-        bool success = (playerController = FindObjectOfType<PlayerController>());
-        if (!success) Debug.Log("PlayerHandler.cs: playerController ERROR.");
+        // Singleton pattern, preferred over making the class static:
+        PlayerHandler[] checker;
+        checker = FindObjectsOfType<PlayerHandler>();
+        if (checker.Length > 1) Destroy(gameObject);
+        else DontDestroyOnLoad(gameObject);
     }
 
-    public bool PlayerIsAlive() { return alive; }
+    private void Start()
+    {
+        bool success = (playerController = FindObjectOfType<PlayerController>());
+        if (!success) Debug.Log("PlayerHandler.cs: playerController INFO, ERROR.");
+    }
 
     private IEnumerator LaunchPlayer()
     {
@@ -39,6 +41,7 @@ public class PlayerHandler : MonoBehaviour
         StartCoroutine(LaunchPlayer());
     }
 
+    public bool PlayerIsAlive() { return alive; }
     public void SetPlayerPosition(Vector3 position) { playerStartPosition = position; }
     public void SetPlayerRotation(Quaternion rotation) { playerStartRotation = rotation; }
 }

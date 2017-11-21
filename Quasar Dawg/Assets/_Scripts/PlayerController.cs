@@ -11,6 +11,7 @@ using UnityStandardAssets.Utility;
  * 
  * TODO: Prevent spawning while player resetting? 
  * 
+ * TODO: enemy weapon that freeezes recharge
  * TODO: have spawn-rate increase over time
  * TODO: have enemy volley increase over time (and range too?)
  * TODO: use camera-speed hooks to have a boss fight?
@@ -112,13 +113,13 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         if (!(audioSource = GetComponent<AudioSource>()))
-            Debug.Log("PlayerController.cs: audioSource ERROR.");
+            Debug.Log("PlayerController.cs: audioSource INFO, ERROR.");
         if (!(keyValet = FindObjectOfType<KeyValet>()))
-            Debug.Log("PlayerController.cs: keyValet ERROR.");
+            Debug.Log("PlayerController.cs: keyValet INFO, ERROR.");
         if (!(playerHandler = FindObjectOfType<PlayerHandler>()))
-            Debug.Log("PlayerController.cs: playerHandler ERROR.");
+            Debug.Log("PlayerController.cs: playerHandler INFO, ERROR.");
         if (!(waypointProgressTracker = FindObjectOfType<WaypointProgressTracker>()))
-            Debug.Log("PlayerController.cs: waypointProgressTracker ERROR");
+            Debug.Log("PlayerController.cs: waypointProgressTracker INFO, ERROR");
 
         debugMode = Debug.isDebugBuild;
 
@@ -132,7 +133,7 @@ public class PlayerController : MonoBehaviour
         ChargeShieldBattery(true);
         ChargeWeaponBattery(true);
 
-        waypointProgressTracker.SetForwardSpeed(.8f);
+        waypointProgressTracker.SetForwardSpeed(.8f); // TODO: do more fun things with forward speed.....
     }
 
     private void FixedUpdate()  { UpdatePlayerPosition(); }

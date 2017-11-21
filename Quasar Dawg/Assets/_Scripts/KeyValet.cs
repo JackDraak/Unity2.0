@@ -15,13 +15,13 @@ public class KeyValet : MonoBehaviour
         
        if (Input.GetKeyDown(commandKey)) IssueCommand();
      */
-
-    static KeyValet instance = null;
-
     private void OnEnable()
     {
-        if (instance != null && instance != this) { Destroy(gameObject); }
-        else { instance = this; DontDestroyOnLoad(gameObject); }
+        // Singleton pattern, preferred over making the class static:
+        KeyValet[] checker;
+        checker = FindObjectsOfType<KeyValet>();
+        if (checker.Length > 1) Destroy(gameObject);
+        else DontDestroyOnLoad(gameObject);
     }
 
     public KeyCode GetKey(string key)

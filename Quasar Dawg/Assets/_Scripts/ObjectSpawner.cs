@@ -36,7 +36,7 @@ public class ObjectSpawner : MonoBehaviour
     {
         debugMode = Debug.isDebugBuild;
 
-        if (!(keyValet = FindObjectOfType<KeyValet>())) Debug.Log("ObjectSpawner.cs keyValet ERROR.");
+        if (!(keyValet = FindObjectOfType<KeyValet>())) Debug.Log("ObjectSpawner.cs: keyValet INFO, ERROR.");
         despawnKey = keyValet.GetKey("ObjectSpawner-DespawnCommand");
         spawnAllKey = keyValet.GetKey("ObjectSpawner-SpawnAllCommand");
         spawnRandomKey = keyValet.GetKey("ObjectSpawner-SpawnRandomCommand");
@@ -98,7 +98,6 @@ public class ObjectSpawner : MonoBehaviour
         spawnedObject.SetActive(true);
     }
 
-    // DEVNOTE: to enable / disable various debug features, swap the desired lines and keys here:
     private void PollDebugKeys()
     {
         // Set keys in KeyValet.cs, comment-out and replace with '*Command = false' line to disable.

@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 
-public class ObjectPool : MonoBehaviour
+public class EffectPool : MonoBehaviour
 {
-    [Tooltip("Allow pool to grow as needed (if checked)")][SerializeField] bool dynamicPool = false;
-    [SerializeField] int initialPoolSize = 20;
-    [SerializeField][Range(1, 10)] int poolGrowthRate = 5;
+    [Tooltip("Allow pool to grow as needed (if checked)")] [SerializeField] bool dynamicPool = false;
+    [SerializeField] int initialPoolSize = 10;
+    [SerializeField] [Range(1, 5)] int poolGrowthRate = 2;
+    [Space(10)]
+    [SerializeField]
+    GameObject effect;
     [SerializeField] float effectDuration = 1;
-    [SerializeField] GameObject explosion;
 
     private int dynamicPoolSize;
     private int poolPosition;
@@ -46,7 +48,7 @@ public class ObjectPool : MonoBehaviour
 
     private void CreateEffect(int i)
     {
-        effects[i].gameObject = Instantiate(explosion, transform.position, Quaternion.identity, transform);
+        effects[i].gameObject = Instantiate(effect, transform.position, Quaternion.identity, transform);
         effects[i].onTime = 0;
         effects[i].on = false;
         effects[i].gameObject.SetActive(false);
@@ -91,7 +93,9 @@ public class ObjectPool : MonoBehaviour
         effects[position].onTime = Time.time;
         effects[position].gameObject.transform.position = transform.position;
 
-        // doing a pre-emtive toggle-off ensures that even non-dynamic use gives a more dynamic appearance
+        // doing a pre-emtive toggle-off ensures that even non-dynamic use gives a
+        // more dynamic appearance, but depending on your application, it might not
+        // be optimal -- it's safe to comment-out the following "false" line.
         effects[position].gameObject.SetActive(false);
         effects[position].gameObject.SetActive(true);
     }

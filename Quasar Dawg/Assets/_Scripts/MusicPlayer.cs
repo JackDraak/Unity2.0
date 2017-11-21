@@ -2,24 +2,24 @@
 
 public class MusicPlayer : MonoBehaviour
 {
-    static MusicPlayer instance = null;
-
-    private bool music = true;
     private AudioSource audioSource;
-    private KeyValet keyManager;
+    private bool music = true;
     private KeyCode musicKey;
+    private KeyValet keyManager;
 
     private void OnEnable()
     {
-        if (instance != null && instance != this) { Destroy(gameObject); }
-        else { instance = this; GameObject.DontDestroyOnLoad(gameObject); }
+        // Singleton pattern, preferred over making the class static:
+        MusicPlayer[] checker;
+        checker = FindObjectsOfType<MusicPlayer>();
+        if (checker.Length > 1) Destroy(gameObject);
+        else DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
-        if (!(audioSource = GetComponent<AudioSource>())) Debug.Log("MusicPlayer.cs audioSource ERROR.");
-
-        if (!(keyManager = FindObjectOfType<KeyValet>())) Debug.Log("MusicPlayer.cs keyManager ERROR.");
+        if (!(audioSource = GetComponent<AudioSource>())) Debug.Log("MusicPlayer.cs: audioSource INFO, FAIL.");
+        if (!(keyManager = FindObjectOfType<KeyValet>())) Debug.Log("MusicPlayer.cs: keyManager INFO, FAIL.");
         musicKey = keyManager.GetKey("MusicPlayer-MusicToggle");
     }
 

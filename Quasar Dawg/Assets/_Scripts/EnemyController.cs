@@ -11,8 +11,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField] ParticleSystem weapon;
 
     private float firetime;
-    private ObjectPool hitPool;
-    private ObjectPool killPool;
+    private EffectPool hitPool;
+    private EffectPool killPool;
     private PlayerController playerController;
     private PlayerHandler playerHandler;
     private ScoreController scoreController;
@@ -21,16 +21,16 @@ public class EnemyController : MonoBehaviour
     {
         bool success;
 
-        success = (hitPool = GameObject.FindGameObjectWithTag("HitPool").GetComponent<ObjectPool>());
-            if (!success) Debug.Log("EnemyController.cs: HitPool ERROR.");
-        success = (killPool = GameObject.FindGameObjectWithTag("KillPool").GetComponent<ObjectPool>());
-            if (!success) Debug.Log("EnemyController.cs: KillPool ERROR.");
+        success = (hitPool = GameObject.FindGameObjectWithTag("HitPool").GetComponent<EffectPool>());
+            if (!success) Debug.Log("EnemyController.cs: hitPool INFO, FAIL.");
+        success = (killPool = GameObject.FindGameObjectWithTag("KillPool").GetComponent<EffectPool>());
+            if (!success) Debug.Log("EnemyController.cs: killPool INFO, FAIL.");
         success = (playerController = FindObjectOfType<PlayerController>());
-            if (!success) Debug.Log("EnemyController.cs: PlayerController ERROR.");
+            if (!success) Debug.Log("EnemyController.cs: playerController INFO, FAIL.");
         success = (playerHandler = FindObjectOfType<PlayerHandler>());
-            if (!playerHandler) Debug.Log("EnemyController.cs: playerHandler ERROR.");
+            if (!playerHandler) Debug.Log("EnemyController.cs: playerHandler INFO, FAIL.");
         success = (scoreController = FindObjectOfType<ScoreController>());
-            if (!success) Debug.Log("EnemyController.cs: ScoreController ERROR.");
+            if (!success) Debug.Log("EnemyController.cs: scoreController INFO, FAIL.");
     }
 
     private void Update()
@@ -41,7 +41,7 @@ public class EnemyController : MonoBehaviour
             {
                 // Debug.Log("EC.cs playerController REUP:");
                 playerController = FindObjectOfType<PlayerController>();
-                if (!playerController) Debug.Log("EC.cs playerController REUP-FAIL.");
+                if (!playerController) Debug.Log("EnemyController.cs: playerController INFO, REUP-FAIL.");
             }
             transform.LookAt(playerController.transform);
             TryShoot();
@@ -53,12 +53,12 @@ public class EnemyController : MonoBehaviour
         if (other.gameObject.tag == "PlayerBeamWeapon")
         {
             hitPoints--;
-            scoreController.Add(3); // TODO: move this value to the inspector?
+            scoreController.Add(3); // TODO: move this value to the inspector? Have it go up over time?
             hitPool.PopEffect(transform);
             AudioSource.PlayClipAtPoint(hit, transform.position);
             if (hitPoints <= 0)
             {
-                scoreController.Add(15); // TODO: move this value to the inspector?
+                scoreController.Add(15); // TODO: move this value to the inspector? Have it go up over time?
                 killPool.PopEffect(transform);
                 AudioSource.PlayClipAtPoint(explode, transform.position);
                 Destroy(this.gameObject);
