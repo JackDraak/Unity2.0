@@ -3,11 +3,23 @@
 public class DifficultyRegulator : MonoBehaviour
 {
     [SerializeField] float enemyVolleyMin = 1;
+    [SerializeField] int enemyVolleyMinClamp = 25;
+
+    [Space(8)]
     [SerializeField] float enemyVolleyMax = 2;
-    [SerializeField] float enemyVolleyGrowthFactor = 0.1f;
-    [SerializeField] float enemyVolleyGrowthFrequency = 20;
-    private int volleyMin;
-    private int volleyMax;
+    [SerializeField] int enemyVolleyMaxClamp = 50;
+
+    private int volleyMax = 0;
+    private int volleyMin = 0;
+    private bool volleyMinClapmed = false;
+    private bool volleyMaxClamped = false;
+
+    [Space(8)]
+    [Tooltip("percent/100, i.e. 1 = 100%")]
+    [SerializeField] float enemyVolleyGrowthFactor = 0.1f; // 10% growth...
+
+    [Tooltip("time taken to grow 1 factor, in seconds")]
+    [SerializeField] float enemyVolleyGrowthFrequency = 15; // ...every 15 seconds.
 
     [Space(8)]
     [SerializeField] float playerForwardSpeed = 0.8f;
@@ -16,7 +28,7 @@ public class DifficultyRegulator : MonoBehaviour
     [SerializeField] float playerWeaponChargeRate = 20;
     [SerializeField] float playerShieldCapacity = 600;
     [SerializeField] float playerWeaponCapacity = 600;
-    [SerializeField] float playerDamage;
+    [SerializeField] float playerDamage = 1;
 
     private void OnEnable()
     {
@@ -35,10 +47,32 @@ public class DifficultyRegulator : MonoBehaviour
 
     private void Update()
     {
-        enemyVolleyMin = enemyVolleyMin += enemyVolleyMin * enemyVolleyGrowthFactor * (Time.deltaTime / enemyVolleyGrowthFrequency);
-        enemyVolleyMax = enemyVolleyMax += enemyVolleyMax * enemyVolleyGrowthFactor * (Time.deltaTime / enemyVolleyGrowthFrequency);
-        volleyMin = (int)Mathf.Abs(enemyVolleyMin);
-        volleyMax = (int)Mathf.Abs(enemyVolleyMax);
+        if (!volleyMinClapmed)
+        {
+            enemyVolleyMin = enemyVolleyMin += enemyVolleyMin * enemyVolleyGrowthFactor * 
+                (Time.deltaTime / enemyVolleyGrowthFrequency);
+            volleyMin = (int)Mathf.Abs(enemyVolleyMin);
+
+        }
+        if (!volleyMaxClamped)
+        {
+            enemyVolleyMax = enemyVolleyMax += enemyVolleyMax * enemyVolleyGrowthFactor * 
+                (Time.deltaTime / enemyVolleyGrowthFrequency);
+            volleyMax = (int)Mathf.Abs(enemyVolleyMax);
+        }
+
+        if (volleyMin > enemyVolleyMinClamp)
+        {
+            volleyMin = enemyVolleyMinClamp;
+            enemyVolleyMin = volleyMin;
+            volleyMinClapmed = true;
+        }
+        if (volleyMax > enemyVolleyMaxClamp)
+        {
+            volleyMax = enemyVolleyMaxClamp;
+            enemyVolleyMax = volleyMax;
+            volleyMaxClamped = true;
+        }
     }
 
     public int EnemyVolleyMin() { return volleyMin; }

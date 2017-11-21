@@ -11,10 +11,10 @@ using UnityStandardAssets.Utility;
  * 
  * TODO: Prevent spawning while player resetting? 
  * 
- * TODO: enemy weapon that freeezes recharge
+ * TODO: enemy weapon that freeezes recharge?
  * TODO: have spawn-rate increase over time
- * TODO: have enemy volley increase over time (and range too?)
- * TODO: use camera-speed hooks to have a boss fight?
+ * DONE: have enemy volley increase over time.
+ * TODO: use camera-speed hooks (DONE) to have a boss fight? (WIP)
  *      
  * TODO: Improve ship damage/reset effects/sounds
  * TODO: Make enemies more interesting / animated
@@ -84,10 +84,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject dischargeLight_1;   [SerializeField] ParticleSystem weapon_1;
     [SerializeField] GameObject dischargeLight_2;   [SerializeField] ParticleSystem weapon_2;
     [SerializeField] GameObject dischargeLight_3;   [SerializeField] ParticleSystem weapon_3;
-
-
-
-
     #endregion
 
     #region More member variables... but shhh... these ones are pirvate!

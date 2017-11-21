@@ -51,3 +51,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5704fc6d4f068c449cf1b92d9e92396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyVolleyMin: 1
+  enemyVolleyMinClamp: 25
+  enemyVolleyMax: 2
+  enemyVolleyMaxClamp: 50
+  enemyVolleyGrowthFactor: 0.1
+  enemyVolleyGrowthFrequency: 20
+  playerForwardSpeed: 0.8
+  playerFireRate: 75
+  playerShieldChargeRate: 20
+  playerWeaponChargeRate: 20
+  playerShieldCapacity: 600
+  playerWeaponCapacity: 600
+  playerDamage: 1
