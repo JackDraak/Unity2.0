@@ -3,19 +3,19 @@
 public class DifficultyRegulator : MonoBehaviour
 {
     [SerializeField] float enemyVolleyMin = 1;
-    [SerializeField] float enemyVolleyMax = 4;
-    [SerializeField] float enemyVolleyGrowthFactor = 0.2f;
-    [SerializeField] float enemyVolleyGrowthFrequency = 60;
+    [SerializeField] float enemyVolleyMax = 2;
+    [SerializeField] float enemyVolleyGrowthFactor = 0.1f;
+    [SerializeField] float enemyVolleyGrowthFrequency = 20;
     private int volleyMin;
     private int volleyMax;
 
     [Space(8)]
     [SerializeField] float playerForwardSpeed = 0.8f;
     [SerializeField] float playerFireRate = 75;
-    [SerializeField] float playerShieldChargeRate;
-    [SerializeField] float playerWeaponChargeRate;
-    [SerializeField] float playerShieldCapacity;
-    [SerializeField] float playerWeaponCapacity;
+    [SerializeField] float playerShieldChargeRate = 20;
+    [SerializeField] float playerWeaponChargeRate = 20;
+    [SerializeField] float playerShieldCapacity = 600;
+    [SerializeField] float playerWeaponCapacity = 600;
     [SerializeField] float playerDamage;
 
     private void OnEnable()
@@ -35,11 +35,12 @@ public class DifficultyRegulator : MonoBehaviour
 
     private void Update()
     {
-        enemyVolleyMin = enemyVolleyMin += enemyVolleyMin * enemyVolleyGrowthFactor * (Time.time / enemyVolleyGrowthFrequency);
-        enemyVolleyMax = enemyVolleyMax += enemyVolleyMax * enemyVolleyGrowthFactor * (Time.time / enemyVolleyGrowthFrequency);
+        enemyVolleyMin = enemyVolleyMin += enemyVolleyMin * enemyVolleyGrowthFactor * (Time.deltaTime / enemyVolleyGrowthFrequency);
+        enemyVolleyMax = enemyVolleyMax += enemyVolleyMax * enemyVolleyGrowthFactor * (Time.deltaTime / enemyVolleyGrowthFrequency);
         volleyMin = (int)Mathf.Abs(enemyVolleyMin);
         volleyMax = (int)Mathf.Abs(enemyVolleyMax);
-
-
     }
+
+    public int EnemyVolleyMin() { return volleyMin; }
+    public int EnemyVolleyMax() { return volleyMax; }
 }

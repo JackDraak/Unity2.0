@@ -7,12 +7,12 @@ public class EnemyController : MonoBehaviour
     [SerializeField] float minFireDelay = 0.8f;
     [SerializeField] float range = 10;
     [SerializeField] int hitPoints = 10;
-    [SerializeField] int volley = 1;
     [SerializeField] ParticleSystem weapon;
 
-    private float firetime;
+    private DifficultyRegulator difficultyRegulator;
     private EffectPool hitPool;
     private EffectPool killPool;
+    private float firetime;
     private PlayerController playerController;
     private PlayerHandler playerHandler;
     private ScoreController scoreController;
@@ -31,6 +31,8 @@ public class EnemyController : MonoBehaviour
             if (!playerHandler) Debug.Log("EnemyController.cs: playerHandler INFO, FAIL.");
         success = (scoreController = FindObjectOfType<ScoreController>());
             if (!success) Debug.Log("EnemyController.cs: scoreController INFO, FAIL.");
+        success = (difficultyRegulator = FindObjectOfType<DifficultyRegulator>());
+            if (!success) Debug.Log("EnemyController.cs: difficultyRegulator INFO, FAIL.");
     }
 
     private void Update()
@@ -72,7 +74,7 @@ public class EnemyController : MonoBehaviour
         if (distance < range && (Time.time > firetime))
         {
             firetime = Time.time + Random.Range(minFireDelay, maxFireDelay);
-            weapon.Emit(volley);
+            weapon.Emit(Random.Range(difficultyRegulator.EnemyVolleyMin(), difficultyRegulator.EnemyVolleyMax()));
         }
     }
 }
