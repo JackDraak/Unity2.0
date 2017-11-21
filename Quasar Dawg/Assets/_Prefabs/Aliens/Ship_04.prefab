@@ -278,14 +278,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e298795dc36634847b48af59aabae3aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitPoints: 8
-  weapon: {fileID: 198048830820544924}
-  volley: 3
-  range: 240
-  minFireDelay: 0.3
-  maxFireDelay: 1
-  hit: {fileID: 8300000, guid: a834f4810db34114d968967dcfbea5c6, type: 3}
   explode: {fileID: 8300000, guid: 52ad6d47cdc9e0b41a55c39dfc235688, type: 3}
+  hit: {fileID: 8300000, guid: a834f4810db34114d968967dcfbea5c6, type: 3}
+  maxFireDelay: 1
+  minFireDelay: 0.3
+  range: 240
+  hitPoints: 8
+  volley: 4
+  weapon: {fileID: 198048830820544924}
 --- !u!198 &198048830820544924
 ParticleSystem:
   m_ObjectHideFlags: 1

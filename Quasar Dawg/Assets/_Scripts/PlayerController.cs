@@ -10,6 +10,10 @@ using UnityStandardAssets.Utility;
  * informed before you go rummaging for treasure.) Cheers. -Jack D.
  * 
  * TODO: Prevent spawning while player resetting? 
+ * 
+ * TODO: have spawn-rate increase over time
+ * TODO: have enemy volley increase over time (and range too?)
+ * TODO: use camera-speed hooks to have a boss fight?
  *      
  * TODO: Improve ship damage/reset effects/sounds
  * TODO: Make enemies more interesting / animated
@@ -32,6 +36,8 @@ public class PlayerController : MonoBehaviour
     // Assign them to keys not in-use [in the KeyValet.cs class]:
     private bool rechargeShieldCommand;     private KeyCode shieldKey;
     private bool rechargeWeaponCommand;     private KeyCode weaponKey;
+    private bool invulnerableCommand;       private KeyCode invulnerableKey;
+    private bool maxEnergyCommand;          private KeyCode maxEnergyKey;
 
     #region So many things to set in the inspector....
     [Header("Values to tweak Player facing angles:")]
@@ -73,20 +79,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip dischargeSound;
     [SerializeField] AudioClip explodeSound;
     [SerializeField] AudioClip hitSound;
-    [SerializeField] GameObject dischargeLight_0;
-    [SerializeField] GameObject dischargeLight_1;
-    [SerializeField] GameObject dischargeLight_2;
-    [SerializeField] GameObject dischargeLight_3;
-    [SerializeField] ParticleSystem weapon_0;
-    [SerializeField] ParticleSystem weapon_1;
-    [SerializeField] ParticleSystem weapon_2;
-    [SerializeField] ParticleSystem weapon_3;
-#endregion
+    [SerializeField] GameObject dischargeLight_0;   [SerializeField] ParticleSystem weapon_0;
+    [SerializeField] GameObject dischargeLight_1;   [SerializeField] ParticleSystem weapon_1;
+    [SerializeField] GameObject dischargeLight_2;   [SerializeField] ParticleSystem weapon_2;
+    [SerializeField] GameObject dischargeLight_3;   [SerializeField] ParticleSystem weapon_3;
 
-#region More member variables... but shhh... these ones are pirvate!
+
+
+
+    #endregion
+
+    #region More member variables... but shhh... these ones are pirvate!
     private AudioSource                 audioSource;
     private bool                        alive = true;
     private bool                        debugMode = false;
+    private bool                        invulnerable = false;
+    private bool                        maxEnergy = false;
     private float                       coolTime = 0;
     private float                       delta = 0;
     private float                       shieldBattery = 0;
@@ -103,7 +111,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        if (!(audioSource = GameObject.FindGameObjectWithTag("PlayerAudioSource").GetComponent<AudioSource>()))
+        if (!(audioSource = GetComponent<AudioSource>()))
             Debug.Log("PlayerController.cs: audioSource ERROR.");
         if (!(keyValet = FindObjectOfType<KeyValet>()))
             Debug.Log("PlayerController.cs: keyValet ERROR.");
@@ -116,13 +124,15 @@ public class PlayerController : MonoBehaviour
 
         shieldKey = keyValet.GetKey("PlayerController-ShieldCharge");
         weaponKey = keyValet.GetKey("PlayerController-WeaponCharge");
+        invulnerableKey = keyValet.GetKey("PlayerController-ToggleInvulnerable");
+        maxEnergyKey = keyValet.GetKey("PlayerController-ToggleEnergyMax");
 
         playerHandler.SetPlayerPosition(transform.localPosition);
         playerHandler.SetPlayerRotation(transform.localRotation);
         ChargeShieldBattery(true);
         ChargeWeaponBattery(true);
 
-        waypointProgressTracker.percentSpeed = 2;
+        waypointProgressTracker.SetForwardSpeed(.8f);
     }
 
     private void FixedUpdate()  { UpdatePlayerPosition(); }
@@ -185,7 +195,8 @@ public class PlayerController : MonoBehaviour
             case "EnemyPinkWeapon":
                 AudioSource.PlayClipAtPoint(hitSound, transform.position);
                 // TODO: have a visual effect here?
-                shieldBattery -= 40; // TODO: make this adjustbale in the inspector?
+                if (!invulnerable) shieldBattery -= 40; // TODO: make this adjustbale in the inspector?
+                else Debug.Log("I N V U L N E R A B L E");
                 if (shieldBattery < 0)
                 {
                     AudioSource.PlayClipAtPoint(explodeSound, transform.position);
@@ -304,9 +315,13 @@ public class PlayerController : MonoBehaviour
 
     private void TryDebug()
     {
+        invulnerableCommand = Input.GetKeyDown(invulnerableKey);
+        maxEnergyCommand = Input.GetKeyDown(maxEnergyKey);
         rechargeShieldCommand = Input.GetKeyDown(shieldKey);
         rechargeWeaponCommand = Input.GetKeyDown(weaponKey);
 
+        if (invulnerableCommand) invulnerable = !invulnerable;
+        if (maxEnergyCommand) maxEnergy = !maxEnergy;
         if (rechargeShieldCommand) ChargeShieldBattery(true);
         if (rechargeWeaponCommand) ChargeWeaponBattery(true);
     }
@@ -317,7 +332,8 @@ public class PlayerController : MonoBehaviour
 
         if (Time.time > coolTime)
         {
-            weaponBattery -= weaponUseRate;
+            if (!maxEnergy) weaponBattery -= weaponUseRate;
+            else Debug.Log("M A X  E N E R G Y");
             if (weaponBattery < 0) return;
 
             coolTime = Time.time + (weaponCooldownTime / 1000f);
