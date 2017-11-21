@@ -10,12 +10,9 @@ public class ObjectSpawner : MonoBehaviour
 
     // DEVNOTE: These debugging commands work in the editor or on "debug" builds. 
     // Assign them to keys not in-use [in the Start() method]:
-    private bool despawnCommand;
-    private bool spawnAllCommand;
-    private bool spawnRandomCommand;
-    private KeyCode despawnKey;
-    private KeyCode spawnAllKey;
-    private KeyCode spawnRandomKey;
+    private bool despawnCommand;        private KeyCode despawnKey;
+    private bool spawnAllCommand;       private KeyCode spawnAllKey;
+    private bool spawnRandomCommand;    private KeyCode spawnRandomKey;
 
     // DEVNOTE: simplified mode, i.e. fill a random empty spawn-point every N seconds:
     [Tooltip("Fills a random empty spawn-point, every N")] [SerializeField] bool simplified = true;
@@ -49,7 +46,7 @@ public class ObjectSpawner : MonoBehaviour
         var b = tagForSpawnPoints;
         Debug.Log("ObjectSpawner.cs report: " + a + " spawn-points registered with tag '" + b + "'.");
 
-        Invoke("SpawnAllSpawnpointsInstantly", 2);
+        Invoke("SpawnAllSpawnpoints", 3);
     }
 
  #region Updates...
@@ -63,11 +60,11 @@ public class ObjectSpawner : MonoBehaviour
 
     private void SimplifiedUpdate()
     {
-        var timeNow = Time.time;
-        if (timeNow > spawnTime + simpleDelay)
+        if (SpawnPointsAreFull()) spawnTime = Time.time;
+        if (Time.time > spawnTime + simpleDelay)
         {
             SpawnRandomSpawnpoint();
-            spawnTime = timeNow;
+            spawnTime = Time.time;
         }
     }
 
@@ -104,12 +101,12 @@ public class ObjectSpawner : MonoBehaviour
     // DEVNOTE: to enable / disable various debug features, swap the desired lines and keys here:
     private void PollDebugKeys()
     {
-        // Set keys here for enabled commands, comment-out and replace with '*Command = false' line to disable.
+        // Set keys in KeyValet.cs, comment-out and replace with '*Command = false' line to disable.
         despawnCommand = Input.GetKeyDown(despawnKey);
         spawnAllCommand = Input.GetKeyDown(spawnAllKey);
         spawnRandomCommand = Input.GetKeyDown(spawnRandomKey);
 
-        // Set commands to false to fully disable them
+        // Set commands to false to fully disable them:
         // despawnCommand = false;
         // spawnAllCommand = false;
         // spawnRandomCommand = false;

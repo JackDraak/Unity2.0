@@ -16,7 +16,7 @@ public class PlayerHandler : MonoBehaviour
         else { instance = this; DontDestroyOnLoad(gameObject); }
 
         bool success = (playerController = FindObjectOfType<PlayerController>());
-        if (!success) Debug.Log("PlayerHandler.cs: PlayerController ERROR.");
+        if (!success) Debug.Log("PlayerHandler.cs: playerController ERROR.");
     }
 
     public bool PlayerIsAlive() { return alive; }

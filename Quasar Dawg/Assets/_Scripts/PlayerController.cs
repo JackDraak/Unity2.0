@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityStandardAssets.CrossPlatformInput;
+using UnityStandardAssets.Utility;
 
 /* Development notes: Lots of place-holder assets, many that I created myself, others from the asset
  * store or elsewhere (i.e. from the Udemy course).  While I publish this source on GitHub and am glad
@@ -8,9 +9,9 @@ using UnityStandardAssets.CrossPlatformInput;
  * be allowed to. (In general, anything here can be used freely for personal use, but again, please be
  * informed before you go rummaging for treasure.) Cheers. -Jack D.
  * 
- * TODO: Prevent spawning while player resetting 
+ * TODO: Prevent spawning while player resetting? 
  *      
- * TODO: Improve ship damage/reset 
+ * TODO: Improve ship damage/reset effects/sounds
  * TODO: Make enemies more interesting / animated
  * TODO: Add pause button
  * 
@@ -28,13 +29,11 @@ using UnityStandardAssets.CrossPlatformInput;
 public class PlayerController : MonoBehaviour
 {
     // DEVNOTE: These debugging commands work in the editor or on "development" builds. 
-    // Assign them to keys not in-use [in the Start() method]:
-    private KeyCode shieldKey;
-    private KeyCode weaponKey;
-    private bool rechargeShieldCommand;
-    private bool rechargeWeaponCommand;
+    // Assign them to keys not in-use [in the KeyValet.cs class]:
+    private bool rechargeShieldCommand;     private KeyCode shieldKey;
+    private bool rechargeWeaponCommand;     private KeyCode weaponKey;
 
-#region So many things to set in the inspector....
+    #region So many things to set in the inspector....
     [Header("Values to tweak Player facing angles:")]
     [Range(0f, 18f)][Tooltip("factor for vertical rotation skew")]          [SerializeField] float skewHorizontal = 9f;
     [Range(0f, 90f)][Tooltip("factor for roll skew, in degrees")]           [SerializeField] float skewRoll = 45f;
@@ -85,40 +84,45 @@ public class PlayerController : MonoBehaviour
 #endregion
 
 #region More member variables... but shhh... these ones are pirvate!
-    private AudioSource     audioSource;
-    private bool            alive = true;
-    private bool            debugMode = false;
-    private float           coolTime = 0;
-    private float           delta = 0;
-    private float           shieldBattery = 0;
-    private float           weaponBattery = 0;
-    private int             lastWeaponFired = 0;
-    private Vector2         controlAxis = Vector2.zero;
-    private Vector3         priorRotation = Vector3.zero;
-    private Vector3         startPos;
-    private KeyValet        keyValet;
-    private PlayerHandler   playerHandler;
-    private Quaternion      startRot;
+    private AudioSource                 audioSource;
+    private bool                        alive = true;
+    private bool                        debugMode = false;
+    private float                       coolTime = 0;
+    private float                       delta = 0;
+    private float                       shieldBattery = 0;
+    private float                       weaponBattery = 0;
+    private int                         lastWeaponFired = 0;
+    private Vector2                     controlAxis = Vector2.zero;
+    private Vector3                     priorRotation = Vector3.zero;
+    private Vector3                     startPos;
+    private KeyValet                    keyValet;
+    private PlayerHandler               playerHandler;
+    private Quaternion                  startRot;
+    private WaypointProgressTracker     waypointProgressTracker;
 #endregion
 
     private void Start()
     {
         if (!(audioSource = GameObject.FindGameObjectWithTag("PlayerAudioSource").GetComponent<AudioSource>()))
-            Debug.Log("PlayerController.cs audioSource ERROR.");
-        if (!(playerHandler = FindObjectOfType<PlayerHandler>()))
-            Debug.Log("PlayerController.cs playerHandler ERROR.");
+            Debug.Log("PlayerController.cs: audioSource ERROR.");
         if (!(keyValet = FindObjectOfType<KeyValet>()))
-            Debug.Log("PlayerController.cs keyValet ERROR.");
+            Debug.Log("PlayerController.cs: keyValet ERROR.");
+        if (!(playerHandler = FindObjectOfType<PlayerHandler>()))
+            Debug.Log("PlayerController.cs: playerHandler ERROR.");
+        if (!(waypointProgressTracker = FindObjectOfType<WaypointProgressTracker>()))
+            Debug.Log("PlayerController.cs: waypointProgressTracker ERROR");
+
+        debugMode = Debug.isDebugBuild;
 
         shieldKey = keyValet.GetKey("PlayerController-ShieldCharge");
         weaponKey = keyValet.GetKey("PlayerController-WeaponCharge");
-
-        debugMode = Debug.isDebugBuild;
 
         playerHandler.SetPlayerPosition(transform.localPosition);
         playerHandler.SetPlayerRotation(transform.localRotation);
         ChargeShieldBattery(true);
         ChargeWeaponBattery(true);
+
+        waypointProgressTracker.percentSpeed = 2;
     }
 
     private void FixedUpdate()  { UpdatePlayerPosition(); }
