@@ -9,7 +9,7 @@ public class SumPause : MonoBehaviour {
     private float lerpTimeScale; // JDraak
     private bool lerping = false;
     float beginLerpTime = 0;
-    float ohToOne = 0;
+    int desiredScale, beginingScale;
 
     // Event managers
     public delegate void PauseAction(bool paused);
@@ -90,54 +90,46 @@ public class SumPause : MonoBehaviour {
             // What to do when paused
             instance.lerping = true;
             instance.beginLerpTime = Time.time;
-            //instance.StartCoroutine(instance.SetTimeScale(0f));
-            //instance.StartCoroutine(instance.SetTime(0));
+            instance.beginingScale = 1;
+            instance.desiredScale = 0;
+
+            //instance.StartCoroutine(instance.SetTimeScale());
+            //instance.Invoke("instance.StopTime", 1.1f);
             Time.timeScale = 0; // Set game speed to 0
         }
         else {
             // What to do when unpaused
             instance.lerping = true;
             instance.beginLerpTime = Time.time;
-            //instance.StartCoroutine(instance.SetTimeScale(1f));
-            //instance.StartCoroutine(instance.SetTime(1));
+            instance.beginingScale = 0;
+            instance.desiredScale = 1;
+
+            //instance.StartCoroutine(instance.SetTimeScale());
+            //instance.Invoke("instance.StartTime", 1.1f);
             Time.timeScale = 1; // Resume normal game speed
         }
     }
 
-    private IEnumerator SetTime(int scale)
+    private IEnumerator SetTimeScale()
     {
         float duration = Time.time - instance.beginLerpTime;
-        if (scale == 0)
+        if (duration <= 1)
         {
-            if (duration <= 1)
-            {
-                Time.timeScale = Mathf.SmoothStep(1, 0, duration);
-                yield return new WaitForSeconds(Time.deltaTime);
-                instance.StartCoroutine(SetTime(scale));
-                yield return 0;
-            }
-            else
-            {
-                Time.timeScale = 0;
-                instance.lerping = false;
-                yield return 0;
-            }
+            Time.timeScale = Mathf.SmoothStep(instance.beginingScale, instance.desiredScale, duration);
+            yield return new WaitForSeconds(Time.deltaTime * 2);
+            instance.StartCoroutine(SetTimeScale());
         }
-        else if (scale == 1)
-        {
-            if (duration <= 1)
-            {
-                Time.timeScale = Mathf.SmoothStep(0, 1, duration);
-                yield return new WaitForSeconds(Time.deltaTime);
-                instance.StartCoroutine(SetTime(scale));
-                yield return 0;
-            }
-            else
-            {
-                Time.timeScale = 1;
-                instance.lerping = false;
-                yield return 0;
-            }
-        }
+        else Time.timeScale = instance.desiredScale;
+        yield return 0;
+    }
+
+    private void StartTime()
+    {
+        Time.timeScale = 1;
+    }
+
+    private void StopTime()
+    {
+        Time.timeScale = 0;
     }
 }
