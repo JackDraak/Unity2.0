@@ -221,9 +221,13 @@ public class PlayerController : MonoBehaviour
         float roll = controlAxis.x * -skewRoll;
 
         // Lerp between prior rotation and desired fixed rotation:
-        pitch = Mathf.Lerp(priorRotation.x, pitch, delta * skewLerp);
-        yaw = Mathf.Lerp(priorRotation.y, yaw, delta * skewLerp);
-        roll = Mathf.Lerp(priorRotation.z, roll, delta * skewRollLerp);
+        //pitch = Mathf.Lerp(priorRotation.x, pitch, delta * skewLerp);
+        //yaw = Mathf.Lerp(priorRotation.y, yaw, delta * skewLerp);
+        //roll = Mathf.Lerp(priorRotation.z, roll, delta * skewRollLerp);
+
+        pitch = Mathf.SmoothStep(priorRotation.x, pitch, delta * skewLerp);
+        yaw = Mathf.SmoothStep(priorRotation.y, yaw, delta * skewLerp);
+        roll = Mathf.SmoothStep(priorRotation.z, roll, delta * skewRollLerp);
 
         // apply rotation for this update:
         transform.localRotation = Quaternion.Euler(pitch, yaw, roll);
@@ -264,10 +268,11 @@ public class PlayerController : MonoBehaviour
     {
         Color colour = Color.white;
         shieldSlider.value = shieldBattery / shieldCapacity;
-        colour.r = Mathf.Lerp(shieldCharged.r, shieldDischarged.r, 1 - shieldSlider.value);
-        colour.g = Mathf.Lerp(shieldCharged.g, shieldDischarged.g, 1 - shieldSlider.value);
-        colour.b = Mathf.Lerp(shieldCharged.b, shieldDischarged.b, 1 - shieldSlider.value);
-        colour.a = Mathf.Lerp(shieldCharged.a, shieldDischarged.a, 1 - shieldSlider.value);
+        colour = Vector4.Lerp(shieldCharged, shieldDischarged, 1 - shieldSlider.value);
+        //   colour.r = Mathf.Lerp(shieldCharged.r, shieldDischarged.r, 1 - shieldSlider.value);
+        //    colour.g = Mathf.Lerp(shieldCharged.g, shieldDischarged.g, 1 - shieldSlider.value);
+        //    colour.b = Mathf.Lerp(shieldCharged.b, shieldDischarged.b, 1 - shieldSlider.value);
+        //    colour.a = Mathf.Lerp(shieldCharged.a, shieldDischarged.a, 1 - shieldSlider.value);
         shieldFill.color = colour;
     }
 
@@ -275,10 +280,11 @@ public class PlayerController : MonoBehaviour
     {
         Color colour = Color.white;
         weaponSlider.value = weaponBattery / weaponCapacity;
-        colour.r = Mathf.Lerp(weaponCharged.r, weaponDischarged.r, 1 - weaponSlider.value);
-        colour.g = Mathf.Lerp(weaponCharged.g, weaponDischarged.g, 1 - weaponSlider.value);
-        colour.b = Mathf.Lerp(weaponCharged.b, weaponDischarged.b, 1 - weaponSlider.value);
-        colour.a = Mathf.Lerp(weaponCharged.a, weaponDischarged.a, 1 - weaponSlider.value);
+        colour = Vector4.Lerp(weaponCharged, weaponDischarged, 1 - weaponSlider.value);
+         //   colour.r = Mathf.Lerp(weaponCharged.r, weaponDischarged.r, 1 - weaponSlider.value);
+         //   colour.g = Mathf.Lerp(weaponCharged.g, weaponDischarged.g, 1 - weaponSlider.value);
+         //   colour.b = Mathf.Lerp(weaponCharged.b, weaponDischarged.b, 1 - weaponSlider.value);
+         //   colour.a = Mathf.Lerp(weaponCharged.a, weaponDischarged.a, 1 - weaponSlider.value);
         weaponFill.color = colour;
     }
 

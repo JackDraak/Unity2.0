@@ -19,8 +19,8 @@ public class AudioHandler : MonoBehaviour
 
     private void Start()
     {
-        if (!(audioSource = GetComponent<AudioSource>())) Debug.Log("MusicPlayer.cs: audioSource INFO, FAIL.");
-        if (!(keyManager = FindObjectOfType<KeyValet>())) Debug.Log("MusicPlayer.cs: keyManager INFO, FAIL.");
+        if (!(audioSource = GetComponent<AudioSource>())) Debug.Log("AudioHandler.cs: audioSource INFO, FAIL.");
+        if (!(keyManager = FindObjectOfType<KeyValet>())) Debug.Log("AudioHandler.cs: keyManager INFO, FAIL.");
         musicKey = keyManager.GetKey("MusicPlayer-MusicToggle");
     }
 
