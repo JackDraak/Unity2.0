@@ -37,18 +37,16 @@ GameObject:
   m_Component:
   - component: {fileID: 4713872358592616}
   - component: {fileID: 114117154191572222}
-  - component: {fileID: 33534922094518690}
-  - component: {fileID: 23128496507539426}
-  - component: {fileID: 65646439429152168}
   - component: {fileID: 199717045071946224}
   - component: {fileID: 198532509535366982}
+  - component: {fileID: 65710118429538698}
   m_Layer: 0
   m_Name: Ship_04
   m_TagString: EnemyCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1357062519368158
 GameObject:
   m_ObjectHideFlags: 0
@@ -137,40 +135,6 @@ Transform:
   m_Father: {fileID: 4713872358592616}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 183.082, y: 0, z: 0}
---- !u!23 &23128496507539426
-MeshRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1196039470210352}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_Materials:
-  - {fileID: 2100000, guid: 76754057fe6d6f64aa00ca4273553e93, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
 --- !u!23 &23642419000049138
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -205,13 +169,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33534922094518690
-MeshFilter:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1196039470210352}
-  m_Mesh: {fileID: 4300004, guid: ec2ed6fafcc53c64ba923b9ef7d5749f, type: 3}
 --- !u!33 &33612205604193672
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -219,7 +176,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1001145465346374}
   m_Mesh: {fileID: 4300004, guid: ec2ed6fafcc53c64ba923b9ef7d5749f, type: 3}
---- !u!65 &65646439429152168
+--- !u!65 &65710118429538698
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -229,7 +186,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.39, y: 0.21, z: 0.51}
+  m_Size: {x: 0.37, y: 0.18, z: 0.51}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!108 &108851211725856348
 Light:
@@ -284,7 +241,6 @@ MonoBehaviour:
   minFireDelay: 0.3
   range: 240
   hitPoints: 8
-  volley: 4
   weapon: {fileID: 198048830820544924}
 --- !u!198 &198048830820544924
 ParticleSystem:
@@ -346,7 +302,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1734191578
+  randomSeed: -233721486
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3663,7 +3619,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1982880314
+  randomSeed: 2001896539
   InitialModule:
     serializedVersion: 3
     enabled: 1
