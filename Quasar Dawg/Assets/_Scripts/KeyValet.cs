@@ -15,6 +15,7 @@ public class KeyValet : MonoBehaviour
         
        if (Input.GetKeyDown(commandKey)) IssueCommand();
      */
+
     private void OnEnable()
     {
         // Singleton pattern, preferred over making the class static:
@@ -31,17 +32,15 @@ public class KeyValet : MonoBehaviour
         {
             // "Standard" keys....
             case "MusicPlayer-MusicToggle":             handback = KeyCode.M; break;
-            case "PlayerController-RollLeft":           handback = KeyCode.Q; break;
-            case "PlayerController-RollRight":          handback = KeyCode.E; break;
 
             // "Debug" keys...
             case "ObjectSpawner-DespawnCommand":        handback = KeyCode.P; break;
             case "ObjectSpawner-SpawnAllCommand":       handback = KeyCode.I; break;
             case "ObjectSpawner-SpawnRandomCommand":    handback = KeyCode.O; break;
             case "PlayerController-ShieldCharge":       handback = KeyCode.Y; break;
-            case "PlayerController-WeaponCharge":       handback = KeyCode.U; break;
-            case "PlayerController-ToggleInvulnerable": handback = KeyCode.L; break;
             case "PlayerController-ToggleEnergyMax":    handback = KeyCode.K; break;
+            case "PlayerController-ToggleInvulnerable": handback = KeyCode.L; break;
+            case "PlayerController-WeaponCharge":       handback = KeyCode.U; break;
             default: break;
         }
         return handback;

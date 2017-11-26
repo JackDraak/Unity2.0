@@ -18,8 +18,6 @@ using UnityStandardAssets.Utility;
  * TODO: Improve ship damage/reset effects/sounds
  * TODO: Make enemies more interesting / animated
  * 
- * TODO: Use Q, E or shoulder buttons for barrell-roll dodge.
- * 
  * TODO: Have player controller take control of camera/waypoint script in order to stop (slow/speed-up?)
  *       waypoint patrol for Boss battles or something?
  *       
@@ -37,10 +35,6 @@ public class PlayerController : MonoBehaviour
     private bool rechargeWeaponCommand;     private KeyCode weaponKey;
     private bool invulnerableCommand;       private KeyCode invulnerableKey;
     private bool maxEnergyCommand;          private KeyCode maxEnergyKey;
-
-    //These are commands not captured by CrossPlatformInput:
-    private bool rollLeftCommand; private KeyCode rollLeftKey;
-    private bool rollRightCommand; private KeyCode rollRightKey;
 
     #region So many things to set in the inspector....
     [Header("Values to tweak Player facing angles:")]
@@ -133,8 +127,6 @@ public class PlayerController : MonoBehaviour
         weaponKey = keyValet.GetKey("PlayerController-WeaponCharge");
         invulnerableKey = keyValet.GetKey("PlayerController-ToggleInvulnerable");
         maxEnergyKey = keyValet.GetKey("PlayerController-ToggleEnergyMax");
-        rollLeftKey = keyValet.GetKey("PlayerController-RollLeft");
-        rollRightKey = keyValet.GetKey("PlayerController-RollRight");
 
         playerHandler.SetPlayerPosition(transform.localPosition);
         playerHandler.SetPlayerRotation(transform.localRotation);
@@ -347,10 +339,8 @@ public class PlayerController : MonoBehaviour
     {
         if (!alive || rollDirection != 0) return;
 
-        rollLeftCommand = Input.GetKeyDown(rollLeftKey);
-        rollRightCommand = Input.GetKeyDown(rollRightKey);
-        if (rollLeftCommand) rollDirection = -1;
-        if (rollRightCommand) rollDirection = 1;
+        if (CrossPlatformInputManager.GetButtonDown("RollLeft")) rollDirection = -1; // button 4, shoulder button
+        if (CrossPlatformInputManager.GetButtonDown("RollRight")) rollDirection = 1; // button 5, shoulder button
     }
 
     private void TryDebug()

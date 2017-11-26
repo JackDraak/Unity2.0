@@ -10,7 +10,7 @@ public class GUITextHandler : MonoBehaviour
 
     private void Start()
     {
-        ReseScoret();
+        ResetScore();
         HideBonusText();
     }
 
@@ -20,7 +20,7 @@ public class GUITextHandler : MonoBehaviour
     }
 
     public void AddToScore(int points)      { score += points; }
-    public void ReseScoret()                { score = 0; }
+    public void ResetScore()                { score = 0; }
 
     public void ShowBonusText(string text)
     {

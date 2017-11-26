@@ -24304,8 +24304,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1398009375}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 523, y: 294, z: 0}
-  m_LocalScale: {x: 0.54479164, y: 0.54479164, z: 0.54479164}
+  m_LocalPosition: {x: 487.5, y: 274, z: 0}
+  m_LocalScale: {x: 0.5078125, y: 0.5078125, z: 0.5078125}
   m_Children:
   - {fileID: 1974563207}
   - {fileID: 1681542225}
@@ -25791,15 +25791,16 @@ MonoBehaviour:
   lateralRange: 4.8
   verticalMax: 2.8
   verticalMin: 2.5
-  strafeSpeed: 5.2
+  defaultForwardSpeed: 0.85
+  strafeSpeed: 3.8
   volley: 1
   weaponCooldownTime: 75
-  shieldCapacity: 600
-  shieldChargeRate: 20
-  shieldUseRate: 8
-  weaponCapacity: 600
-  weaponChargeRate: 20
-  weaponUseRate: 8
+  shieldCapacity: 300
+  shieldChargeRate: 17
+  shieldUseRate: 16
+  weaponCapacity: 900
+  weaponChargeRate: 33
+  weaponUseRate: 7
   weaponSlider: {fileID: 2048804942}
   weaponCharged: {r: 0.25490198, g: 1, b: 0, a: 0.68235296}
   weaponDischarged: {r: 1, g: 0, b: 0, a: 0.68235296}
@@ -28248,7 +28249,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1681542224}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.9000854, y: -503.65588, z: 0}
+  m_LocalPosition: {x: 6.9000244, y: -503.5692, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2048804941}
@@ -34079,7 +34080,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1974563206}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1411, y: -503.65588, z: 0}
+  m_LocalPosition: {x: -1411, y: -503.5692, z: 0}
   m_LocalScale: {x: 0.99998474, y: 0.99998474, z: 0.99998474}
   m_Children:
   - {fileID: 1282553091}
