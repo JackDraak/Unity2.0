@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BonusController : MonoBehaviour
 {
@@ -95,28 +94,6 @@ public class BonusController : MonoBehaviour
         Time.timeScale = 1;
         guiTextHandler.DropText();
     }
-
-  /*  private IEnumerator AdrenalineRush()
-    {
-        var desiredScale = 0.6f;
-        var duration = 5f;
-        float adrenalineTime = Time.time - adrenalineBegin;
-        float timeLeft = Mathf.Round((duration - adrenalineTime) * 10) / 10;
-        if (timeLeft == Mathf.Epsilon)
-        {
-            adrenalineRush = false;
-            guiTextHandler.HideAdrenalineText();
-            yield return 0;
-        }
-        if (adrenalineRush)
-        {
-            guiTextHandler.ShowAdrenalineText("<size=+20>A</size>drenaline <size=+20>B</size>oost!<br><size=+20>" + timeLeft.ToString() + " seconds</size>");
-            Time.timeScale = Mathf.InverseLerp(regularTimeScale, desiredScale, (timeLeft / duration));
-            yield return new WaitForSeconds(0.1f);
-            StartCoroutine(AdrenalineRush());
-        }
-        yield return 0;
-    } */
 
     private void DestroySelf()
     {
