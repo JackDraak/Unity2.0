@@ -16,13 +16,14 @@ public class DifficultyRegulator : MonoBehaviour
 
     [Space(8)]
     [Tooltip("percent/100, i.e. 1 = 100%")]
-    [SerializeField] float enemyVolleyGrowthFactor = 0.1f; // 10% growth...
+    [SerializeField] float enemyVolleyGrowthFactor = 0.08f; // 8% growth...
 
     [Tooltip("time taken to grow 1 factor, in seconds")]
-    [SerializeField] float enemyVolleyGrowthFrequency = 15; // ...every 15 seconds.
+    [SerializeField] float enemyVolleyGrowthFrequency = 25; // ...every 25 seconds.
 
     [Space(8)]
-    [SerializeField] float playerForwardSpeed = 0.8f;
+    // TODO: tie these in for player, currently it's just filler...
+    [SerializeField] float playerForwardSpeed = 0.9f; 
     [SerializeField] float playerFireRate = 75;
     [SerializeField] float playerShieldChargeRate = 20;
     [SerializeField] float playerWeaponChargeRate = 20;

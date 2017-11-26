@@ -13,9 +13,9 @@ public class BonusController : MonoBehaviour
     private bool adrenalineRush = false;
     private float adrenalineBegin = 0;
     private float regularTimeScale = 1;
+    private GUITextHandler guiTextHandler;
     private PlayerController playerController;
     private PlayerHandler playerHandler;
-    private GUITextHandler guiTextHandler;
 
     private void Start()
     {
@@ -23,12 +23,12 @@ public class BonusController : MonoBehaviour
 
         success = (audioSource = gameObject.GetComponent<AudioSource>());
             if (!success) Debug.Log("EnergyBonus.cs: audioSource INFO, FAIL.");
+        success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
+            if (!success) Debug.Log("EnergyBonus.cs: guiTextHandler INFO, FAIL.");
         success = (playerController = FindObjectOfType<PlayerController>());
             if (!success) Debug.Log("EnergyBonus.cs: playerController INFO, FAIL.");
         success = (playerHandler = FindObjectOfType<PlayerHandler>());
             if (!success) Debug.Log("EnergyBonus.cs: playerHandler INFO, FAIL.");
-        success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
-            if (!success) Debug.Log("EnergyBonus.cs: guiTextHandler INFO, FAIL.");
     }
 
     private void OnTriggerEnter(Collider other)
@@ -47,10 +47,10 @@ public class BonusController : MonoBehaviour
     {
         if (playerController == null)
         {
-            // Debug.Log("EB.cs playerController REUP:");
             playerController = FindObjectOfType<PlayerController>();
             if (!playerController) Debug.Log("EnergyBonus.cs: playerController INFO, REUP-FAIL.");
         }
+
         // variety of potential bonus effects, chose one at random:
         int variety = Mathf.FloorToInt(Random.Range(0, 3));
         switch (variety)
@@ -58,33 +58,28 @@ public class BonusController : MonoBehaviour
             case 0:
                 playerController.ChargeWeaponBattery(.5f); // TODO: have unique audio based on bonus? 
                 guiTextHandler.ShowBonusText("<size=+20>B</size>laster <size=+20>C</size>harge-<size=+20>B</size>oost<br><size=+10>+50%</size>");
-                Debug.Log("case 0");
+                Debug.Log("bonus case 0");
                 break;
             case 1:
                 playerController.ChargeShieldBattery(.33f); // TODO: have unique audio based on bonus? 
                 guiTextHandler.ShowBonusText("<size=+20>S</size>hield <size=+20>C</size>harge-<size=+20>B</size>oost<br><size=+10>+33%</size>");
-                Debug.Log("case 1");
+                Debug.Log("bonus case 1");
                 break;
             case 2:
-                adrenalineRush = true;
+                adrenalineRush = true;  // TODO: have unique (additional) audio based on bonus? 
                 adrenalineBegin = Time.time;
                 regularTimeScale = Time.timeScale;
                 guiTextHandler.PopText("<size=+20>A</size>drenaline <size=+20>R</size>ush!");
                 Time.timeScale = 0.5f;
                 Invoke("NormalizeTime", 3);
-           //     StartCoroutine(AdrenalineRush()); // TODO: have unique audio based on bonus? 
-                Debug.Log("case 2");
+                Debug.Log("bonus case 2");
                 break;
-            case 6:
-                adrenalineRush = true;
-                adrenalineBegin = Time.time;
-                regularTimeScale = Time.timeScale;
-            //    StartCoroutine(AdrenalineRush()); // TODO: have unique audio based on bonus? 
-                Debug.Log("case 6");
+            case 3:
+                Debug.Log("bonus case 3");
                 break;
             default:
                 guiTextHandler.ShowBonusText("<size=+20>D</size>efault <size=+20>C</size>ase!");
-                Debug.Log("DEFAULT CASE");
+                Debug.Log("DEFAULT BONUS CASE");
                 break;
         }
         audioSource.Stop();

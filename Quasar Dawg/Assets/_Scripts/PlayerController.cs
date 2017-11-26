@@ -53,15 +53,16 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 5.0f)]   [Tooltip("Range of drift, in m")]                   [SerializeField] float verticalMin = 2.5f;
 
     [Space(6)]
-    [Range(0f, 5f)]     [Tooltip("Forward speed, in ??")]                   [SerializeField]float defaultForwardSpeed = .85f;
-    [Range(0f, 10.4f)]  [Tooltip("Strafe speed, in ms^-1")]                 [SerializeField] float strafeSpeed = 5.2f;
-    [Range(1, 12)]      [Tooltip("Weapon volley, in particles/discharge")]  [SerializeField] int volley = 3;
-    [Range(0f, 500.0f)] [Tooltip("Weapon cooldown time, in ms")]            [SerializeField] float weaponCooldownTime = 75f;
+    [Range(0f, 3f)]     [Tooltip("Forward speed, in ??")]                   [SerializeField]float defaultForwardSpeed = .85f;
+    [Range(0f, 7.6f)]   [Tooltip("Strafe speed, in ms^-1")]                 [SerializeField] float strafeSpeed = 3.8f;
+    [Range(0f, 5f)]     [Tooltip("Forced delay between aileron rolls")]     [SerializeField] float rollDelay = 1f;
+    [Range(1, 6)]       [Tooltip("Weapon volley, in particles/discharge")]  [SerializeField] int volley = 3;
+    [Range(0f, 200f)]   [Tooltip("Weapon cooldown time, in ms")]            [SerializeField] float weaponCooldownTime = 65f;
 
     [Space(6)]
-    [Range(1, 1200)]    [Tooltip("Shield battery capacity")]                [SerializeField] int shieldCapacity = 600;
-    [Range(1, 40)]      [Tooltip("Shield battery charge-rate, in p/s")]     [SerializeField] int shieldChargeRate = 20;
-    [Range(0, 16)]      [Tooltip("Shield battery use-rate, in p/volley")]   [SerializeField] int shieldUseRate = 8;
+    [Range(1, 600)]     [Tooltip("Shield battery capacity")]                [SerializeField] int shieldCapacity = 300;
+    [Range(1, 34)]      [Tooltip("Shield battery charge-rate, in p/s")]     [SerializeField] int shieldChargeRate = 17;
+    [Range(0, 100)]     [Tooltip("Shield battery use-rate, in p/volley")]   [SerializeField] int shieldUseRate = 30;
 
     [Space(6)]
     [Range(1, 1200)]    [Tooltip("Weapon battery capacity")]                [SerializeField] int weaponCapacity = 600;
@@ -97,6 +98,7 @@ public class PlayerController : MonoBehaviour
     private bool                        maxEnergy = false;
     private float                       coolTime = 0;
     private float                       delta = 0;
+    private float                       rollTime = 0; 
     private float                       shieldBattery = 0;
     private float                       weaponBattery = 0;
     private int                         lastWeaponFired = 0;
@@ -221,14 +223,11 @@ public class PlayerController : MonoBehaviour
         float pitch = -pos.y * skewVertical - (controlAxis.y * skewThrow);
         float yaw = pos.x * skewHorizontal + (controlAxis.x * skewThrow);
 
-        // set a desired roll when strafing left or right:
+        // set a desired roll when strafing left or right vs. aileron rolling:
         float roll;
-        if (rollDirection == 0) roll = controlAxis.x * -skewRoll;
-        else roll = rollDirection * -skewRoll * 9;
-
-        //pitch = Mathf.Lerp(priorRotation.x, pitch, delta * skewLerp);
-        //yaw = Mathf.Lerp(priorRotation.y, yaw, delta * skewLerp);
-        //roll = Mathf.Lerp(priorRotation.z, roll, delta * skewRollLerp);
+        if (Time.time > rollTime + rollDelay && rollDirection != 0)
+             roll = rollDirection * 370;
+        else roll = controlAxis.x * -skewRoll;
 
         // Lerp between prior rotation and desired fixed rotation:
         pitch = Mathf.SmoothStep(priorRotation.x, pitch, delta * skewLerp);
@@ -251,11 +250,13 @@ public class PlayerController : MonoBehaviour
         {
             roll += 360;
             rollDirection = 0;
+            rollTime = Time.time;
         }
         if (roll > 350)
         {
             roll -= 360;
             rollDirection = 0;
+            rollTime = Time.time;
         }
         return roll;
     }
@@ -264,14 +265,14 @@ public class PlayerController : MonoBehaviour
     {
         if ((float.IsNaN(controlAxis.x) && float.IsNaN(controlAxis.y)) || !alive) return;
 
-        // while aileron rolling, boost speed
+        // while aileron rolling, boost strafe speed:
         float rollBoost; if (rollDirection != 0) rollBoost = 1.75f; else rollBoost = 1;
 
         // set a desired position based on controlAxis input:
         float desiredXpos = transform.localPosition.x + controlAxis.x * strafeSpeed * rollBoost * delta;
         float desiredYpos = transform.localPosition.y + controlAxis.y * strafeSpeed * rollBoost * delta;
 
-        // use bounds to restrain player to play area:
+        // use bounds to confine player to viewable area:
         float clampedXPos = Mathf.Clamp(desiredXpos, -lateralRange, lateralRange);
         float clampedYPos = Mathf.Clamp(desiredYpos, -verticalMin, verticalMax);
 
@@ -339,8 +340,8 @@ public class PlayerController : MonoBehaviour
     {
         if (!alive || rollDirection != 0) return;
 
-        if (CrossPlatformInputManager.GetButtonDown("RollLeft")) rollDirection = -1; // button 4, shoulder button
-        if (CrossPlatformInputManager.GetButtonDown("RollRight")) rollDirection = 1; // button 5, shoulder button
+        if (CrossPlatformInputManager.GetButton("RollLeft")) rollDirection = 1;
+        if (CrossPlatformInputManager.GetButton("RollRight")) rollDirection = -1;
     }
 
     private void TryDebug()

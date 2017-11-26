@@ -13,14 +13,18 @@ public class EnemyController : MonoBehaviour
     private EffectPool hitPool;
     private EffectPool killPool;
     private float firetime;
+    private GUITextHandler guiTextHandler;
     private PlayerController playerController;
     private PlayerHandler playerHandler;
-    private GUITextHandler guiTextHandler;
 
     private void Start()
     {
         bool success;
 
+        success = (difficultyRegulator = FindObjectOfType<DifficultyRegulator>());
+            if (!success) Debug.Log("EnemyController.cs: difficultyRegulator INFO, FAIL.");
+        success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
+            if (!success) Debug.Log("EnemyController.cs: guiTextHandler INFO, FAIL.");
         success = (hitPool = GameObject.FindGameObjectWithTag("HitPool").GetComponent<EffectPool>());
             if (!success) Debug.Log("EnemyController.cs: hitPool INFO, FAIL.");
         success = (killPool = GameObject.FindGameObjectWithTag("KillPool").GetComponent<EffectPool>());
@@ -29,10 +33,6 @@ public class EnemyController : MonoBehaviour
             if (!success) Debug.Log("EnemyController.cs: playerController INFO, FAIL.");
         success = (playerHandler = FindObjectOfType<PlayerHandler>());
             if (!playerHandler) Debug.Log("EnemyController.cs: playerHandler INFO, FAIL.");
-        success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
-            if (!success) Debug.Log("EnemyController.cs: guiTextHandler INFO, FAIL.");
-        success = (difficultyRegulator = FindObjectOfType<DifficultyRegulator>());
-            if (!success) Debug.Log("EnemyController.cs: difficultyRegulator INFO, FAIL.");
     }
 
     private void Update()
@@ -41,7 +41,6 @@ public class EnemyController : MonoBehaviour
         {
             if (playerController == null) 
             {
-                // Debug.Log("EC.cs playerController REUP:");
                 playerController = FindObjectOfType<PlayerController>();
                 if (!playerController) Debug.Log("EnemyController.cs: playerController INFO, REUP-FAIL.");
             }

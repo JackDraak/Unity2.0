@@ -25793,11 +25793,11 @@ MonoBehaviour:
   verticalMin: 2.5
   defaultForwardSpeed: 0.85
   strafeSpeed: 3.8
-  volley: 1
+  volley: 3
   weaponCooldownTime: 75
   shieldCapacity: 300
-  shieldChargeRate: 17
-  shieldUseRate: 16
+  shieldChargeRate: 20
+  shieldUseRate: 40
   weaponCapacity: 900
   weaponChargeRate: 33
   weaponUseRate: 7

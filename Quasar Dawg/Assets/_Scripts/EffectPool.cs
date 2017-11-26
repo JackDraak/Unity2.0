@@ -2,13 +2,13 @@
 
 public class EffectPool : MonoBehaviour
 {
-    [Tooltip("Allow pool to grow as needed (if checked)")] [SerializeField] bool dynamicPool = false;
-    [SerializeField] int initialPoolSize = 10;
-    [SerializeField] [Range(1, 5)] int poolGrowthRate = 2;
-    [Space(10)]
-    [SerializeField]
-    GameObject effect;
-    [SerializeField] float effectDuration = 1;
+    [Tooltip("Allow pool to grow as needed (if checked)")]
+                    [SerializeField] bool dynamicPool = false;
+                    [SerializeField] int initialPoolSize = 10;
+    [Range(1, 5)]   [SerializeField] int poolGrowthRate = 2;
+
+    [Space(10)]     [SerializeField] GameObject effect;
+                    [SerializeField] float effectDuration = 1;
 
     private int dynamicPoolSize;
     private int poolPosition;

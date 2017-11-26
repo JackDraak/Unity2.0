@@ -15,21 +15,21 @@ public class ObjectSpawner : MonoBehaviour
     private bool spawnRandomCommand;    private KeyCode spawnRandomKey;
 
     // DEVNOTE: simplified mode, i.e. fill a random empty spawn-point every N seconds:
-    [Tooltip("Fills a random empty spawn-point, every N")] [SerializeField] bool simplified = true;
-    [Tooltip("time between simple spawn, in s")] [SerializeField] float simpleDelay = 10;
+    [Tooltip("Fills a random empty spawn-point, every N")]  [SerializeField] bool simplified = true;
+    [Tooltip("time between simple spawn, in s")]            [SerializeField] float simpleDelay = 10;
 
     // DEVNOTE: Not all features are fully implemented, sorry. Feel free to fork and suggest improvements.
     [Tooltip("Drop GameObject prefab-to-be-spawned here:")] [SerializeField] GameObject[] gameObjectsToSpawn;
-    [Tooltip("Delay between re-spawn, in s")] [SerializeField] float delayBetweenRespawn = 1;
-    [Tooltip("Delay between spawn, in s")] [SerializeField] float delayBetweenSpawn = 1;
-    [Tooltip("Delay between waves, in s")] [SerializeField] float delayBetweenWaves = 1;
-    [Tooltip("Number of waves, 0 = infinite")] [SerializeField] int numberOfWaves = 0;
+    [Tooltip("Delay between re-spawn, in s")]               [SerializeField] float delayBetweenRespawn = 1;
+    [Tooltip("Delay between spawn, in s")]                  [SerializeField] float delayBetweenSpawn = 1;
+    [Tooltip("Delay between waves, in s")]                  [SerializeField] float delayBetweenWaves = 1;
+    [Tooltip("Number of waves, 0 = infinite")]              [SerializeField] int numberOfWaves = 0;
 
     private bool debugMode = false;
     private bool respawn = false;
     private float spawnTime = 0;
-    private int thisWave = 1;
     private GameObject[] spawnPoints;
+    private int thisWave = 1;
     private KeyValet keyValet;
 
     private void Start()
@@ -100,7 +100,7 @@ public class ObjectSpawner : MonoBehaviour
 
     private void PollDebugKeys()
     {
-        // Set keys in KeyValet.cs, comment-out and replace with '*Command = false' line to disable.
+        // Set keys in KeyValet.cs, comment-out and replace with '*Command = false' line to safely disable.
         despawnCommand = Input.GetKeyDown(despawnKey);
         spawnAllCommand = Input.GetKeyDown(spawnAllKey);
         spawnRandomCommand = Input.GetKeyDown(spawnRandomKey);
