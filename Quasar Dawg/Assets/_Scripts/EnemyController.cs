@@ -15,7 +15,7 @@ public class EnemyController : MonoBehaviour
     private float firetime;
     private PlayerController playerController;
     private PlayerHandler playerHandler;
-    private ScoreController scoreController;
+    private GUITextHandler guiTextHandler;
 
     private void Start()
     {
@@ -29,8 +29,8 @@ public class EnemyController : MonoBehaviour
             if (!success) Debug.Log("EnemyController.cs: playerController INFO, FAIL.");
         success = (playerHandler = FindObjectOfType<PlayerHandler>());
             if (!playerHandler) Debug.Log("EnemyController.cs: playerHandler INFO, FAIL.");
-        success = (scoreController = FindObjectOfType<ScoreController>());
-            if (!success) Debug.Log("EnemyController.cs: scoreController INFO, FAIL.");
+        success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
+            if (!success) Debug.Log("EnemyController.cs: guiTextHandler INFO, FAIL.");
         success = (difficultyRegulator = FindObjectOfType<DifficultyRegulator>());
             if (!success) Debug.Log("EnemyController.cs: difficultyRegulator INFO, FAIL.");
     }
@@ -55,12 +55,12 @@ public class EnemyController : MonoBehaviour
         if (other.gameObject.tag == "PlayerBeamWeapon")
         {
             hitPoints--;
-            scoreController.Add(3); // TODO: move this value to the inspector? Have it go up over time?
+            guiTextHandler.AddToScore(3); // TODO: move this value to the inspector? Have it go up over time?
             hitPool.PopEffect(transform);
             AudioSource.PlayClipAtPoint(hit, transform.position);
             if (hitPoints <= 0)
             {
-                scoreController.Add(15); // TODO: move this value to the inspector? Have it go up over time?
+                guiTextHandler.AddToScore(15); // TODO: move this value to the inspector? Have it go up over time?
                 killPool.PopEffect(transform);
                 AudioSource.PlayClipAtPoint(explode, transform.position);
                 Destroy(this.gameObject);

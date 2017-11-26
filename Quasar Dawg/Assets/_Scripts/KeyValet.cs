@@ -31,6 +31,8 @@ public class KeyValet : MonoBehaviour
         {
             // "Standard" keys....
             case "MusicPlayer-MusicToggle":             handback = KeyCode.M; break;
+            case "PlayerController-RollLeft":           handback = KeyCode.Q; break;
+            case "PlayerController-RollRight":          handback = KeyCode.E; break;
 
             // "Debug" keys...
             case "ObjectSpawner-DespawnCommand":        handback = KeyCode.P; break;

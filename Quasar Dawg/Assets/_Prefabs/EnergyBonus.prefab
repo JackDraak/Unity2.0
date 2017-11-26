@@ -95,7 +95,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4076288757774418
 Transform:
   m_ObjectHideFlags: 1
@@ -333,11 +333,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc956fae132f132408dc47ea554b09a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentBonusObject: {fileID: 1716543149235696}
-  orbObject: {fileID: 1262498593539366}
-  mainEffect: {fileID: 1338615078944772}
-  collectEffect: {fileID: 1255217108407082}
   collectSound: {fileID: 8300000, guid: 083e163f1e0a38c428c309158691c53b, type: 3}
+  collectEffect: {fileID: 1255217108407082}
+  mainEffect: {fileID: 1338615078944772}
+  orbObject: {fileID: 1262498593539366}
+  parentBonusObject: {fileID: 1716543149235696}
+  bonusText: {fileID: 0}
 --- !u!135 &135093555522976024
 SphereCollider:
   m_ObjectHideFlags: 1
