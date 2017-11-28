@@ -17,8 +17,13 @@ public class EnemyController : MonoBehaviour
     private PlayerController playerController;
     private PlayerHandler playerHandler;
 
+    private static int seed = 0;
+
     private void Start()
     {
+        if (seed == 0) seed = Mathf.FloorToInt(Time.deltaTime * 10000000);
+        Random.InitState(seed);
+
         bool success;
 
         success = (difficultyRegulator = FindObjectOfType<DifficultyRegulator>());

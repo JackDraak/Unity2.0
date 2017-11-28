@@ -8,6 +8,9 @@ public class BonusController : MonoBehaviour
     [SerializeField] GameObject orbObject;
     [SerializeField] GameObject parentBonusObject;
 
+
+    private static int seed = 0;
+
     private AudioSource audioSource;
     private bool adrenalineRush = false;
     private float adrenalineBegin = 0;
@@ -18,6 +21,9 @@ public class BonusController : MonoBehaviour
 
     private void Start()
     {
+        if (seed == 0) seed = Mathf.FloorToInt(Time.deltaTime * 10000000);
+        Random.InitState(seed);
+
         bool success;
 
         success = (audioSource = gameObject.GetComponent<AudioSource>());
