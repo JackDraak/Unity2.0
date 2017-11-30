@@ -7,7 +7,9 @@ public class EnemyController : MonoBehaviour
     [SerializeField] float minFireDelay = 0.8f;
     [SerializeField] float range = 10;
     [SerializeField] int hitPoints = 10;
-    [SerializeField] ParticleSystem weapon;
+    [SerializeField] int hitScore = 3;
+    [SerializeField] int killScore = 15;
+    [SerializeField] ParticleSystem weaponParticleSystem;
 
     private DifficultyRegulator difficultyRegulator;
     private EffectPool hitPool;
@@ -51,12 +53,12 @@ public class EnemyController : MonoBehaviour
         if (other.gameObject.tag == "PlayerBeamWeapon")
         {
             hitPoints--;
-            guiTextHandler.AddToScore(3); // TODO: move this value to the inspector? Have it go up over time?
+            guiTextHandler.AddToScore(hitScore);
             hitPool.PopEffect(transform);
             AudioSource.PlayClipAtPoint(hit, transform.position);
             if (hitPoints <= 0)
             {
-                guiTextHandler.AddToScore(15); // TODO: move this value to the inspector? Have it go up over time?
+                guiTextHandler.AddToScore(killScore);
                 killPool.PopEffect(transform);
                 AudioSource.PlayClipAtPoint(explode, transform.position);
                 Destroy(this.gameObject);
@@ -70,7 +72,7 @@ public class EnemyController : MonoBehaviour
         if (distance < range && (Time.time > firetime))
         {
             firetime = Time.time + Random.Range(minFireDelay, maxFireDelay);
-            weapon.Emit(Random.Range(difficultyRegulator.EnemyVolleyMin(), difficultyRegulator.EnemyVolleyMax()));
+            weaponParticleSystem.Emit(Random.Range(difficultyRegulator.EnemyVolleyMin(), difficultyRegulator.EnemyVolleyMax()));
         }
     }
 }

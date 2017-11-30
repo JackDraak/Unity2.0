@@ -64,11 +64,12 @@ public class BonusController : MonoBehaviour
                 difficultyRegulator.AdrenalineRush();
                 Debug.Log("bonus case 2 - Adrenaline boost");
                 break;
-            case 3: // TODO: have unique audio based on bonus? 
+                // TODO: make anti-bonuses properties of various enemy weapons, instead
+            case 3: 
                 difficultyRegulator.BlasterDampen();
                 Debug.Log("bonus(anti) case 3 - Dampen Blasters");
                 break;
-            case 4: // TODO: have unique audio based on bonus? 
+            case 4: 
                 difficultyRegulator.StrafeDampen();
                 Debug.Log("bonus(anti) case 4 - Dampen Strafe");
                 break;
