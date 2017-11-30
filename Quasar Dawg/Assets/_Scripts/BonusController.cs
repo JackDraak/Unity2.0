@@ -9,9 +9,7 @@ public class BonusController : MonoBehaviour
     [SerializeField] GameObject parentBonusObject;
 
     private AudioSource audioSource;
-    private bool adrenalineRush = false;
-    private float adrenalineBegin = 0;
-    private float regularTimeScale = 1;
+    private DifficultyRegulator difficultyRegulator;
     private GUITextHandler guiTextHandler;
     private PlayerController playerController;
     private PlayerHandler playerHandler;
@@ -27,6 +25,8 @@ public class BonusController : MonoBehaviour
 
         success = (audioSource = gameObject.GetComponent<AudioSource>());
             if (!success) Debug.Log("EnergyBonus.cs: audioSource INFO, FAIL.");
+        success = (difficultyRegulator = FindObjectOfType<DifficultyRegulator>());
+            if (!success) Debug.Log("EnergyBonus.cs: difficultyRegulator INFO, FAIL.");
         success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
             if (!success) Debug.Log("EnergyBonus.cs: guiTextHandler INFO, FAIL.");
         success = (playerController = FindObjectOfType<PlayerController>());
@@ -62,24 +62,23 @@ public class BonusController : MonoBehaviour
             case 0:
                 playerController.ChargeWeaponBattery(.5f); // TODO: have unique audio based on bonus? 
                 guiTextHandler.ShowBonusText("<size=+20>B</size>laster <size=+20>C</size>harge-<size=+20>B</size>oost<br><size=+10>+50%</size>");
-                Debug.Log("bonus case 0");
+                Debug.Log("bonus case 0 - Weapon power boost");
                 break;
             case 1:
                 playerController.ChargeShieldBattery(.33f); // TODO: have unique audio based on bonus? 
                 guiTextHandler.ShowBonusText("<size=+20>S</size>hield <size=+20>C</size>harge-<size=+20>B</size>oost<br><size=+10>+33%</size>");
-                Debug.Log("bonus case 1");
+                Debug.Log("bonus case 1 - Shield power boost");
                 break;
             case 2:
-                adrenalineRush = true;  // TODO: have unique (additional) audio based on bonus? 
-                adrenalineBegin = Time.time;
-                regularTimeScale = Time.timeScale;
-                guiTextHandler.PopText("<size=+20>A</size>drenaline <size=+20>R</size>ush!");
-                Time.timeScale = 0.5f;
-                Invoke("NormalizeTime", 3);
-                Debug.Log("bonus case 2");
+                // bool success = true;
+                // if (difficultyRegulator == null) success = (difficultyRegulator = FindObjectOfType<DifficultyRegulator>());
+                // if (!success) Debug.Log("EnergyBonus.cs: difficultyRegulator INFO, RE-UP FAIL.");
+                difficultyRegulator.AdrenalineRush();
+                // TODO: have unique (additional) audio based on bonus? 
+                Debug.Log("bonus case 2 - Adrenaline boost");
                 break;
             case 3:
-                Debug.Log("bonus case 3");
+                Debug.Log("bonus case 3 - boost TBA");
                 break;
             default:
                 guiTextHandler.ShowBonusText("<size=+20>D</size>efault <size=+20>C</size>ase!");
@@ -92,12 +91,6 @@ public class BonusController : MonoBehaviour
         collectEffect.SetActive(true);
         orbObject.SetActive(false);
         Invoke("DestroySelf", 3f);
-    }
-
-    private void NormalizeTime()
-    {
-        Time.timeScale = 1;
-        guiTextHandler.DropText();
     }
 
     private void DestroySelf()

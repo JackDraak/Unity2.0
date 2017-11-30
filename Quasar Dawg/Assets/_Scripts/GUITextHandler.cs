@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class GUITextHandler : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI scoreText;
     [SerializeField] TextMeshProUGUI bonusText;
+    [SerializeField] TextMeshProUGUI scoreText;
 
     private int score;
 
@@ -21,6 +21,7 @@ public class GUITextHandler : MonoBehaviour
 
     public void AddToScore(int points)      { score += points; }
     public void ResetScore()                { score = 0; }
+    private void HideBonusText()            { bonusText.gameObject.SetActive(false); }
 
     public void ShowBonusText(string text)
     {
@@ -40,8 +41,4 @@ public class GUITextHandler : MonoBehaviour
         if (bonusText.gameObject.activeSelf) bonusText.gameObject.SetActive(false);
     }
 
-    private void HideBonusText()
-    {
-        bonusText.gameObject.SetActive(false);
-    }
 }
