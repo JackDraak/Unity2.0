@@ -3,67 +3,27 @@
 public class DifficultyRegulator : MonoBehaviour
 {
     [Header("Enemy defaults:")]
-    [SerializeField] float enemyVolleyMin = 1;
+    [SerializeField]
+    float enemyVolleyMin = 1;
     [SerializeField] int enemyVolleyMinClamp = 25;
 
     [Space(6)]
-    [SerializeField] float enemyVolleyMax = 2;
+    [SerializeField]
+    float enemyVolleyMax = 2;
     [SerializeField] int enemyVolleyMaxClamp = 50;
 
     [Space(6)]
     [Tooltip("percent/100, i.e. 1 = 100%")]
-    [SerializeField] float enemyVolleyGrowthFactor = 0.07f; // 8% growth...
+    [SerializeField]
+    float enemyVolleyGrowthFactor = 0.07f; // 8% growth...
 
     [Tooltip("time taken to grow 1 factor, in seconds")]
-    [SerializeField] float enemyVolleyGrowthFrequency = 30; // ...every 25 seconds.
-
-    struct Monitor
-    {
-        private bool active;
-        private float defaultValue;
-        private float durationTime;
-        private float startTime;
-        private string defaultAction;
-
-        public bool Active
-        {
-            get { return active; }
-            set { active = value; }
-        }
-
-        public float DurationTime
-        {
-            get { return durationTime; }
-            set { durationTime = value; }
-        }
-
-        public float DefaultValue
-        {
-            get { return defaultValue; }
-            set { defaultValue = value; }
-        }
-
-        public float StartTime
-        {
-            get { return startTime; }
-            set { startTime = value; }
-        }
-
-        public string DefaultAction
-        {
-            get { return defaultAction; }
-            set { defaultAction = value; }
-        }
-    }
-
-    private Monitor adrenaline, blasters, strafe;
+    [SerializeField]
+    float enemyVolleyGrowthFrequency = 30; // ...every 25 seconds.
 
     // Player-related variables:
-    // private bool adrenalineRush = false;
-    private bool dampenBlaster = false;
-    private bool dampenStrafe = false;
-   // private float adrenalineStartTime = 0;
-   // private float adrenalineDurationTime = 4.2f;
+    private float adrenalineStartTime = 0;
+    private float adrenalineDurationTime = 4.2f;
     private float dampenDurationTime = 6;
     private float dampenFactor = 5;
     private float dampenStartTime = 0;
@@ -87,6 +47,9 @@ public class DifficultyRegulator : MonoBehaviour
     // Enemy-related variables:
     private int volleyMax = 0;
     private int volleyMin = 0;
+    private bool adrenalineRush = false;
+    private bool dampenBlaster = false;
+    private bool dampenStrafe = false;
     private bool volleyMinClapmed = false;
     private bool volleyMaxClamped = false;
 
@@ -101,15 +64,10 @@ public class DifficultyRegulator : MonoBehaviour
 
     private void Start()
     {
-        adrenaline.DurationTime = 4.2f;
-        adrenaline.StartTime = 0;
-        adrenaline.Active = false;
-        adrenaline.DefaultAction = "RevertTimeScale";
-
         guiTextHandler = FindObjectOfType<GUITextHandler>();
         playerController = FindObjectOfType<PlayerController>();
 
-        volleyMin = (int) Mathf.Abs(enemyVolleyMin);
+        volleyMin = (int)Mathf.Abs(enemyVolleyMin);
         volleyMax = (int)Mathf.Abs(enemyVolleyMax);
 
         /*
@@ -138,35 +96,19 @@ public class DifficultyRegulator : MonoBehaviour
 
     private void RegulatePlayer()
     {
-        GenericMonitor(adrenaline);
-       // MonitorAdrenalineRush();
+        MonitorAdrenalineRush();
         MonitorBlasters();
         MonitorStrafe();
     }
 
-    private void GenericMonitor(Monitor monitor)
+    private void MonitorAdrenalineRush()
     {
-        if (Time.time > monitor.DurationTime + monitor.StartTime && monitor.Active)
+        if (Time.time > adrenalineDurationTime + adrenalineStartTime && adrenalineRush)
         {
-            monitor.Active = false;
-            guiTextHandler.DropText();
-            Invoke(monitor.DefaultAction, 0);
-        }
-    }
-
-  /*  private void MonitorAdrenalineRush()
-    {
-        if (Time.time > adrenaline.DurationTime + adrenaline.StartTime && adrenaline.Active)
-        {
-            adrenaline.Active = false;
+            adrenalineRush = false;
             guiTextHandler.DropText();
             Time.timeScale = regularTimeScale;
         }
-    } */
-
-    private void RevertTimeScale()
-    {
-        Time.timeScale = regularTimeScale;
     }
 
     private void MonitorBlasters()
@@ -178,7 +120,7 @@ public class DifficultyRegulator : MonoBehaviour
             playerController.PlayerWeaponCoolTime = defaultPlayerWeaponCooldownTime;
         }
     }
-    
+
     private void MonitorStrafe()
     {
         if (Time.time > strafeDampenDurationTime + strafeDampenStartTime && dampenStrafe)
@@ -219,13 +161,13 @@ public class DifficultyRegulator : MonoBehaviour
 
     public void AdrenalineRush()
     {
-        if (Time.time > adrenaline.DurationTime + adrenaline.StartTime)
+        if (Time.time > adrenalineDurationTime + adrenalineStartTime)
         {
             guiTextHandler.PopText("<size=+20>A</size>drenaline <size=+20>R</size>ush!");
             Time.timeScale = 0.5f;
         }
-        adrenaline.StartTime = Time.time;
-        adrenaline.Active = true;
+        adrenalineStartTime = Time.time;
+        adrenalineRush = true;
     }
 
     public void BlasterDampen()
