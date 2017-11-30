@@ -12,7 +12,6 @@ public class BonusController : MonoBehaviour
     private DifficultyRegulator difficultyRegulator;
     private GUITextHandler guiTextHandler;
     private PlayerController playerController;
-    private PlayerHandler playerHandler;
 
     private static int seed = 0;
 
@@ -21,18 +20,10 @@ public class BonusController : MonoBehaviour
         if (seed == 0) seed = Mathf.FloorToInt(Time.deltaTime * 10000000);
         Random.InitState(seed);
 
-        bool success;
-
-        success = (audioSource = gameObject.GetComponent<AudioSource>());
-        //    if (!success) Debug.Log("EnergyBonus.cs: audioSource INFO, FAIL.");
-        success = (difficultyRegulator = FindObjectOfType<DifficultyRegulator>());
-        //    if (!success) Debug.Log("EnergyBonus.cs: difficultyRegulator INFO, FAIL.");
-        success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
-        //    if (!success) Debug.Log("EnergyBonus.cs: guiTextHandler INFO, FAIL.");
-        success = (playerController = FindObjectOfType<PlayerController>());
-        //    if (!success) Debug.Log("EnergyBonus.cs: playerController INFO, FAIL.");
-        success = (playerHandler = FindObjectOfType<PlayerHandler>());
-        //    if (!success) Debug.Log("EnergyBonus.cs: playerHandler INFO, FAIL.");
+        audioSource = gameObject.GetComponent<AudioSource>();
+        difficultyRegulator = FindObjectOfType<DifficultyRegulator>();
+        guiTextHandler = FindObjectOfType<GUITextHandler>();
+        playerController = FindObjectOfType<PlayerController>();
     }
 
     private void OnTriggerEnter(Collider other)

@@ -24,20 +24,12 @@ public class EnemyController : MonoBehaviour
         if (seed == 0) seed = Mathf.FloorToInt(Time.deltaTime * 10000000);
         Random.InitState(seed);
 
-        bool success;
-
-        success = (difficultyRegulator = FindObjectOfType<DifficultyRegulator>());
-        //    if (!success) Debug.Log("EnemyController.cs: difficultyRegulator INFO, FAIL.");
-        success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
-        //    if (!success) Debug.Log("EnemyController.cs: guiTextHandler INFO, FAIL.");
-        success = (hitPool = GameObject.FindGameObjectWithTag("HitPool").GetComponent<EffectPool>());
-        //    if (!success) Debug.Log("EnemyController.cs: hitPool INFO, FAIL.");
-        success = (killPool = GameObject.FindGameObjectWithTag("KillPool").GetComponent<EffectPool>());
-        //    if (!success) Debug.Log("EnemyController.cs: killPool INFO, FAIL.");
-        success = (playerController = FindObjectOfType<PlayerController>());
-        //    if (!success) Debug.Log("EnemyController.cs: playerController INFO, FAIL.");
-        success = (playerHandler = FindObjectOfType<PlayerHandler>());
-        //    if (!playerHandler) Debug.Log("EnemyController.cs: playerHandler INFO, FAIL.");
+        difficultyRegulator = FindObjectOfType<DifficultyRegulator>();
+        guiTextHandler = FindObjectOfType<GUITextHandler>();
+        hitPool = GameObject.FindGameObjectWithTag("HitPool").GetComponent<EffectPool>();
+        killPool = GameObject.FindGameObjectWithTag("KillPool").GetComponent<EffectPool>();
+        playerController = FindObjectOfType<PlayerController>();
+        playerHandler = FindObjectOfType<PlayerHandler>();
     }
 
     private void Update()

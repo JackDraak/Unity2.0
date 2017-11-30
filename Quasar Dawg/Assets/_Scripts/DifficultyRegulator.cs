@@ -60,12 +60,8 @@ public class DifficultyRegulator : MonoBehaviour
 
     private void Start()
     {
-        bool success;
-
-        success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
-        //    if (!success) Debug.Log("DifficultyRegulator.cs: guiTextHandler INFO, FAIL.");
-        success = (playerController = FindObjectOfType<PlayerController>());
-        //    if (!success) Debug.Log("EnergyBonus.cs: playerController INFO, FAIL.");
+        guiTextHandler = FindObjectOfType<GUITextHandler>();
+        playerController = FindObjectOfType<PlayerController>();
 
         volleyMin = (int) Mathf.Abs(enemyVolleyMin);
         volleyMax = (int)Mathf.Abs(enemyVolleyMax);
@@ -121,7 +117,6 @@ public class DifficultyRegulator : MonoBehaviour
         }
     }
 
-
     private void MonitorStrafe()
     {
         if (Time.time > strafeDampenDurationTime + strafeDampenStartTime && dampenStrafe)
@@ -136,15 +131,15 @@ public class DifficultyRegulator : MonoBehaviour
     {
         if (!volleyMinClapmed)
         {
-            enemyVolleyMin = enemyVolleyMin += enemyVolleyMin * enemyVolleyGrowthFactor *
-                (Time.deltaTime / enemyVolleyGrowthFrequency);
+            //enemyVolleyMin = enemyVolleyMin += enemyVolleyMin * enemyVolleyGrowthFactor *....
+            enemyVolleyMin += enemyVolleyMin * enemyVolleyGrowthFactor * (Time.deltaTime / enemyVolleyGrowthFrequency);
             volleyMin = (int)Mathf.Abs(enemyVolleyMin);
 
         }
         if (!volleyMaxClamped)
         {
-            enemyVolleyMax = enemyVolleyMax += enemyVolleyMax * enemyVolleyGrowthFactor *
-                (Time.deltaTime / enemyVolleyGrowthFrequency);
+            //enemyVolleyMax = enemyVolleyMax += enemyVolleyMax * enemyVolleyGrowthFactor *....
+            enemyVolleyMax += enemyVolleyMax * enemyVolleyGrowthFactor * (Time.deltaTime / enemyVolleyGrowthFrequency);
             volleyMax = (int)Mathf.Abs(enemyVolleyMax);
         }
 

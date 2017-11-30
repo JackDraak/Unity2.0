@@ -51,7 +51,7 @@ public class ObjectSpawner : MonoBehaviour
         var b = tagForSpawnPoints;
         Debug.Log("ObjectSpawner.cs report: " + a + " spawn-points registered with tag '" + b + "'.");
 
-        Invoke("SpawnAllSpawnpoints", delayBetweenRespawn);
+        Invoke("SpawnAllSpawnpoints", delayBetweenWaves);
     }
 
  #region Updates...
