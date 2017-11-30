@@ -2,29 +2,109 @@
 
 public class DifficultyRegulator : MonoBehaviour
 {
+    [Header("Enemy defaults:")]
     [SerializeField] float enemyVolleyMin = 1;
     [SerializeField] int enemyVolleyMinClamp = 25;
 
-    [Space(8)]
+    [Space(6)]
     [SerializeField] float enemyVolleyMax = 2;
     [SerializeField] int enemyVolleyMaxClamp = 50;
 
-    [Space(8)]
+    [Space(6)]
     [Tooltip("percent/100, i.e. 1 = 100%")]
-    [SerializeField] float enemyVolleyGrowthFactor = 0.08f; // 8% growth...
+    [SerializeField] float enemyVolleyGrowthFactor = 0.07f; // 8% growth...
 
     [Tooltip("time taken to grow 1 factor, in seconds")]
-    [SerializeField] float enemyVolleyGrowthFrequency = 25; // ...every 25 seconds.
+    [SerializeField] float enemyVolleyGrowthFrequency = 30; // ...every 25 seconds.
 
     [Space(8)]
-    // TODO: tie these in for player, currently it's just filler...
-    [SerializeField] float playerForwardSpeed = 0.9f; 
-    [SerializeField] float playerFireRate = 75;
-    [SerializeField] float playerShieldChargeRate = 20;
-    [SerializeField] float playerWeaponChargeRate = 20;
-    [SerializeField] float playerShieldCapacity = 600;
-    [SerializeField] float playerWeaponCapacity = 600;
-    [SerializeField] float playerDamage = 1;
+    [Header("Player defaults:")]
+    [SerializeField] float basePlayerDamage = 1;
+    [SerializeField] float basePlayerForwardSpeed = 0.85f; 
+    [SerializeField] float basePlayerRollDelay = 2f;
+    [SerializeField] float basePlayerShieldCapacity = 250;
+    [SerializeField] float basePlayerShieldChargeRate = 12;
+    [SerializeField] float basePlayerShieldUseRate = 33;
+    [SerializeField] float basePlayerStrafeSpeed = 3.8f;
+    [SerializeField] float basePlayerWeaponCapacity = 600;
+    [SerializeField] float basePlayerWeaponChargeRate = 20;
+    [SerializeField] float basePlayerWeaponCoolTime = 65;
+    [SerializeField] float basePlayerWeaponUseRate = 5;
+    [SerializeField] int basePlayerVolley = 3;
+
+    #region Getters and Setters...
+    public float playerDamage
+    {
+        get { return basePlayerDamage; }
+        set { basePlayerDamage = value; }
+    }
+
+    public float playerForwardSpeed
+    {
+        get { return basePlayerForwardSpeed; }
+        set { basePlayerForwardSpeed = value; }
+    }
+
+    public float playerRollDelay
+    {
+        get { return basePlayerRollDelay; }
+        set { basePlayerRollDelay = value; }
+    }
+
+    public float playerShieldCapacity
+    {
+        get { return basePlayerShieldCapacity; }
+        set { basePlayerShieldCapacity = value; }
+    }
+
+    public float playerShieldChargeRate
+    {
+        get { return basePlayerShieldChargeRate; }
+        set { basePlayerShieldChargeRate = value; }
+    }
+
+    public float playerShieldUseRate
+    {
+        get { return basePlayerShieldUseRate; }
+        set { basePlayerShieldUseRate = value; }
+    }
+
+    public float playerStrafeSpeed
+    {
+        get { return basePlayerStrafeSpeed; }
+        set { basePlayerStrafeSpeed = value; }
+    }
+
+    public float playerWeaponCapacity
+    {
+        get { return basePlayerWeaponCapacity; }
+        set { basePlayerWeaponCapacity = value; }
+    }
+
+    public float playerWeaponChargeRate
+    {
+        get { return basePlayerWeaponChargeRate; }
+        set { basePlayerWeaponChargeRate = value; }
+    }
+
+    public float playerWeaponCoolTime
+    {
+        get { return basePlayerWeaponCoolTime; }
+        set { basePlayerWeaponCoolTime = value; }
+    }
+
+    public float playerWeaponUseRate
+    {
+        get { return basePlayerWeaponUseRate; }
+        set { basePlayerWeaponUseRate = value; }
+    }
+
+    public int playerVolley
+    {
+        get { return basePlayerVolley; }
+        set { basePlayerVolley = value; }
+    }
+    #endregion
 
     private GUITextHandler guiTextHandler;
 

@@ -55,12 +55,17 @@ MonoBehaviour:
   enemyVolleyMinClamp: 25
   enemyVolleyMax: 2
   enemyVolleyMaxClamp: 50
-  enemyVolleyGrowthFactor: 0.08
-  enemyVolleyGrowthFrequency: 25
-  playerForwardSpeed: 0.9
-  playerFireRate: 75
-  playerShieldChargeRate: 20
-  playerWeaponChargeRate: 20
-  playerShieldCapacity: 600
-  playerWeaponCapacity: 600
-  playerDamage: 1
+  enemyVolleyGrowthFactor: 0.07
+  enemyVolleyGrowthFrequency: 30
+  basePlayerDamage: 1
+  basePlayerForwardSpeed: 0.85
+  basePlayerRollDelay: 2
+  basePlayerShieldCapacity: 250
+  basePlayerShieldChargeRate: 12
+  basePlayerShieldUseRate: 33
+  basePlayerStrafeSpeed: 3.8
+  basePlayerWeaponCapacity: 600
+  basePlayerWeaponChargeRate: 20
+  basePlayerWeaponCoolTime: 65
+  basePlayerWeaponUseRate: 5
+  basePlayerVolley: 3

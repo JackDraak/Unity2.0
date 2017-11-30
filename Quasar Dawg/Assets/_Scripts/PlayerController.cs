@@ -52,22 +52,17 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 5.6f)]   [Tooltip("Range of drift, in m")]                   [SerializeField] float verticalMax = 2.8f;
     [Range(0f, 5.0f)]   [Tooltip("Range of drift, in m")]                   [SerializeField] float verticalMin = 2.5f;
 
-    [Space(6)]
-    [Range(0f, 3f)]     [Tooltip("Forward speed, in ??")]                   [SerializeField]float defaultForwardSpeed = .85f;
-    [Range(0f, 7.6f)]   [Tooltip("Strafe speed, in ms^-1")]                 [SerializeField] float strafeSpeed = 3.8f;
-    [Range(0f, 5f)]     [Tooltip("Forced delay between aileron rolls")]     [SerializeField] float rollDelay = 1f;
-    [Range(1, 6)]       [Tooltip("Weapon volley, in particles/discharge")]  [SerializeField] int volley = 3;
-    [Range(0f, 200f)]   [Tooltip("Weapon cooldown time, in ms")]            [SerializeField] float weaponCooldownTime = 65f;
-
-    [Space(6)]
-    [Range(1, 600)]     [Tooltip("Shield battery capacity")]                [SerializeField] int shieldCapacity = 300;
-    [Range(1, 34)]      [Tooltip("Shield battery charge-rate, in p/s")]     [SerializeField] int shieldChargeRate = 17;
-    [Range(0, 100)]     [Tooltip("Shield battery use-rate, in p/volley")]   [SerializeField] int shieldUseRate = 30;
-
-    [Space(6)]
-    [Range(1, 1200)]    [Tooltip("Weapon battery capacity")]                [SerializeField] int weaponCapacity = 600;
-    [Range(1, 40)]      [Tooltip("Weapon battery charge-rate, in p/s")]     [SerializeField] int weaponChargeRate = 20;
-    [Range(0, 16)]      [Tooltip("Weapon battery use-rate, in p/volley")]   [SerializeField] int weaponUseRate = 8;
+    private float defaultForwardSpeed;
+    private float rollDelay;
+    private float strafeSpeed;
+    private float shieldCapacity;
+    private float shieldChargeRate;
+    private float shieldUseRate;
+    private float weaponCapacity;
+    private float weaponChargeRate;
+    private float weaponCooldownTime;
+    private float weaponUseRate;
+    private int volley;
 
     [Space(10)][Header("Player components:")]
     [Tooltip("Weapon battery slider")]                                  [SerializeField] Slider weaponSlider;
@@ -96,6 +91,7 @@ public class PlayerController : MonoBehaviour
     private bool                        debugMode = false;
     private bool                        invulnerable = false;
     private bool                        maxEnergy = false;
+    private DifficultyRegulator         difficultyRegulator;
     private float                       coolTime = 0;
     private float                       delta = 0;
     private float                       rollTime = 0; 
@@ -116,6 +112,8 @@ public class PlayerController : MonoBehaviour
     {
         if (!(audioSource = GetComponent<AudioSource>()))
             Debug.Log("PlayerController.cs: audioSource INFO, ERROR.");
+        if (!(difficultyRegulator = FindObjectOfType<DifficultyRegulator>()));
+            Debug.Log("PlayerController.cs: difficultyRegulator INFO, FAIL.");
         if (!(keyValet = FindObjectOfType<KeyValet>()))
             Debug.Log("PlayerController.cs: keyValet INFO, ERROR.");
         if (!(playerHandler = FindObjectOfType<PlayerHandler>()))
@@ -125,7 +123,19 @@ public class PlayerController : MonoBehaviour
 
         debugMode = Debug.isDebugBuild;
 
-        invulnerableKey = keyValet.GetKey("PlayerController-ToggleInvulnerable");
+        defaultForwardSpeed = difficultyRegulator.playerForwardSpeed;
+        rollDelay = difficultyRegulator.playerRollDelay;
+        strafeSpeed = difficultyRegulator.playerStrafeSpeed;
+        shieldCapacity = difficultyRegulator.playerShieldCapacity;
+        shieldChargeRate = difficultyRegulator.playerShieldChargeRate;
+        shieldUseRate = difficultyRegulator.playerShieldUseRate;
+        weaponCapacity = difficultyRegulator.playerWeaponCapacity;
+        weaponChargeRate = difficultyRegulator.playerWeaponChargeRate;
+        weaponCooldownTime = difficultyRegulator.playerWeaponCoolTime;
+        weaponUseRate = difficultyRegulator.playerWeaponUseRate;
+        volley = difficultyRegulator.playerVolley;
+
+    invulnerableKey = keyValet.GetKey("PlayerController-ToggleInvulnerable");
         maxEnergyKey = keyValet.GetKey("PlayerController-ToggleEnergyMax");
         shieldKey = keyValet.GetKey("PlayerController-ShieldCharge");
         weaponKey = keyValet.GetKey("PlayerController-WeaponCharge");
