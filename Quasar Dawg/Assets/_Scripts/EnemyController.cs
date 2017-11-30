@@ -27,17 +27,17 @@ public class EnemyController : MonoBehaviour
         bool success;
 
         success = (difficultyRegulator = FindObjectOfType<DifficultyRegulator>());
-            if (!success) Debug.Log("EnemyController.cs: difficultyRegulator INFO, FAIL.");
+        //    if (!success) Debug.Log("EnemyController.cs: difficultyRegulator INFO, FAIL.");
         success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
-            if (!success) Debug.Log("EnemyController.cs: guiTextHandler INFO, FAIL.");
+        //    if (!success) Debug.Log("EnemyController.cs: guiTextHandler INFO, FAIL.");
         success = (hitPool = GameObject.FindGameObjectWithTag("HitPool").GetComponent<EffectPool>());
-            if (!success) Debug.Log("EnemyController.cs: hitPool INFO, FAIL.");
+        //    if (!success) Debug.Log("EnemyController.cs: hitPool INFO, FAIL.");
         success = (killPool = GameObject.FindGameObjectWithTag("KillPool").GetComponent<EffectPool>());
-            if (!success) Debug.Log("EnemyController.cs: killPool INFO, FAIL.");
+        //    if (!success) Debug.Log("EnemyController.cs: killPool INFO, FAIL.");
         success = (playerController = FindObjectOfType<PlayerController>());
-            if (!success) Debug.Log("EnemyController.cs: playerController INFO, FAIL.");
+        //    if (!success) Debug.Log("EnemyController.cs: playerController INFO, FAIL.");
         success = (playerHandler = FindObjectOfType<PlayerHandler>());
-            if (!playerHandler) Debug.Log("EnemyController.cs: playerHandler INFO, FAIL.");
+        //    if (!playerHandler) Debug.Log("EnemyController.cs: playerHandler INFO, FAIL.");
     }
 
     private void Update()

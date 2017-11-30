@@ -5,6 +5,8 @@ using System.Collections;
 [RequireComponent(typeof(Image))]
 /// <summary>Singleton class for controlling pause functions.</summary>
 public class SumPause : MonoBehaviour {
+    private float priorTimeScale = 0; // JDraak
+
     // Event managers
     public delegate void PauseAction(bool paused);
     public static event PauseAction PauseEvent;
@@ -81,11 +83,12 @@ public class SumPause : MonoBehaviour {
     static void OnChange() {
         if(status) {
             // What to do when paused
+            instance.priorTimeScale = Time.timeScale;
             Time.timeScale = 0;
         }
         else {
             // What to do when unpaused
-            Time.timeScale = 1;
+            Time.timeScale = instance.priorTimeScale;
         }
     }
 }

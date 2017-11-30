@@ -20,7 +20,7 @@ public class PlayerHandler : MonoBehaviour
     private void Start()
     {
         bool success = (playerController = FindObjectOfType<PlayerController>());
-        if (!success) Debug.Log("PlayerHandler.cs: playerController INFO, ERROR.");
+            if (!success) Debug.Log("PlayerHandler.cs: playerController INFO, ERROR.");
     }
 
     private IEnumerator LaunchPlayer()

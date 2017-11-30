@@ -17,105 +17,37 @@ public class DifficultyRegulator : MonoBehaviour
     [Tooltip("time taken to grow 1 factor, in seconds")]
     [SerializeField] float enemyVolleyGrowthFrequency = 30; // ...every 25 seconds.
 
-    [Space(8)]
-    [Header("Player defaults:")]
-    [SerializeField] float basePlayerDamage = 1;
-    [SerializeField] float basePlayerForwardSpeed = 0.85f; 
-    [SerializeField] float basePlayerRollDelay = 2f;
-    [SerializeField] float basePlayerShieldCapacity = 250;
-    [SerializeField] float basePlayerShieldChargeRate = 12;
-    [SerializeField] float basePlayerShieldUseRate = 33;
-    [SerializeField] float basePlayerStrafeSpeed = 3.8f;
-    [SerializeField] float basePlayerWeaponCapacity = 600;
-    [SerializeField] float basePlayerWeaponChargeRate = 20;
-    [SerializeField] float basePlayerWeaponCoolTime = 65;
-    [SerializeField] float basePlayerWeaponUseRate = 5;
-    [SerializeField] int basePlayerVolley = 3;
-
-    #region Getters and Setters...
-    public float playerDamage
-    {
-        get { return basePlayerDamage; }
-        set { basePlayerDamage = value; }
-    }
-
-    public float playerForwardSpeed
-    {
-        get { return basePlayerForwardSpeed; }
-        set { basePlayerForwardSpeed = value; }
-    }
-
-    public float playerRollDelay
-    {
-        get { return basePlayerRollDelay; }
-        set { basePlayerRollDelay = value; }
-    }
-
-    public float playerShieldCapacity
-    {
-        get { return basePlayerShieldCapacity; }
-        set { basePlayerShieldCapacity = value; }
-    }
-
-    public float playerShieldChargeRate
-    {
-        get { return basePlayerShieldChargeRate; }
-        set { basePlayerShieldChargeRate = value; }
-    }
-
-    public float playerShieldUseRate
-    {
-        get { return basePlayerShieldUseRate; }
-        set { basePlayerShieldUseRate = value; }
-    }
-
-    public float playerStrafeSpeed
-    {
-        get { return basePlayerStrafeSpeed; }
-        set { basePlayerStrafeSpeed = value; }
-    }
-
-    public float playerWeaponCapacity
-    {
-        get { return basePlayerWeaponCapacity; }
-        set { basePlayerWeaponCapacity = value; }
-    }
-
-    public float playerWeaponChargeRate
-    {
-        get { return basePlayerWeaponChargeRate; }
-        set { basePlayerWeaponChargeRate = value; }
-    }
-
-    public float playerWeaponCoolTime
-    {
-        get { return basePlayerWeaponCoolTime; }
-        set { basePlayerWeaponCoolTime = value; }
-    }
-
-    public float playerWeaponUseRate
-    {
-        get { return basePlayerWeaponUseRate; }
-        set { basePlayerWeaponUseRate = value; }
-    }
-
-    public int playerVolley
-    {
-        get { return basePlayerVolley; }
-        set { basePlayerVolley = value; }
-    }
-    #endregion
-
-    private GUITextHandler guiTextHandler;
-
-    private int volleyMax = 0;
-    private int volleyMin = 0;
-    private bool adrenalineRush;
-    private bool volleyMinClapmed = false;
-    private bool volleyMaxClamped = false;
+    // Player-related variables:
     private float adrenalineStartTime = 0;
     private float adrenalineDurationTime = 4.2f;
+    private float dampenDurationTime = 6;
+    private float dampenFactor = 5;
+    private float dampenStartTime = 0;
+    private float defaultPlayerForwardSpeed;
+    private float defaultPlayerRollDelay;
+    private float defaultPlayerShieldCapacity;
+    private float defaultPlayerShieldChargeRate;
+    private float defaultPlayerShieldUseRate;
+    private float defaultPlayerStrafeSpeed;
+    private float defaultPlayerWeaponCapacity;
+    private float defaultPlayerWeaponChargeRate;
+    private float defaultPlayerWeaponCooldownTime;
+    private float defaultPlayerWeaponUseRate;
     private float regularTimeScale = 1;
+    private float strafeDampenDurationTime = 5;
+    private float strafeDampenStartTime = 0;
+    private GUITextHandler guiTextHandler;
+    private int defaultPlayerVolley;
+    private PlayerController playerController;
+
+    // Enemy-related variables:
+    private int volleyMax = 0;
+    private int volleyMin = 0;
+    private bool adrenalineRush = false;
+    private bool dampenBlaster = false;
+    private bool dampenStrafe = false;
+    private bool volleyMinClapmed = false;
+    private bool volleyMaxClamped = false;
 
     private void OnEnable()
     {
@@ -131,31 +63,76 @@ public class DifficultyRegulator : MonoBehaviour
         bool success;
 
         success = (guiTextHandler = FindObjectOfType<GUITextHandler>());
-            if (!success) Debug.Log("DifficultyRegulator.cs: guiTextHandler INFO, FAIL.");
+        //    if (!success) Debug.Log("DifficultyRegulator.cs: guiTextHandler INFO, FAIL.");
+        success = (playerController = FindObjectOfType<PlayerController>());
+        //    if (!success) Debug.Log("EnergyBonus.cs: playerController INFO, FAIL.");
 
         volleyMin = (int) Mathf.Abs(enemyVolleyMin);
         volleyMax = (int)Mathf.Abs(enemyVolleyMax);
+
+        /*
+        defaultPlayerForwardSpeed = playerController.PlayerForwardSpeed;
+        defaultPlayerRollDelay = playerController.PlayerRollDelay;
+        defaultPlayerShieldCapacity = playerController.PlayerShieldCapacity;
+        defaultPlayerShieldChargeRate = playerController.PlayerShieldChargeRate;
+        defaultPlayerShieldUseRate = playerController.PlayerShieldUseRate;
+        defaultPlayerWeaponCapacity = playerController.PlayerWeaponCapacity;
+        defaultPlayerWeaponChargeRate = playerController.PlayerWeaponChargeRate;
+        defaultPlayerWeaponUseRate = playerController.PlayerWeaponUseRate;
+        defaultPlayerVolley = playerController.PlayerVolley;
+        */
+        defaultPlayerStrafeSpeed = playerController.PlayerStrafeSpeed;
+        defaultPlayerWeaponCooldownTime = playerController.PlayerWeaponCoolTime;
     }
 
     private void Update()
     {
-        RegulateEnemyVolley();
-        RegulateAdrenalineRush();
+        RegulateEnemy();
+        RegulatePlayer();
     }
 
     public int EnemyVolleyMin() { return volleyMin; }
     public int EnemyVolleyMax() { return volleyMax; }
 
-    private void RegulateAdrenalineRush()
+    private void RegulatePlayer()
+    {
+        MonitorAdrenalineRush();
+        MonitorBlasters();
+        MonitorStrafe();
+    }
+
+    private void MonitorAdrenalineRush()
     {
         if (Time.time > adrenalineDurationTime + adrenalineStartTime && adrenalineRush)
         {
             adrenalineRush = false;
-            NormalizeTime();
+            guiTextHandler.DropText();
+            Time.timeScale = regularTimeScale;
         }
     }
 
-    private void RegulateEnemyVolley()
+    private void MonitorBlasters()
+    {
+        if (Time.time > dampenDurationTime + dampenStartTime && dampenBlaster)
+        {
+            dampenBlaster = false;
+            guiTextHandler.DropText();
+            playerController.PlayerWeaponCoolTime = defaultPlayerWeaponCooldownTime;
+        }
+    }
+
+
+    private void MonitorStrafe()
+    {
+        if (Time.time > strafeDampenDurationTime + strafeDampenStartTime && dampenStrafe)
+        {
+            dampenStrafe = false;
+            guiTextHandler.DropText();
+            playerController.PlayerStrafeSpeed = defaultPlayerStrafeSpeed;
+        }
+    }
+
+    private void RegulateEnemy()
     {
         if (!volleyMinClapmed)
         {
@@ -196,9 +173,25 @@ public class DifficultyRegulator : MonoBehaviour
         adrenalineRush = true;
     }
 
-    private void NormalizeTime()
+    public void BlasterDampen()
     {
-        Time.timeScale = regularTimeScale;
-        guiTextHandler.DropText();
+        if (Time.time > dampenDurationTime + dampenStartTime)
+        {
+            guiTextHandler.PopText("<size=+20>B</size>lasters <size=+20>D</size>ampened!");
+            playerController.PlayerWeaponCoolTime = defaultPlayerWeaponCooldownTime * dampenFactor;
+        }
+        dampenStartTime = Time.time;
+        dampenBlaster = true;
+    }
+
+    public void StrafeDampen()
+    {
+        if (Time.time > strafeDampenDurationTime + strafeDampenStartTime)
+        {
+            guiTextHandler.PopText("<size=+20>S</size>trafe <size=+20>D</size>ampened!");
+            playerController.PlayerStrafeSpeed = defaultPlayerStrafeSpeed * 0.5f;
+        }
+        strafeDampenStartTime = Time.time;
+        dampenStrafe = true;
     }
 }
