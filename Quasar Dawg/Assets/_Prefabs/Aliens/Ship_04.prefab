@@ -241,7 +241,9 @@ MonoBehaviour:
   minFireDelay: 0.3
   range: 240
   hitPoints: 8
-  weapon: {fileID: 198048830820544924}
+  hitScore: 3
+  killScore: 15
+  weaponParticleSystem: {fileID: 198048830820544924}
 --- !u!198 &198048830820544924
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -302,7 +304,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 913651584
+  randomSeed: 1255137148
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3619,7 +3621,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 774370397
+  randomSeed: -2045601578
   InitialModule:
     serializedVersion: 3
     enabled: 1
