@@ -9,17 +9,17 @@ using UnityStandardAssets.Utility;
  * be allowed to. (In general, anything here can be used freely for personal use, but again, please be
  * informed before you go rummaging for treasure.) Cheers. -Jack D.
  * 
+ * TODO: find or generate some structures to help bring the level(s) to life
+ * TODO: fix all collisions (player/terrain, player/enemy, player/structure)
+ * 
  * TODO: enemy weapon that freeezes recharge?
  * TODO: have spawn-rate increase over time
  * TODO: use camera-speed hooks (DONE) to have a boss fight? (WIP)
- * TODO: play with time?
+ * TODO: play with time more?
  * TODO: Prevent spawning while player resetting? 
  *      
  * TODO: Improve ship damage/reset effects/sounds
  * TODO: Make enemies more interesting / animated
- * 
- * TODO: Have player controller take control of camera/waypoint script in order to stop (slow/speed-up?)
- *       waypoint patrol for Boss battles or something?
  *       
  * TODO: Have other collectible boosters or downers.... variety of enemy weapons....
  * 
@@ -47,7 +47,8 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 30f)][Tooltip("factor for skew Lerping for pitch and yaw")]  [SerializeField] float skewLerp = 15f;
     [Range(0f, 10f)][Tooltip("factor for skew Lerping for roll")]           [SerializeField] float skewRollLerp = 5f;
 
-    [Space(10)][Header("Player bounds:")]
+    [Space(10)]
+    [Header("Player bounds:")]
     [Range(0f, 9.6f)]   [Tooltip("Range of drift, in m")]                   [SerializeField] float lateralRange = 4.8f;
     [Range(0f, 5.6f)]   [Tooltip("Range of drift, in m")]                   [SerializeField] float verticalMax = 2.8f;
     [Range(0f, 5.0f)]   [Tooltip("Range of drift, in m")]                   [SerializeField] float verticalMin = 2.5f;
@@ -57,15 +58,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float basePlayerDamage = 1;
     [SerializeField] float basePlayerForwardSpeed = 0.85f;
     [SerializeField] float basePlayerRollDelay = 2f;
-    [SerializeField] float basePlayerShieldCapacity = 250;
-    [SerializeField] float basePlayerShieldChargeRate = 12;
-    [SerializeField] float basePlayerShieldUseRate = 33;
+    [SerializeField] float basePlayerShieldCapacity = 200;
+    [SerializeField] float basePlayerShieldChargeRate = 10;
+    [SerializeField] float basePlayerShieldUseRate = 34;
     [SerializeField] float basePlayerStrafeSpeed = 3.8f;
     [SerializeField] float basePlayerWeaponCapacity = 600;
     [SerializeField] float basePlayerWeaponChargeRate = 20;
-    [SerializeField] float basePlayerWeaponCoolTime = 65;
+    [SerializeField] float basePlayerWeaponCoolTime = 90;
     [SerializeField] float basePlayerWeaponUseRate = 5;
-    [SerializeField] int basePlayerVolley = 3;
+    [SerializeField] int basePlayerVolley = 2;
 
     [Space(10)]
     [Header("Player components:")]
@@ -188,13 +189,9 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        //    Debug.Log("PlayerController.cs: audioSource INFO, ERROR.");
         keyValet = FindObjectOfType<KeyValet>();
-        //    Debug.Log("PlayerController.cs: keyValet INFO, ERROR.");
         playerHandler = FindObjectOfType<PlayerHandler>();
-        //    Debug.Log("PlayerController.cs: playerHandler INFO, ERROR.");
         waypointProgressTracker = FindObjectOfType<WaypointProgressTracker>();
-        //    Debug.Log("PlayerController.cs: waypointProgressTracker INFO, ERROR");
 
         debugMode = Debug.isDebugBuild;
 
