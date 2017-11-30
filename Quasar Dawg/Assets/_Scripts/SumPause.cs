@@ -5,12 +5,6 @@ using System.Collections;
 [RequireComponent(typeof(Image))]
 /// <summary>Singleton class for controlling pause functions.</summary>
 public class SumPause : MonoBehaviour {
-
-    private float lerpTimeScale; // JDraak
-    private bool lerping = false;
-    float beginLerpTime = 0;
-    int desiredScale, beginingScale;
-
     // Event managers
     public delegate void PauseAction(bool paused);
     public static event PauseAction PauseEvent;
@@ -74,7 +68,6 @@ public class SumPause : MonoBehaviour {
     /// the inspector.
     /// </summary>
     public void TogglePause () {
-        // if (!lerping) Status = !Status; // Flip current status
         Status = !Status;
     }
 
@@ -88,48 +81,11 @@ public class SumPause : MonoBehaviour {
     static void OnChange() {
         if(status) {
             // What to do when paused
-            instance.lerping = true;
-            instance.beginLerpTime = Time.time;
-            instance.beginingScale = 1;
-            instance.desiredScale = 0;
-
-            //instance.StartCoroutine(instance.SetTimeScale());
-            //instance.Invoke("instance.StopTime", 1.1f);
-            Time.timeScale = 0; // Set game speed to 0
+            Time.timeScale = 0;
         }
         else {
             // What to do when unpaused
-            instance.lerping = true;
-            instance.beginLerpTime = Time.time;
-            instance.beginingScale = 0;
-            instance.desiredScale = 1;
-
-            //instance.StartCoroutine(instance.SetTimeScale());
-            //instance.Invoke("instance.StartTime", 1.1f);
-            Time.timeScale = 1; // Resume normal game speed
+            Time.timeScale = 1;
         }
-    }
-
-    private IEnumerator SetTimeScale()
-    {
-        float duration = Time.time - instance.beginLerpTime;
-        if (duration <= 1)
-        {
-            Time.timeScale = Mathf.SmoothStep(instance.beginingScale, instance.desiredScale, duration);
-            yield return new WaitForSeconds(Time.deltaTime * 2);
-            instance.StartCoroutine(SetTimeScale());
-        }
-        else Time.timeScale = instance.desiredScale;
-        yield return 0;
-    }
-
-    private void StartTime()
-    {
-        Time.timeScale = 1;
-    }
-
-    private void StopTime()
-    {
-        Time.timeScale = 0;
     }
 }

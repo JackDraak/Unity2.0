@@ -8,9 +8,6 @@ public class BonusController : MonoBehaviour
     [SerializeField] GameObject orbObject;
     [SerializeField] GameObject parentBonusObject;
 
-
-    private static int seed = 0;
-
     private AudioSource audioSource;
     private bool adrenalineRush = false;
     private float adrenalineBegin = 0;
@@ -18,6 +15,8 @@ public class BonusController : MonoBehaviour
     private GUITextHandler guiTextHandler;
     private PlayerController playerController;
     private PlayerHandler playerHandler;
+
+    private static int seed = 0;
 
     private void Start()
     {

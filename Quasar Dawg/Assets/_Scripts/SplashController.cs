@@ -2,9 +2,9 @@
 
 public class SplashController : MonoBehaviour
 {
-    [SerializeField] GameObject subtitle;
     [SerializeField] float blinkSpeed = .333f;
     [SerializeField] float loadDelay = 3;
+    [SerializeField] GameObject subtitle;
 
     private bool aglow = false;
     private float blinkTime = 0;

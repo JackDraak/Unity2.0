@@ -36,10 +36,10 @@ public class ObjectSpawner : MonoBehaviour
 
     private void Start()
     {
-        debugMode = Debug.isDebugBuild;
-
         if (seed == 0) seed = Mathf.FloorToInt(Time.deltaTime * 10000000);
         Random.InitState(seed);
+
+        debugMode = Debug.isDebugBuild;
 
         if (!(keyValet = FindObjectOfType<KeyValet>())) Debug.Log("ObjectSpawner.cs: keyValet INFO, ERROR.");
         despawnKey = keyValet.GetKey("ObjectSpawner-DespawnCommand");

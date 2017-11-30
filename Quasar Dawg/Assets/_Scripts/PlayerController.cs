@@ -31,10 +31,10 @@ public class PlayerController : MonoBehaviour
 {
     // DEVNOTE: These debugging commands work in the editor or on "development" builds. 
     // Assign them to keys not in-use [in the KeyValet.cs class]:
-    private bool rechargeShieldCommand;     private KeyCode shieldKey;
-    private bool rechargeWeaponCommand;     private KeyCode weaponKey;
     private bool invulnerableCommand;       private KeyCode invulnerableKey;
     private bool maxEnergyCommand;          private KeyCode maxEnergyKey;
+    private bool rechargeShieldCommand;     private KeyCode shieldKey;
+    private bool rechargeWeaponCommand;     private KeyCode weaponKey;
 
     #region So many things to set in the inspector....
     [Header("Values to tweak Player facing angles:")]
@@ -125,10 +125,10 @@ public class PlayerController : MonoBehaviour
 
         debugMode = Debug.isDebugBuild;
 
-        shieldKey = keyValet.GetKey("PlayerController-ShieldCharge");
-        weaponKey = keyValet.GetKey("PlayerController-WeaponCharge");
         invulnerableKey = keyValet.GetKey("PlayerController-ToggleInvulnerable");
         maxEnergyKey = keyValet.GetKey("PlayerController-ToggleEnergyMax");
+        shieldKey = keyValet.GetKey("PlayerController-ShieldCharge");
+        weaponKey = keyValet.GetKey("PlayerController-WeaponCharge");
 
         playerHandler.SetPlayerPosition(transform.localPosition);
         playerHandler.SetPlayerRotation(transform.localRotation);
@@ -225,8 +225,7 @@ public class PlayerController : MonoBehaviour
 
         // set a desired roll when strafing left or right vs. aileron rolling:
         float roll;
-        if (Time.time > rollTime + rollDelay && rollDirection != 0)
-             roll = rollDirection * 370;
+        if (Time.time > rollTime + rollDelay && rollDirection != 0) roll = rollDirection * 370;
         else roll = controlAxis.x * -skewRoll;
 
         // Lerp between prior rotation and desired fixed rotation:
