@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4818162091961444}
   - component: {fileID: 108796889622306788}
   m_Layer: 0
-  m_Name: EnergyWeaponLight
+  m_Name: BeamWeaponLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
