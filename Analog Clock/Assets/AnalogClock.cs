@@ -14,7 +14,7 @@ public class AnalogClock : MonoBehaviour
 
     private AudioSource audioSource;
     private bool mute = false, stopwatch = false;
-    private float intervalGUIUpdate, stopTime, updateGUITime;
+    private float intervalGUIUpdate, updateGUITime;
     private float hourMinuteRotation;
     private float minuteRotation = 0.1f;
     private float twelveHourRotation = (0.1f / 12);
@@ -22,7 +22,8 @@ public class AnalogClock : MonoBehaviour
     private float updateTime;
     private int hourRotation = 30;
     private int secondRotation = 6;
-    private DateTime currentTime, startTime;
+    private DateTime currentTime, startTime, stopTime;
+    private TimeSpan breakTime;
     private Vector3 clockwise = new Vector3(0, 1, 0);
 
     private void Start()
@@ -32,6 +33,7 @@ public class AnalogClock : MonoBehaviour
         intervalGUIUpdate = updateInterval / 10;
         startTime = DateTime.Now;
         UpdateClock();
+        topRight.text = ("0ms :Stopwatch\n(space)");
     }
 
     private void Update()
@@ -52,9 +54,12 @@ public class AnalogClock : MonoBehaviour
     {
         if (stopwatch)
         {
-            stopTime += Time.deltaTime;
-            float absoluteAngle = (stopTime % 60) * secondRotation;
+            breakTime = DateTime.Now - stopTime;
+
+            float ms = (float)breakTime.TotalMilliseconds;
+            float absoluteAngle = ((ms / 1000) % 60) * secondRotation;
             stopwatchHand.rotation = Quaternion.Euler(0f, absoluteAngle, 0f);
+            topRight.text = (Mathf.RoundToInt(ms) + "ms :Stopwatch\n(space)");
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -62,7 +67,7 @@ public class AnalogClock : MonoBehaviour
             stopwatch = !stopwatch;
             if (stopwatch)
             {
-                stopTime = 0;
+                stopTime = DateTime.Now;
                 stopwatchHand.rotation = Quaternion.identity;
             }
         }
@@ -79,7 +84,7 @@ public class AnalogClock : MonoBehaviour
         
         secondHand.rotation = Quaternion.Euler(0f, currentTime.Second * secondRotation, 0f);
         minuteHand.rotation = Quaternion.Euler(0f, (currentTime.Minute * secondRotation) + (currentTime.Second * minuteRotation), 0f);
-        hourHand.rotation = Quaternion.Euler(0f, (currentTime.Hour * hourRotation) + (startTime.Minute * hourMinuteRotation), 0f);
+        hourHand.rotation = Quaternion.Euler(0f, (currentTime.Hour * hourRotation) + (currentTime.Minute * hourMinuteRotation), 0f);
     }
 
     private void UpdateGUI()
@@ -87,6 +92,5 @@ public class AnalogClock : MonoBehaviour
         updateGUITime += intervalGUIUpdate;
 
         topLeft.text = ("Begun: " + startTime.ToString() + "\nElapsed: " + Time.time.ToString());
-        topRight.text = (stopTime.ToString() + " :Stopwatch (space)\n" + (Time.time % 60).ToString() + " :Laptime");
     }
 }
