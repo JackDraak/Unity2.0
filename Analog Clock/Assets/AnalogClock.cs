@@ -3,15 +3,17 @@ using UnityEngine.UI;
 
 public class AnalogClock : MonoBehaviour 
 {
-    [SerializeField] Transform hours;
-    [SerializeField] Transform minutes;
-    [SerializeField] Transform seconds;
-    [SerializeField] Text left, right;
+    [SerializeField] Transform hourHand;
+    [SerializeField] Transform minuteHand;
+    [SerializeField] Transform secondHand;
+    [SerializeField] Transform stopwatchHand;
+    [SerializeField] Text bottomLeft, topLeft, topRight;
     [SerializeField] AudioClip[] secondHandFX;
 
     private AudioSource audioSource;
-    private bool stopwatch = false;
-    private float intervalGUIUpdate, updateGUITime, stopTime; 
+    private bool mute = false, stopwatch = false;
+    private float intervalGUIUpdate, stopTime, updateGUITime;
+    private float hourMinuteRotation;
     private float minuteRotation = 0.1f;
     private float twelveHourRotation = (0.1f / 12);
     private float updateInterval = 1;
@@ -24,10 +26,11 @@ public class AnalogClock : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        hourMinuteRotation = hourRotation * twelveHourRotation * 2;
         intervalGUIUpdate = updateInterval / 10;
         startTime = System.DateTime.Now;
         updateTime = updateInterval;
-        SetClock();
+        InitClock();
     }
 
     private void Update()
@@ -35,36 +38,56 @@ public class AnalogClock : MonoBehaviour
         if (Time.time >= updateTime) UpdateClock();
         if (Time.time >= updateGUITime) UpdateGUI();
 
+        ControlStopwatch();
+        ControlMute();
+    }
+
+    private void ControlMute()
+    {
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            mute = !mute;
+        }
+        if (mute) bottomLeft.text = "M = restore audio"; else bottomLeft.text = "M = mute audio";
+    }
+
+    private void ControlStopwatch()
+    {
         if (stopwatch) stopTime += Time.deltaTime;
-        if (Input.GetKeyDown(KeyCode.Space)) 
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             stopwatch = !stopwatch;
-            if (stopwatch) stopTime = 0;
+            if (stopwatch)
+            {
+                stopTime = 0;
+                stopwatchHand.rotation = Quaternion.identity;
+            }
         }
     }
 
-    private void SetClock()
+    private void InitClock()
     {
-        hours.Rotate(clockwise * startTime.Hour * hourRotation);
-        hours.Rotate(clockwise * startTime.Minute * hourRotation * twelveHourRotation * 2); // TODO: make this cleaner
-        minutes.Rotate(clockwise * startTime.Minute * secondRotation);
-        minutes.Rotate(clockwise * startTime.Second * minuteRotation);
-        seconds.Rotate(clockwise * startTime.Second * secondRotation);
+        hourHand.Rotate(clockwise * startTime.Hour * hourRotation);
+        hourHand.Rotate(clockwise * startTime.Minute * hourMinuteRotation);
+        minuteHand.Rotate(clockwise * startTime.Minute * secondRotation);
+        minuteHand.Rotate(clockwise * startTime.Second * minuteRotation);
+        secondHand.Rotate(clockwise * startTime.Second * secondRotation);
     }
 
     private void UpdateGUI()
     {
         updateGUITime += intervalGUIUpdate;
-        left.text = ("Begun: " + startTime.ToString() + "\nElapsed: " + Time.time.ToString());
-        right.text = ((Time.time % 60).ToString() + " :Laptime\n" + stopTime.ToString() + " :Stopwatch");
+        topLeft.text = ("Begun: " + startTime.ToString() + "\nElapsed: " + Time.time.ToString());
+        topRight.text = ((Time.time % 60).ToString() + " :Laptime\n" + stopTime.ToString() + " :Stopwatch");
     }
 
     private void UpdateClock()
     {
         updateTime += updateInterval;
-        audioSource.PlayOneShot(secondHandFX[Mathf.FloorToInt(Random.Range(0, secondHandFX.Length))]);
-        seconds.Rotate(clockwise * secondRotation);
-        minutes.Rotate(clockwise * minuteRotation);
-        hours.Rotate(clockwise * twelveHourRotation);
+        if (!mute) audioSource.PlayOneShot(secondHandFX[Mathf.FloorToInt(Random.Range(0, secondHandFX.Length))]);
+        secondHand.Rotate(clockwise * secondRotation);
+        minuteHand.Rotate(clockwise * minuteRotation);
+        hourHand.Rotate(clockwise * twelveHourRotation);
+        if (stopwatch) stopwatchHand.Rotate(clockwise * secondRotation);
     }
 }
