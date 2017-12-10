@@ -31,8 +31,7 @@ public class AnalogClock : MonoBehaviour
         hourMinuteRotation = hourRotation * twelveHourRotation * 2;
         intervalGUIUpdate = updateInterval / 10;
         startTime = DateTime.Now;
-        updateTime = updateInterval;
-        InitClock();
+        UpdateClock();
     }
 
     private void Update()
@@ -69,29 +68,18 @@ public class AnalogClock : MonoBehaviour
         }
     }
 
-    private void InitClock()
-    {
-        hourHand.Rotate(clockwise * startTime.Hour * hourRotation);
-        hourHand.Rotate(clockwise * startTime.Minute * hourMinuteRotation);
-
-        minuteHand.Rotate(clockwise * startTime.Minute * secondRotation);
-        minuteHand.Rotate(clockwise * startTime.Second * minuteRotation);
-
-        secondHand.Rotate(clockwise * startTime.Second * secondRotation);
-    }
-
     private void UpdateClock()
     {
         updateTime += updateInterval;
 
         if (!mute) audioSource.PlayOneShot(secondHandFX[Mathf.FloorToInt(URandom.Range(0, secondHandFX.Length))]);
 
-        secondHand.Rotate(clockwise * secondRotation);
-        minuteHand.Rotate(clockwise * minuteRotation);
-        hourHand.Rotate(clockwise * twelveHourRotation);
-
         currentTime = DateTime.Now;
         bottomRight.text = currentTime.ToLongTimeString();
+        
+        secondHand.rotation = Quaternion.Euler(0f, currentTime.Second * secondRotation, 0f);
+        minuteHand.rotation = Quaternion.Euler(0f, (currentTime.Minute * secondRotation) + (currentTime.Second * minuteRotation), 0f);
+        hourHand.rotation = Quaternion.Euler(0f, (currentTime.Hour * hourRotation) + (startTime.Minute * hourMinuteRotation), 0f);
     }
 
     private void UpdateGUI()
