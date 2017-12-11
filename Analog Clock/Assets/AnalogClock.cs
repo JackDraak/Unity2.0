@@ -1,13 +1,14 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System;
+﻿using System;
+using UnityEngine;
 using URandom = UnityEngine.Random;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class AnalogClock : MonoBehaviour 
 {
     [SerializeField] AudioClip[] secondHandFX;
     [SerializeField] Text bottomLeft, bottomRight, topLeft, topRight;
-    [SerializeField] Transform hourHand, minuteHand, secondHand, stopwatchHand;
+    [SerializeField] Transform cam, hourHand, minuteHand, secondHand, stopwatchHand, sweepHand;
 
     private AudioSource audioSource;
     private bool mute = false, overlay = true, stopwatch = false;
@@ -28,11 +29,18 @@ public class AnalogClock : MonoBehaviour
 
     private void Update()
     {
+        transform.LookAt(cam);
+        ControlMode();
         ControlMute();
         ControlStopwatch();
         ControlVisability();
         if (Time.time >= updateTimer) UpdateClock();
         if (Time.time >= updateElapsedTimer) UpdateElapsedTime();
+    }
+
+    private void ControlMode()
+    {
+        if (Input.GetKeyDown(KeyCode.S)) LoadNextLevel();
     }
 
     private void ControlMute()
@@ -46,10 +54,11 @@ public class AnalogClock : MonoBehaviour
         if (stopwatch)
         {
             breakTime = DateTime.Now - stopTime;
-
             float ms = (float)breakTime.TotalMilliseconds;
-            float absoluteAngle = ((ms / 1000) % 60) * semiNotch;
-            stopwatchHand.rotation = Quaternion.Euler(0f, absoluteAngle, 0f);
+            float stopwatchHandAngle = ((ms / 1000) % 60) * semiNotch;
+            float sweepHandAngle = ((ms / 1000) % 360) * 360;
+            stopwatchHand.localRotation = Quaternion.Euler(0f, stopwatchHandAngle, 0f);
+            sweepHand.localRotation = Quaternion.Euler(0f, sweepHandAngle, 0f);
             topRight.text = (Mathf.RoundToInt(ms) + "ms :Stopwatch\n(space)");
         }
 
@@ -59,7 +68,7 @@ public class AnalogClock : MonoBehaviour
             if (stopwatch)
             {
                 stopTime = DateTime.Now;
-                stopwatchHand.rotation = Quaternion.identity;
+                //stopwatchHand.rotation = Quaternion.identity;
             }
         }
     }
@@ -88,23 +97,31 @@ public class AnalogClock : MonoBehaviour
         }
     }
 
+    private void LoadNextLevel()
+    {
+        int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
+        if (nextScene > SceneManager.sceneCountInBuildSettings -1) nextScene = 0;
+        SceneManager.LoadScene(nextScene);
+    }
+
     private void UpdateClock()
     {
         updateTimer += updateInterval;
-
         if (!mute) audioSource.PlayOneShot(secondHandFX[Mathf.FloorToInt(URandom.Range(0, secondHandFX.Length))]);
-
         DateTime time = DateTime.Now;
         bottomRight.text = time.ToLongTimeString();
-        
-        secondHand.rotation = Quaternion.Euler(0f, time.Second * semiNotch, 0f);
-        minuteHand.rotation = Quaternion.Euler(0f, (time.Minute * semiNotch) + (time.Second * rFac_Minute), 0f);
-        hourHand.rotation = Quaternion.Euler(0f, (time.Hour * notch) + (time.Minute * rFac_Hour), 0f);
+        secondHand.localRotation = Quaternion.Euler(0f, time.Second * semiNotch, 0f);
+        minuteHand.localRotation = Quaternion.Euler(0f, (time.Minute * semiNotch) + (time.Second * rFac_Minute), 0f);
+        hourHand.localRotation = Quaternion.Euler(0f, (time.Hour * notch) + (time.Minute * rFac_Hour), 0f);
     }
 
     private void UpdateElapsedTime()
     {
+        updateElapsedTimer += updateInterval / 10;
         runTime = DateTime.Now - startTime;
-        topLeft.text = ("Begun: " + startTime.ToString() + "\nElapsed: " + runTime.ToString() + "\nV = toggle overlay");
+        topLeft.text = ("Begun: " + startTime.ToString() 
+            + "\nElapsed: " + runTime.ToString() 
+            + "\nS = toggle static/dynamic"
+            + "\nV = toggle overlay");
     }
 }
