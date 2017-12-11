@@ -7,30 +7,20 @@ public class AnalogClock : MonoBehaviour
 {
     [SerializeField] AudioClip[] secondHandFX;
     [SerializeField] Text bottomLeft, bottomRight, topLeft, topRight;
-    [SerializeField] Transform hourHand;
-    [SerializeField] Transform minuteHand;
-    [SerializeField] Transform secondHand;
-    [SerializeField] Transform stopwatchHand;
+    [SerializeField] Transform hourHand, minuteHand, secondHand, stopwatchHand;
 
     private AudioSource audioSource;
-    private bool mute = false, stopwatch = false, view = true;
-    private float intervalGUIUpdate, updateElapsedTimer;
-    private float hourMinuteRotation;
-    private float minuteRotation = 0.1f;
-    private float twelveHourRotation = (0.1f / 12);
-    private float updateInterval = 1;
-    private float updateTimer;
-    private int hourRotation = 30;
-    private int secondRotation = 6;
-    private DateTime currentTime, startTime, stopTime;
+    private bool mute = false, overlay = true, stopwatch = false;
+    private DateTime startTime, stopTime;
+    private float updateElapsedTimer, updateInterval = 1, updateTimer;
+    private float rFac_12Hour = (0.1f / 12), rFac_Hour, rFac_Minute = 0.1f;
+    private int notch = 30, semiNotch = 6;
     private TimeSpan breakTime, runTime;
-    private Vector3 clockwise = new Vector3(0, 1, 0);
 
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        hourMinuteRotation = hourRotation * twelveHourRotation * 2;
-        intervalGUIUpdate = updateInterval / 10;
+        rFac_Hour = notch * rFac_12Hour * 2;
         startTime = DateTime.Now;
         topRight.text = ("0ms :Stopwatch\n(space)");
         UpdateClock();
@@ -58,7 +48,7 @@ public class AnalogClock : MonoBehaviour
             breakTime = DateTime.Now - stopTime;
 
             float ms = (float)breakTime.TotalMilliseconds;
-            float absoluteAngle = ((ms / 1000) % 60) * secondRotation;
+            float absoluteAngle = ((ms / 1000) % 60) * semiNotch;
             stopwatchHand.rotation = Quaternion.Euler(0f, absoluteAngle, 0f);
             topRight.text = (Mathf.RoundToInt(ms) + "ms :Stopwatch\n(space)");
         }
@@ -80,8 +70,8 @@ public class AnalogClock : MonoBehaviour
         {
             Color invisible = new Color(0, 0, 0, 0);
             Color visible = new Color(250, 250, 250, 250);
-            view = !view;
-            if (!view)
+            overlay = !overlay;
+            if (!overlay)
             {
                 topLeft.color = invisible;
                 topRight.color = invisible;
@@ -104,12 +94,12 @@ public class AnalogClock : MonoBehaviour
 
         if (!mute) audioSource.PlayOneShot(secondHandFX[Mathf.FloorToInt(URandom.Range(0, secondHandFX.Length))]);
 
-        currentTime = DateTime.Now;
-        bottomRight.text = currentTime.ToLongTimeString();
+        DateTime time = DateTime.Now;
+        bottomRight.text = time.ToLongTimeString();
         
-        secondHand.rotation = Quaternion.Euler(0f, currentTime.Second * secondRotation, 0f);
-        minuteHand.rotation = Quaternion.Euler(0f, (currentTime.Minute * secondRotation) + (currentTime.Second * minuteRotation), 0f);
-        hourHand.rotation = Quaternion.Euler(0f, (currentTime.Hour * hourRotation) + (currentTime.Minute * hourMinuteRotation), 0f);
+        secondHand.rotation = Quaternion.Euler(0f, time.Second * semiNotch, 0f);
+        minuteHand.rotation = Quaternion.Euler(0f, (time.Minute * semiNotch) + (time.Second * rFac_Minute), 0f);
+        hourHand.rotation = Quaternion.Euler(0f, (time.Hour * notch) + (time.Minute * rFac_Hour), 0f);
     }
 
     private void UpdateElapsedTime()
