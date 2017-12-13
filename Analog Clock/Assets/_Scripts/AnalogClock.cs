@@ -77,6 +77,7 @@ public class AnalogClock : MonoBehaviour
             bottomLeft.text = "C = mute clicks";
             audioHandler.soundFX = true;
         }
+        bottomLeft.text += "\nV = toggle overlay\nS = switch theme (resets stopwatch)";
     }
 
     private void ControlStopwatch()
@@ -140,9 +141,6 @@ public class AnalogClock : MonoBehaviour
     {
         updateElapsedTimer += updateInterval / 10;
         runTime = DateTime.Now - startTime;
-        topLeft.text = ("Begun: " + startTime.ToString() 
-            + "\nElapsed: " + runTime.ToString() 
-            + "\nS = switch theme (resets stopwatch)"
-            + "\nV = toggle overlay");
+        topLeft.text = ("Begun: " + startTime.ToString() + "\nElapsed: " + runTime.ToString());
     }
 }
