@@ -32,10 +32,12 @@ public class KeyValet : MonoBehaviour
         {
             // "Standard" keys....
             case "AudioHandler-AudioToggle":    handback = KeyCode.M;       break;
+            case "Clock-SwitchTheme":           handback = KeyCode.S;       break;
             case "Clock-ToggleClicks":          handback = KeyCode.C;       break;
+            case "Clock-ToggleLight":           handback = KeyCode.L;       break;
             case "Clock-ToggleOverlay":         handback = KeyCode.V;       break;
             case "Clock-ToggleStopwatch":       handback = KeyCode.Space;   break;
-            case "Clock-SwitchTheme":           handback = KeyCode.S;       break;
+            case "Clock-Quit":                  handback = KeyCode.Q;       break;
             default: break;
         }
         return handback;

@@ -8,16 +8,16 @@ public class AnalogClock : MonoBehaviour
 {
     [SerializeField] AudioClip[] secondHandFX;
     [SerializeField] Text bottomLeft, bottomRight, topLeft, topRight;
-    [SerializeField] Transform cam, hourHand, minuteHand, secondHand, stopwatchHand, sweepHand;
+    [SerializeField] Transform cam, hourHand, sweepLight, minuteHand, secondHand, stopwatchHand, sweepHand;
 
     private AudioHandler audioHandler;
     private AudioSource audioSource;
-    private bool mute, overlay = true, stopwatch = false;
+    private bool light = true, mute, overlay = true, stopwatch = false;
     private DateTime startTime, stopTime;
     private float updateElapsedTimer, updateInterval = 1, updateTimer;
     private float rFac_12Hour = (0.1f / 12), rFac_Hour, rFac_Minute = 0.1f;
     private int notch = 30, semiNotch = 6;
-    private KeyCode toggleClick, toggleOverlay, toggleStopwatch, toggleTheme;
+    private KeyCode endOfLine, toggleClick, toggleLight, toggleOverlay, toggleStopwatch, toggleTheme;
     private KeyValet keyValet;
     private LevelValet levelValet;
     private TimeSpan breakTime, runTime;
@@ -40,6 +40,7 @@ public class AnalogClock : MonoBehaviour
         transform.LookAt(cam);
         ControlMode();
         ControlMute();
+        ControlLight();
         ControlStopwatch();
         ControlVisability();
         if (Time.time >= updateTimer) UpdateClock();
@@ -52,32 +53,48 @@ public class AnalogClock : MonoBehaviour
         if (!(audioHandler = FindObjectOfType<AudioHandler>())) Debug.Log("AnalogClock.cs: audioHandler INFO, FAIL.");
         if (!(levelValet = FindObjectOfType<LevelValet>())) Debug.Log("AnalogClock.cs: levelValet INFO, FAIL.");
         if (!(keyValet = FindObjectOfType<KeyValet>())) Debug.Log("AnalogClock.cs keyValet INFO, FAIL.");
+        endOfLine = keyValet.GetKey("Clock-Quit");
         toggleClick = keyValet.GetKey("Clock-ToggleClicks");
+        toggleLight = keyValet.GetKey("Clock-ToggleLight");
         toggleOverlay = keyValet.GetKey("Clock-ToggleOverlay");
         toggleStopwatch = keyValet.GetKey("Clock-ToggleStopwatch");
         toggleTheme = keyValet.GetKey("Clock-SwitchTheme");
         mute = !audioHandler.soundFX;
     }
 
+    private void ControlLight()
+    {
+        if (Input.GetKeyDown(toggleLight))
+        {
+            light = !light;
+            if (sweepLight != null) sweepLight.gameObject.SetActive(light);
+        }
+    }
+
     private void ControlMode()
     {
         if (Input.GetKeyDown(toggleTheme)) levelValet.LoadNextLevel();
+        if (Input.GetKeyDown(endOfLine)) Application.Quit();
     }
 
     private void ControlMute()
     {
         if (Input.GetKeyDown(toggleClick)) mute = !mute;
+        bottomLeft.text = "Q = quit";
         if (mute) 
         {
-            bottomLeft.text = "C = restore click sounds";
+            bottomLeft.text += "\nC = restore clicks";
             audioHandler.soundFX = false;
         }
         else
         {
-            bottomLeft.text = "C = mute clicks";
+            bottomLeft.text += "\nC = mute clicks";
             audioHandler.soundFX = true;
         }
-        bottomLeft.text += "\nV = toggle overlay\nS = switch theme (resets stopwatch)";
+        bottomLeft.text += "\nV = toggle overlay";
+        if (light) bottomLeft.text += "\nL = deactivate sweep lamp";
+        else bottomLeft.text += "\nL = activate sweep lamp";
+        bottomLeft.text +=  "\nS = switch theme (resets stopwatch)";
     }
 
     private void ControlStopwatch()
