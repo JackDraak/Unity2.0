@@ -36,6 +36,9 @@ public class CameraOperator : MonoBehaviour
         int duration = panDelay;
         pathTime = Time.time + duration + 1;
 
-        iTween.MoveTo(gameObject, iTween.Hash("path", iTweenPath.GetPath("cam"), "time", duration, "easetype", iTween.EaseType.easeInOutSine));
+        iTween.MoveTo(gameObject, 
+            iTween.Hash("path", 
+            iTweenPath.GetPath("cam"), "time", duration, "easetype", 
+            iTween.EaseType.easeInOutSine));
     }
 }

@@ -19,9 +19,9 @@ public class KeyValet : MonoBehaviour
     private void OnEnable()
     {
         // Singleton pattern, preferred over making the class static:
-        KeyValet[] checker;
-        checker = FindObjectsOfType<KeyValet>();
-        if (checker.Length > 1) Destroy(gameObject);
+        KeyValet[] objectCount;
+        objectCount = FindObjectsOfType<KeyValet>();
+        if (objectCount.Length > 1) Destroy(gameObject);
         else DontDestroyOnLoad(gameObject);
     }
 
@@ -30,11 +30,10 @@ public class KeyValet : MonoBehaviour
         KeyCode handback = KeyCode.None;
         switch (key)
         {
-            // "Standard" keys....
             case "AudioHandler-AudioToggle":    handback = KeyCode.M;       break;
             case "Clock-SwitchTheme":           handback = KeyCode.S;       break;
             case "Clock-ToggleClicks":          handback = KeyCode.C;       break;
-            case "Clock-ToggleLight":           handback = KeyCode.L;       break;
+            case "Clock-ToggleLamp":            handback = KeyCode.L;       break;
             case "Clock-ToggleOverlay":         handback = KeyCode.V;       break;
             case "Clock-ToggleStopwatch":       handback = KeyCode.Space;   break;
             case "Clock-Quit":                  handback = KeyCode.Q;       break;

@@ -2,9 +2,9 @@
 
 public class AudioHandler : MonoBehaviour
 {
-    public bool soundFX = true;
 
     private AudioSource audioSource;
+    private bool soundFX = true;
     private float priorTimeScale;
     private KeyCode audioKey;
     private KeyValet keyValet;
@@ -12,9 +12,9 @@ public class AudioHandler : MonoBehaviour
     private void OnEnable()
     {
         // Singleton pattern, preferred over making the class static:
-        AudioHandler[] checker;
-        checker = FindObjectsOfType<AudioHandler>();
-        if (checker.Length > 1) Destroy(gameObject);
+        AudioHandler[] objectCount;
+        objectCount = FindObjectsOfType<AudioHandler>();
+        if (objectCount.Length > 1) Destroy(gameObject);
         else DontDestroyOnLoad(gameObject);
     }
 
@@ -37,16 +37,24 @@ public class AudioHandler : MonoBehaviour
         if (soundFX && !audioSource.isPlaying)
         {
             audioSource.Play();
-            // TODO: control clock audio
         }
         else if (!soundFX && audioSource.isPlaying)
         {
             audioSource.Pause();
-            // TODO: control clock audio
         }
     }
 
-    public void TogglePause()
+    public bool GetFX()
+    {
+        return soundFX;
+    }
+
+    public void SetFX(bool torf)
+    {
+        soundFX = torf;
+    }
+
+    public void ToggleFX()
     {
         soundFX = !soundFX;
     }

@@ -6,9 +6,9 @@ public class LevelValet : MonoBehaviour
     private void OnEnable()
     {
         // Singleton pattern, preferred over making the class static:
-        LevelValet[] checker;
-        checker = FindObjectsOfType<LevelValet>();
-        if (checker.Length > 1) Destroy(gameObject);
+        LevelValet[] objectCount;
+        objectCount = FindObjectsOfType<LevelValet>();
+        if (objectCount.Length > 1) Destroy(gameObject);
         else DontDestroyOnLoad(gameObject);
     }
 

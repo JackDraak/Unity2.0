@@ -744,13 +744,13 @@ MonoBehaviour:
   bottomRight: {fileID: 440208721}
   topLeft: {fileID: 505237516}
   topRight: {fileID: 1061022668}
-  cam: {fileID: 2108780095}
+  sceneCamera: {fileID: 2108780095}
   hourHand: {fileID: 1652365963}
-  sweepLight: {fileID: 922904770}
   minuteHand: {fileID: 531929771}
   secondHand: {fileID: 2078032992}
   stopwatchHand: {fileID: 2130982675}
   sweepHand: {fileID: 1171768220}
+  sweepLampTransform: {fileID: 922904770}
 --- !u!114 &1061022668 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114110032281188556, guid: aefb7da4a8520894d984fd88520fdc49,
@@ -1460,7 +1460,7 @@ Prefab:
     - target: {fileID: 114189511375114862, guid: 47a6c78772eb79f4b860fff65adeeb61,
         type: 2}
       propertyPath: actors.Array.size
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4201342026760878, guid: 47a6c78772eb79f4b860fff65adeeb61, type: 2}
       propertyPath: m_LocalPosition.x
@@ -1513,12 +1513,12 @@ Prefab:
         type: 2}
       propertyPath: actors.Array.data[3]
       value: 
-      objectReference: {fileID: 1390566392}
+      objectReference: {fileID: 3893684}
     - target: {fileID: 114189511375114862, guid: 47a6c78772eb79f4b860fff65adeeb61,
         type: 2}
       propertyPath: actors.Array.data[4]
       value: 
-      objectReference: {fileID: 3893684}
+      objectReference: {fileID: 1486454299}
     - target: {fileID: 114189511375114862, guid: 47a6c78772eb79f4b860fff65adeeb61,
         type: 2}
       propertyPath: actors.Array.data[5]

@@ -146,52 +146,6 @@ Transform:
   m_PrefabParentObject: {fileID: 4069358734504962, guid: c8f3b9b6dc0a8b545bef708b92dd9717,
     type: 2}
   m_PrefabInternal: {fileID: 1123086165}
---- !u!1 &714618744 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1506067276069018, guid: c8f3b9b6dc0a8b545bef708b92dd9717,
-    type: 2}
-  m_PrefabInternal: {fileID: 1123086165}
---- !u!4 &714618745 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 4219192505335972, guid: c8f3b9b6dc0a8b545bef708b92dd9717,
-    type: 2}
-  m_PrefabInternal: {fileID: 1123086165}
---- !u!108 &714618746
-Light:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 714618744}
-  m_Enabled: 1
-  serializedVersion: 8
-  m_Type: 2
-  m_Color: {r: 0.8272354, g: 0.46600002, b: 1, a: 1}
-  m_Intensity: 0.43
-  m_Range: 0.51
-  m_SpotAngle: 30
-  m_CookieSize: 10
-  m_Shadows:
-    m_Type: 1
-    m_Resolution: -1
-    m_CustomResolution: -1
-    m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
-    m_NearPlane: 0.2
-  m_Cookie: {fileID: 0}
-  m_DrawHalo: 0
-  m_Flare: {fileID: 0}
-  m_RenderMode: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_Lightmapping: 4
-  m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 0
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
-  m_ShadowRadius: 0
-  m_ShadowAngle: 0
 --- !u!4 &774896004 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4569973187779052, guid: c8f3b9b6dc0a8b545bef708b92dd9717,
@@ -269,30 +223,9 @@ Prefab:
       objectReference: {fileID: 1061022668}
     - target: {fileID: 114148000588477160, guid: c8f3b9b6dc0a8b545bef708b92dd9717,
         type: 2}
-      propertyPath: cam
+      propertyPath: sceneCamera
       value: 
       objectReference: {fileID: 2108780095}
-    - target: {fileID: 4507916641187064, guid: c8f3b9b6dc0a8b545bef708b92dd9717, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0.0091
-      objectReference: {fileID: 0}
-    - target: {fileID: 4605983680978548, guid: c8f3b9b6dc0a8b545bef708b92dd9717, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: -0.3258
-      objectReference: {fileID: 0}
-    - target: {fileID: 4138657181201066, guid: c8f3b9b6dc0a8b545bef708b92dd9717, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: -0.3207
-      objectReference: {fileID: 0}
-    - target: {fileID: 4833443381634052, guid: c8f3b9b6dc0a8b545bef708b92dd9717, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: -0.3331
-      objectReference: {fileID: 0}
-    - target: {fileID: 114148000588477160, guid: c8f3b9b6dc0a8b545bef708b92dd9717,
-        type: 2}
-      propertyPath: sweepLight
-      value: 
-      objectReference: {fileID: 714618745}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c8f3b9b6dc0a8b545bef708b92dd9717, type: 2}
   m_IsPrefabParent: 0
@@ -577,47 +510,6 @@ Transform:
   m_PrefabParentObject: {fileID: 4984652992406870, guid: c8f3b9b6dc0a8b545bef708b92dd9717,
     type: 2}
   m_PrefabInternal: {fileID: 1123086165}
---- !u!1 &1439510470 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1936840529184944, guid: c8f3b9b6dc0a8b545bef708b92dd9717,
-    type: 2}
-  m_PrefabInternal: {fileID: 1123086165}
---- !u!108 &1439510471
-Light:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1439510470}
-  m_Enabled: 1
-  serializedVersion: 8
-  m_Type: 2
-  m_Color: {r: 1, g: 0.857, b: 0.42799997, a: 1}
-  m_Intensity: 0.91
-  m_Range: 0.84
-  m_SpotAngle: 30
-  m_CookieSize: 10
-  m_Shadows:
-    m_Type: 1
-    m_Resolution: -1
-    m_CustomResolution: -1
-    m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
-    m_NearPlane: 0.2
-  m_Cookie: {fileID: 0}
-  m_DrawHalo: 0
-  m_Flare: {fileID: 0}
-  m_RenderMode: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_Lightmapping: 4
-  m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 0
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
-  m_ShadowRadius: 0
-  m_ShadowAngle: 0
 --- !u!4 &1473164289 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4833443381634052, guid: c8f3b9b6dc0a8b545bef708b92dd9717,

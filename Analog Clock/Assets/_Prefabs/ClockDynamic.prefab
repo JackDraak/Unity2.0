@@ -631,6 +631,7 @@ GameObject:
   - component: {fileID: 4219192505335972}
   - component: {fileID: 33123368058581286}
   - component: {fileID: 23337814111240964}
+  - component: {fileID: 108391911778327274}
   m_Layer: 0
   m_Name: Sweep Hand
   m_TagString: Untagged
@@ -1316,6 +1317,7 @@ GameObject:
   - component: {fileID: 4569973187779052}
   - component: {fileID: 33149923604422314}
   - component: {fileID: 23816056555160950}
+  - component: {fileID: 108972900601571410}
   m_Layer: 0
   m_Name: Stopwatch Hand
   m_TagString: Untagged
@@ -1468,7 +1470,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1339071335174476}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0269, z: -0.3229}
+  m_LocalPosition: {x: 0, y: 0.0269, z: -0.3207}
   m_LocalScale: {x: 0.01560336, y: 0.01, z: 0.015349055}
   m_Children: []
   m_Father: {fileID: 4515693251878110}
@@ -2012,7 +2014,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1869082615979802}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0442, z: 0.008000001}
+  m_LocalPosition: {x: 0, y: 0.0442, z: 0.0091}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4489798965106264}
@@ -2133,7 +2135,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1369713890432648}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0055, z: -0.3264}
+  m_LocalPosition: {x: 0, y: 0.0055, z: -0.3258}
   m_LocalScale: {x: 0.03145922, y: 0.01, z: 0.030679818}
   m_Children: []
   m_Father: {fileID: 4811570457534816}
@@ -2349,7 +2351,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1690219180744064}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.0201, z: -0.3325}
+  m_LocalPosition: {x: 0, y: -0.0201, z: -0.3331}
   m_LocalScale: {x: 0.057955354, y: 0.01, z: 0.060315832}
   m_Children: []
   m_Father: {fileID: 4507916641187064}
@@ -5508,6 +5510,78 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!108 &108391911778327274
+Light:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1506067276069018}
+  m_Enabled: 1
+  serializedVersion: 8
+  m_Type: 2
+  m_Color: {r: 0.8272354, g: 0.46600002, b: 1, a: 1}
+  m_Intensity: 0.43
+  m_Range: 0.51
+  m_SpotAngle: 30
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 1
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_Lightmapping: 4
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 0
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+--- !u!108 &108972900601571410
+Light:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1936840529184944}
+  m_Enabled: 1
+  serializedVersion: 8
+  m_Type: 2
+  m_Color: {r: 1, g: 0.857, b: 0.42799997, a: 1}
+  m_Intensity: 0.91
+  m_Range: 0.84
+  m_SpotAngle: 30
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 1
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_Lightmapping: 4
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 0
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
 --- !u!114 &114148000588477160
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5531,9 +5605,10 @@ MonoBehaviour:
   bottomRight: {fileID: 0}
   topLeft: {fileID: 0}
   topRight: {fileID: 0}
-  cam: {fileID: 0}
+  sceneCamera: {fileID: 0}
   hourHand: {fileID: 4515693251878110}
   minuteHand: {fileID: 4811570457534816}
   secondHand: {fileID: 4507916641187064}
   stopwatchHand: {fileID: 4424312000835572}
   sweepHand: {fileID: 4161295621660790}
+  sweepLampTransform: {fileID: 4219192505335972}
