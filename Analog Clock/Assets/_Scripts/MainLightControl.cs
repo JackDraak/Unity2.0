@@ -22,15 +22,15 @@ public class MainLightControl : MonoBehaviour
     {
      if (Input.GetKeyDown(brighter))
         {
-            brightness = (float) (brightness + .1);
-            if (brightness > 3) brightness = 3;
+            brightness = (float) (brightness + .5);
+            if (brightness > 5) brightness = 5;
             Debug.Log(brightness);
         }
 
         if (Input.GetKeyDown(darker))
         {
-            brightness = (float) (brightness - .1);
-            if (brightness < -4) brightness = -4;
+            brightness = (float) (brightness - .5);
+            if (brightness < -2) brightness = -2;
             Debug.Log(brightness);
         } 
 
