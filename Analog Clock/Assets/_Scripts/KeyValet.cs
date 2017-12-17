@@ -37,6 +37,8 @@ public class KeyValet : MonoBehaviour
             case "Clock-ToggleOverlay":         handback = KeyCode.V;       break;
             case "Clock-ToggleStopwatch":       handback = KeyCode.Space;   break;
             case "Clock-Quit":                  handback = KeyCode.Q;       break;
+            case "Light-Brighten":              handback = KeyCode.Equals;  break;
+            case "Light-Darken":                handback = KeyCode.Minus;   break;
             default: break;
         }
         return handback;

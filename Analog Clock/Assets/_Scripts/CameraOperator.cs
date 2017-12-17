@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 public class CameraOperator : MonoBehaviour 
 {
@@ -8,7 +6,7 @@ public class CameraOperator : MonoBehaviour
 
     private bool onPath = false, onLook = false;
     private float pathTime = 1, lookTime = 1; 
-    private int selection, lookDelay = 21, panDelay = 200;
+    private int selection, lookDelay = 27, panDelay = 200;
 
     private void LateUpdate()
     {
