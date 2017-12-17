@@ -30,15 +30,17 @@ public class KeyValet : MonoBehaviour
         KeyCode handback = KeyCode.None;
         switch (key)
         {
-            case "AudioHandler-AudioToggle":    handback = KeyCode.M;       break;
-            case "Clock-SwitchTheme":           handback = KeyCode.S;       break;
-            case "Clock-ToggleClicks":          handback = KeyCode.C;       break;
-            case "Clock-ToggleLamp":            handback = KeyCode.L;       break;
-            case "Clock-ToggleOverlay":         handback = KeyCode.V;       break;
-            case "Clock-ToggleStopwatch":       handback = KeyCode.Space;   break;
-            case "Clock-Quit":                  handback = KeyCode.Q;       break;
-            case "Light-Brighten":              handback = KeyCode.Equals;  break;
-            case "Light-Darken":                handback = KeyCode.Minus;   break;
+            case "AudioHandler-AudioToggle":    handback = KeyCode.M;               break;
+            case "Clock-SwitchTheme":           handback = KeyCode.S;               break;
+            case "Clock-ToggleClicks":          handback = KeyCode.C;               break;
+            case "Clock-ToggleLamp":            handback = KeyCode.L;               break;
+            case "Clock-ToggleOverlay":         handback = KeyCode.V;               break;
+            case "Clock-ToggleStopwatch":       handback = KeyCode.Space;           break;
+            case "Clock-Quit":                  handback = KeyCode.Q;               break;
+            case "GUI-Larger":                  handback = KeyCode.RightBracket;    break;
+            case "GUI-Smaller":                 handback = KeyCode.LeftBracket;     break;
+            case "Light-Brighten":              handback = KeyCode.Equals;          break;
+            case "Light-Darken":                handback = KeyCode.Minus;           break;
             default: break;
         }
         return handback;

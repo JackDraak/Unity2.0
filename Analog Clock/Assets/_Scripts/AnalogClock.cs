@@ -9,16 +9,14 @@ public class AnalogClock : MonoBehaviour
     [SerializeField] Text bottomLeft, bottomRight, topLeft, topRight;
     [SerializeField] Transform sceneCamera, hourHand, minuteHand, secondHand, stopwatchHand, sweepHand, sweepLampTransform;
 
-    [Range(0, 359)] public int clockX = 0, clockY = 270, clockZ = 0; 
-
     private AudioHandler audioHandler;
     private AudioSource audioSource;
-    private bool sweepLamp = true, mute, overlay = true, stopwatch = false;
+    private bool mute, overlay = true, sweepLamp = true, stopwatch = false;
     private DateTime startTime, stopTime;
-    private float updateElapsedTimer, updateInterval = 1, updateTimer;
+    private float lookUpdate = 0, lookDelay = 5, updateElapsedTimer, updateInterval = 1, updateTimer;
     private float rFac_12Hour = (0.1f / 12), rFac_Hour, rFac_Minute = 0.1f;
-    private int notch = 30, semiNotch = 6;
-    private KeyCode endOfLine, switchTheme, toggleClick, toggleLamp, toggleOverlay, toggleStopwatch;
+    private int fontsize = 18, notch = 30, semiNotch = 6;
+    private KeyCode endOfLine, guiUp, guiDown, switchTheme, toggleClick, toggleLamp, toggleOverlay, toggleStopwatch;
     private KeyValet keyValet;
     private LevelValet levelValet;
     private string currentTime, elapsedTime;
@@ -38,7 +36,6 @@ public class AnalogClock : MonoBehaviour
     private void Update()
     {
         transform.LookAt(sceneCamera);
-        //transform.rotation = Quaternion.Euler(clockX, clockY, clockZ);
 
         ControlMode();
         ControlMute();
@@ -59,6 +56,8 @@ public class AnalogClock : MonoBehaviour
         if (!(keyValet = FindObjectOfType<KeyValet>())) Debug.Log("AnalogClock.cs keyValet INFO, FAIL.");
 
         endOfLine = keyValet.GetKey("Clock-Quit");
+        guiUp = keyValet.GetKey("GUI-Larger");
+        guiDown = keyValet.GetKey("GUI-Smaller");
         toggleClick = keyValet.GetKey("Clock-ToggleClicks");
         toggleLamp = keyValet.GetKey("Clock-ToggleLamp");
         toggleOverlay = keyValet.GetKey("Clock-ToggleOverlay");
@@ -135,8 +134,7 @@ public class AnalogClock : MonoBehaviour
     private void UpdateClock()
     {
         if (!audioHandler) ClockInit();
-        //updateTimer += updateInterval;
-        updateTimer = Time.time + updateInterval; // does this fix the souns issue when scene-swapping? (YES)
+        updateTimer = Time.time + updateInterval;
         if (!mute && audioHandler.GetFX())
             audioSource.PlayOneShot(secondHandFX[Mathf.FloorToInt(URandom.Range(0, secondHandFX.Length))]);
         DateTime time = DateTime.Now;
@@ -156,6 +154,30 @@ public class AnalogClock : MonoBehaviour
 
     private void UpdateGUI()
     {
+        if (Input.GetKeyDown(guiUp))
+        {
+            if (fontsize < 28)
+            {
+                fontsize++;
+                topLeft.fontSize = fontsize;
+                topRight.fontSize = fontsize;
+                bottomLeft.fontSize = fontsize;
+                bottomRight.fontSize = fontsize;
+            }
+        }
+
+        if (Input.GetKeyDown(guiDown))
+        {
+            if (fontsize > 6)
+            {
+                fontsize--;
+                topLeft.fontSize = fontsize;
+                topRight.fontSize = fontsize;
+                bottomLeft.fontSize = fontsize;
+                bottomRight.fontSize = fontsize;
+            }
+        }
+
         topLeft.text = elapsedTime;
 
         topRight.text = (Mathf.RoundToInt((float)breakTime.TotalMilliseconds) + "ms :Stopwatch\n(space)");
