@@ -2,7 +2,6 @@
 
 public class AudioHandler : MonoBehaviour
 {
-
     private AudioSource audioSource;
     private bool soundFX = true;
     private float priorTimeScale;

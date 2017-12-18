@@ -3,6 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class LevelValet : MonoBehaviour
 {
+    private int fontsize = 18;
+    private bool overlay = true;
+
     private void OnEnable()
     {
         // Singleton pattern, preferred over making the class static:
@@ -18,4 +21,12 @@ public class LevelValet : MonoBehaviour
         if (nextScene > SceneManager.sceneCountInBuildSettings - 1) nextScene = 0;
         SceneManager.LoadScene(nextScene);
     }
+
+    public int GetFontsize()            { return fontsize; }
+    public bool GetOverlay()            { return overlay; }
+    public void SetFontsize(int size)   { fontsize = size; }
+    public void SetOverlay(bool torf)   { overlay = torf; }
+    public void ToggleOverlay()         { overlay = !overlay; }
+    public void FontUp()                { fontsize++; }
+    public void FontDown()              { fontsize--; }
 }

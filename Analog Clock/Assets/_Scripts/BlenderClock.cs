@@ -11,11 +11,11 @@ public class BlenderClock : MonoBehaviour
 
     private AudioHandler audioHandler;
     private AudioSource audioSource;
-    private bool mute, overlay = true, sweepLamp = true, stopwatch = false;
+    private bool sweepLamp = true, stopwatch = false;
     private DateTime startTime, stopTime;
     private float lookUpdate = 0, lookDelay = 5, updateElapsedTimer, updateInterval = 1, updateTimer;
     private float rFac_12Hour = (0.1f / 12), rFac_Hour, rFac_Minute = 0.1f;
-    private int fontsize = 18, notch = 30, semiNotch = 6;
+    private int notch = 30, semiNotch = 6;
     private KeyCode endOfLine, guiUp, guiDown, switchTheme, toggleClick, toggleLamp, toggleOverlay, toggleStopwatch;
     private KeyValet keyValet;
     private LevelValet levelValet;
@@ -24,13 +24,14 @@ public class BlenderClock : MonoBehaviour
 
     private void Start()
     {
-        UpdateClock();
     }
 
     private void OnEnable()
     {
-        ClockInit();
         startTime = DateTime.Now;
+        ClockInit();
+        InitGUI();
+        UpdateClock();
     }
 
     private void Update()
@@ -64,7 +65,6 @@ public class BlenderClock : MonoBehaviour
         toggleStopwatch = keyValet.GetKey("Clock-ToggleStopwatch");
         switchTheme = keyValet.GetKey("Clock-SwitchTheme");
 
-        mute = !audioHandler.GetFX();
         rFac_Hour = notch * rFac_12Hour * 2;
     }
 
@@ -85,7 +85,7 @@ public class BlenderClock : MonoBehaviour
 
     private void ControlMute()
     {
-        if (Input.GetKeyDown(toggleClick)) mute = !mute;
+        if (Input.GetKeyDown(toggleClick)) audioHandler.ToggleFX();
     }
 
     private void ControlStopwatch()
@@ -113,8 +113,8 @@ public class BlenderClock : MonoBehaviour
         {
             Color invisible = new Color(0, 0, 0, 0);
             Color visible = new Color(250, 250, 250, 250);
-            overlay = !overlay;
-            if (!overlay)
+            levelValet.ToggleOverlay();
+            if (!levelValet.GetOverlay())
             {
                 topLeft.color = invisible;
                 topRight.color = invisible;
@@ -131,11 +131,20 @@ public class BlenderClock : MonoBehaviour
         }
     }
 
+    private void InitGUI()
+    {
+        int fontsize = levelValet.GetFontsize();
+        topLeft.fontSize = fontsize;
+        topRight.fontSize = fontsize;
+        bottomLeft.fontSize = fontsize;
+        bottomRight.fontSize = fontsize;
+    }
+
     private void UpdateClock()
     {
         if (!audioHandler) ClockInit();
         updateTimer = Time.time + updateInterval;
-        if (!mute && audioHandler.GetFX())
+        if (audioHandler.GetFX())
             audioSource.PlayOneShot(secondHandFX[Mathf.FloorToInt(URandom.Range(0, secondHandFX.Length))]);
         DateTime time = DateTime.Now;
         currentTime = time.ToLongTimeString();
@@ -156,18 +165,21 @@ public class BlenderClock : MonoBehaviour
     {
         if (Input.GetKeyDown(guiUp))
         {
-            if (fontsize < 28)
+            int fontsize = levelValet.GetFontsize();
+            if (fontsize < 27)
             {
                 fontsize++;
                 topLeft.fontSize = fontsize;
                 topRight.fontSize = fontsize;
                 bottomLeft.fontSize = fontsize;
                 bottomRight.fontSize = fontsize;
+                levelValet.SetFontsize(fontsize);
             }
         }
 
         if (Input.GetKeyDown(guiDown))
         {
+            int fontsize = levelValet.GetFontsize();
             if (fontsize > 6)
             {
                 fontsize--;
@@ -175,6 +187,7 @@ public class BlenderClock : MonoBehaviour
                 topRight.fontSize = fontsize;
                 bottomLeft.fontSize = fontsize;
                 bottomRight.fontSize = fontsize;
+                levelValet.SetFontsize(fontsize);
             }
         }
 
@@ -185,19 +198,15 @@ public class BlenderClock : MonoBehaviour
         bottomRight.text = currentTime;
 
         bottomLeft.text = "Q = quit";
-        if (mute)
-        {
-            bottomLeft.text += "\nC = restore clicks";
-            audioHandler.SetFX(false);
-        }
-        else
-        {
-            bottomLeft.text += "\nC = mute clicks";
-            audioHandler.SetFX(true);
-        }
+
+        if (!audioHandler.GetFX()) bottomLeft.text += "\nC = restore clicks";
+        else bottomLeft.text += "\nC = mute clicks";
+
         bottomLeft.text += "\nV = toggle overlay";
+
         if (sweepLamp) bottomLeft.text += "\nL = deactivate sweep lamp";
         else bottomLeft.text += "\nL = activate sweep lamp";
+
         bottomLeft.text += "\nS = switch theme (resets stopwatch)";
     }
 }
