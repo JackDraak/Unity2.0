@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class AnalogClock : MonoBehaviour 
 {
     [SerializeField] AudioClip[] secondHandFX;
-    [SerializeField] bool legacyMode;
+    [SerializeField] bool legacyMode; // controls: y-axis hands (legacy) vs. z-axis hands
     [SerializeField] Text bottomLeft, bottomRight, topLeft, topRight;
     [SerializeField] Transform sceneCamera, hourHand, minuteHand, secondHand, stopwatchHand, sweepHand, sweepLampTransform;
 
@@ -14,7 +14,7 @@ public class AnalogClock : MonoBehaviour
     private AudioSource audioSource;
     private bool sweepLamp = true, stopwatch = false;
     private DateTime startTime, stopTime;
-    private float lookUpdate = 0, lookDelay = 5, updateElapsedTimer, updateInterval = 1, updateTimer;
+    private float lookDelay = 5, updateElapsedTimer = 0, updateInterval = 1, updateTimer = 0;
     private float rFac_12Hour = (0.1f / 12), rFac_Hour, rFac_Minute = 0.1f;
     private int notch = 30, semiNotch = 6;
     private KeyCode endOfLine, guiUp, guiDown, switchTheme, toggleClick, toggleLamp, toggleOverlay, toggleStopwatch;
@@ -22,10 +22,6 @@ public class AnalogClock : MonoBehaviour
     private LevelValet levelValet;
     private string currentTime, elapsedTime;
     private TimeSpan breakTime, runTime;
-
-    private void Start()
-    {
-    }
 
     private void OnEnable()
     {
@@ -37,25 +33,23 @@ public class AnalogClock : MonoBehaviour
 
     private void Update()
     {
-        transform.LookAt(sceneCamera);
-
-        ControlMode();
+        ControlState();
+        iTween.LookUpdate(gameObject, sceneCamera.position, lookDelay);
         ControlMute();
         ControlLamp();
         ControlStopwatch();
         ControlVisability();
-
-        if (Time.time >= updateTimer) UpdateClock();
-        if (Time.time >= updateElapsedTimer) UpdateElapsedTime();
+        UpdateClock();
+        UpdateElapsedTime();
         UpdateGUI();
     }
 
     private void ClockInit()
     {
         audioSource = GetComponent<AudioSource>();
-        if (!(audioHandler = FindObjectOfType<AudioHandler>())) Debug.Log("AnalogClock.cs: audioHandler INFO, FAIL.");
-        if (!(levelValet = FindObjectOfType<LevelValet>())) Debug.Log("AnalogClock.cs: levelValet INFO, FAIL.");
-        if (!(keyValet = FindObjectOfType<KeyValet>())) Debug.Log("AnalogClock.cs keyValet INFO, FAIL.");
+        audioHandler = FindObjectOfType<AudioHandler>();
+        levelValet = FindObjectOfType<LevelValet>();
+        keyValet = FindObjectOfType<KeyValet>();
 
         endOfLine = keyValet.GetKey("Clock-Quit");
         guiUp = keyValet.GetKey("GUI-Larger");
@@ -78,7 +72,7 @@ public class AnalogClock : MonoBehaviour
         }
     }
 
-    private void ControlMode()
+    private void ControlState()
     {
         if (Input.GetKeyDown(switchTheme)) levelValet.LoadNextLevel();
         if (Input.GetKeyDown(endOfLine)) Application.Quit();
@@ -152,32 +146,38 @@ public class AnalogClock : MonoBehaviour
 
     private void UpdateClock()
     {
-        if (!audioHandler) ClockInit();
-        updateTimer = Time.time + updateInterval;
-        if (audioHandler.GetFX())
-            audioSource.PlayOneShot(secondHandFX[Mathf.FloorToInt(URandom.Range(0, secondHandFX.Length))]);
-        DateTime time = DateTime.Now;
-        currentTime = time.ToLongTimeString();
+        if (Time.time >= updateTimer)
+        {
+            updateTimer = Time.time + updateInterval;
+            DateTime time = DateTime.Now;
+            currentTime = time.ToLongTimeString();
+            if (!audioHandler) ClockInit();
+            if (audioHandler.GetFX())
+                audioSource.PlayOneShot(secondHandFX[Mathf.FloorToInt(URandom.Range(0, secondHandFX.Length))]);
 
-        if (!legacyMode)
-        {
-            secondHand.localRotation = Quaternion.Euler(0f, 0f, time.Second * semiNotch);
-            minuteHand.localRotation = Quaternion.Euler(0f, 0f, (time.Minute * semiNotch) + (time.Second * rFac_Minute));
-            hourHand.localRotation = Quaternion.Euler(0f, 0f, (time.Hour * notch) + (time.Minute * rFac_Hour));
-        }
-        else
-        {
-            secondHand.localRotation = Quaternion.Euler(0f, time.Second * semiNotch, 0f);
-            minuteHand.localRotation = Quaternion.Euler(0f, (time.Minute * semiNotch) + (time.Second * rFac_Minute), 0f);
-            hourHand.localRotation = Quaternion.Euler(0f,(time.Hour * notch) + (time.Minute * rFac_Hour), 0f);
+            if (!legacyMode)
+            {
+                secondHand.localRotation = Quaternion.Euler(0f, 0f, time.Second * semiNotch);
+                minuteHand.localRotation = Quaternion.Euler(0f, 0f, (time.Minute * semiNotch) + (time.Second * rFac_Minute));
+                hourHand.localRotation = Quaternion.Euler(0f, 0f, (time.Hour * notch) + (time.Minute * rFac_Hour));
+            }
+            else
+            {
+                secondHand.localRotation = Quaternion.Euler(0f, time.Second * semiNotch, 0f);
+                minuteHand.localRotation = Quaternion.Euler(0f, (time.Minute * semiNotch) + (time.Second * rFac_Minute), 0f);
+                hourHand.localRotation = Quaternion.Euler(0f,(time.Hour * notch) + (time.Minute * rFac_Hour), 0f);
+            }
         }
     }
 
     private void UpdateElapsedTime()
     {
-        updateElapsedTimer += updateInterval / 10;
-        runTime = DateTime.Now - startTime;
-        elapsedTime = "Begun: " + startTime.ToString() + "\nElapsed: " + runTime.ToString();
+        if (Time.time >= updateElapsedTimer)
+        {
+            updateElapsedTimer += updateInterval / 10;
+            runTime = DateTime.Now - startTime;
+            elapsedTime = "Begun: " + startTime.ToString() + "\nElapsed: " + runTime.ToString();
+        }
     }
 
     private void UpdateGUI()
