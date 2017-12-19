@@ -6,12 +6,13 @@ using UnityEngine.UI;
 public class AnalogClock : MonoBehaviour 
 {
     [SerializeField] AudioClip[] secondHandFX;
+    [SerializeField] bool legacyMode;
     [SerializeField] Text bottomLeft, bottomRight, topLeft, topRight;
     [SerializeField] Transform sceneCamera, hourHand, minuteHand, secondHand, stopwatchHand, sweepHand, sweepLampTransform;
 
     private AudioHandler audioHandler;
     private AudioSource audioSource;
-    private bool overlay = true, sweepLamp = true, stopwatch = false;
+    private bool sweepLamp = true, stopwatch = false;
     private DateTime startTime, stopTime;
     private float lookUpdate = 0, lookDelay = 5, updateElapsedTimer, updateInterval = 1, updateTimer;
     private float rFac_12Hour = (0.1f / 12), rFac_Hour, rFac_Minute = 0.1f;
@@ -96,8 +97,17 @@ public class AnalogClock : MonoBehaviour
             float ms = (float)breakTime.TotalMilliseconds;
             float stopwatchHandAngle = ((ms / 1000) % 60) * semiNotch;
             float sweepHandAngle = ((ms / 1000) % 360) * 360;
-            stopwatchHand.localRotation = Quaternion.Euler(0f, stopwatchHandAngle, 0f);
-            sweepHand.localRotation = Quaternion.Euler(0f, sweepHandAngle, 0f);
+
+            if (!legacyMode)
+            {
+                stopwatchHand.localRotation = Quaternion.Euler(0f, 0f, stopwatchHandAngle);
+                sweepHand.localRotation = Quaternion.Euler(0f, 0f, sweepHandAngle);
+            }
+            else
+            {
+                stopwatchHand.localRotation = Quaternion.Euler(0f, stopwatchHandAngle, 0f);
+                sweepHand.localRotation = Quaternion.Euler(0f, sweepHandAngle, 0f);
+            }
         }
 
         if (Input.GetKeyDown(toggleStopwatch))
@@ -149,9 +159,18 @@ public class AnalogClock : MonoBehaviour
         DateTime time = DateTime.Now;
         currentTime = time.ToLongTimeString();
 
-        secondHand.localRotation = Quaternion.Euler(0f, time.Second * semiNotch, 0f);
-        minuteHand.localRotation = Quaternion.Euler(0f, (time.Minute * semiNotch) + (time.Second * rFac_Minute), 0f);
-        hourHand.localRotation = Quaternion.Euler(0f,(time.Hour * notch) + (time.Minute * rFac_Hour), 0f);
+        if (!legacyMode)
+        {
+            secondHand.localRotation = Quaternion.Euler(0f, 0f, time.Second * semiNotch);
+            minuteHand.localRotation = Quaternion.Euler(0f, 0f, (time.Minute * semiNotch) + (time.Second * rFac_Minute));
+            hourHand.localRotation = Quaternion.Euler(0f, 0f, (time.Hour * notch) + (time.Minute * rFac_Hour));
+        }
+        else
+        {
+            secondHand.localRotation = Quaternion.Euler(0f, time.Second * semiNotch, 0f);
+            minuteHand.localRotation = Quaternion.Euler(0f, (time.Minute * semiNotch) + (time.Second * rFac_Minute), 0f);
+            hourHand.localRotation = Quaternion.Euler(0f,(time.Hour * notch) + (time.Minute * rFac_Hour), 0f);
+        }
     }
 
     private void UpdateElapsedTime()

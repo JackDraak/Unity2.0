@@ -2,8 +2,9 @@
 
 public class AudioHandler : MonoBehaviour
 {
+    private static bool soundFX = true;
+
     private AudioSource audioSource;
-    private bool soundFX = true;
     private float priorTimeScale;
     private KeyCode audioKey;
     private KeyValet keyValet;

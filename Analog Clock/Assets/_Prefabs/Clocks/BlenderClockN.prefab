@@ -37,7 +37,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4043801767821996}
   - component: {fileID: 82789766821088600}
-  - component: {fileID: 114218475318255052}
   m_Layer: 0
   m_Name: BlenderClockN
   m_TagString: Untagged
@@ -925,33 +924,3 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!114 &114218475318255052
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1265843724510492}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1848ff963c70b2042a9d420bb251a63b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  secondHandFX:
-  - {fileID: 8300000, guid: c427a38acc01ed942bb857ca70d776e6, type: 3}
-  - {fileID: 8300000, guid: dd77bec4da09ba846a250727e712a313, type: 3}
-  - {fileID: 8300000, guid: 1e313d169d95bfd43af78c5daa1b78fa, type: 3}
-  - {fileID: 8300000, guid: 22f54289799f8d24a9e8ff7e40b8623f, type: 3}
-  - {fileID: 8300000, guid: 1ea70a078c244094897d0b70533cc16d, type: 3}
-  - {fileID: 8300000, guid: 241ac018dfeb80a4593e3ad468b74c1b, type: 3}
-  - {fileID: 8300000, guid: e60b7e0fbb70f2b46bbbdb1b7599daef, type: 3}
-  bottomLeft: {fileID: 0}
-  bottomRight: {fileID: 0}
-  topLeft: {fileID: 0}
-  topRight: {fileID: 0}
-  sceneCamera: {fileID: 0}
-  hourHand: {fileID: 4850203867705988}
-  minuteHand: {fileID: 4747404006427368}
-  secondHand: {fileID: 4819511741311408}
-  stopwatchHand: {fileID: 4327894178552678}
-  sweepHand: {fileID: 4847480333801928}
-  sweepLampTransform: {fileID: 4927254221805208}

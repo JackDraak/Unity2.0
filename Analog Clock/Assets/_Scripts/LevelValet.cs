@@ -3,8 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class LevelValet : MonoBehaviour
 {
-    private int fontsize = 18;
-    private bool overlay = true;
+    private static bool overlay = true;
+    private static int fontsize = 18;
 
     private void OnEnable()
     {

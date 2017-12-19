@@ -797,6 +797,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 1ea70a078c244094897d0b70533cc16d, type: 3}
   - {fileID: 8300000, guid: 241ac018dfeb80a4593e3ad468b74c1b, type: 3}
   - {fileID: 8300000, guid: e60b7e0fbb70f2b46bbbdb1b7599daef, type: 3}
+  legacyMode: 1
   bottomLeft: {fileID: 523603858}
   bottomRight: {fileID: 440208721}
   topLeft: {fileID: 505237516}
@@ -808,21 +809,6 @@ MonoBehaviour:
   stopwatchHand: {fileID: 2130982675}
   sweepHand: {fileID: 1171768220}
   sweepLampTransform: {fileID: 922904770}
-  audioHandler: {fileID: 0}
-  audioSource: {fileID: 0}
-  mute: 0
-  stopwatch: 0
-  updateElapsedTimer: 0
-  updateInterval: 1
-  updateTimer: 0
-  rFac_12Hour: 0.008333334
-  rFac_Hour: 0
-  rFac_Minute: 0.1
-  notch: 30
-  semiNotch: 6
-  toggleStopwatch: 0
-  currentTime: 
-  elapsedTime: 
 --- !u!114 &1061022668 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114110032281188556, guid: aefb7da4a8520894d984fd88520fdc49,
