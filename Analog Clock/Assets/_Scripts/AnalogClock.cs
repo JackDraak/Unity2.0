@@ -63,6 +63,15 @@ public class AnalogClock : MonoBehaviour
         rFac_Hour = notch * rFac_12Hour * 2;
     }
 
+    private void ControlFontsize()
+    {
+        int fontsize = levelValet.GetFontsize();
+        topLeft.fontSize = fontsize;
+        topRight.fontSize = fontsize;
+        bottomLeft.fontSize = fontsize;
+        bottomRight.fontSize = fontsize;
+    }
+
     private void ControlLamp()
     {
         if (Input.GetKeyDown(toggleLamp))
@@ -72,15 +81,35 @@ public class AnalogClock : MonoBehaviour
         }
     }
 
+    private void ControlMute()
+    {
+        if (Input.GetKeyDown(toggleClick)) audioHandler.ToggleFX();
+    }
+
+    private void ControlOverlay()
+    {
+        Color visible = new Color(250, 250, 250, 250);
+        Color invisible = new Color(0, 0, 0, 0);
+        if (!levelValet.GetOverlay())
+        {
+            topLeft.color = invisible;
+            topRight.color = invisible;
+            bottomLeft.color = invisible;
+            bottomRight.color = invisible;
+        }
+        else
+        {
+            topLeft.color = visible;
+            topRight.color = visible;
+            bottomLeft.color = visible;
+            bottomRight.color = visible;
+        }
+    }
+
     private void ControlState()
     {
         if (Input.GetKeyDown(switchTheme)) levelValet.LoadNextLevel();
         if (Input.GetKeyDown(endOfLine)) Application.Quit();
-    }
-
-    private void ControlMute()
-    {
-        if (Input.GetKeyDown(toggleClick)) audioHandler.ToggleFX();
     }
 
     private void ControlStopwatch()
@@ -115,33 +144,15 @@ public class AnalogClock : MonoBehaviour
     {
         if (Input.GetKeyDown(toggleOverlay))
         {
-            Color invisible = new Color(0, 0, 0, 0);
-            Color visible = new Color(250, 250, 250, 250);
             levelValet.ToggleOverlay();
-            if (!levelValet.GetOverlay())
-            {
-                topLeft.color = invisible;
-                topRight.color = invisible;
-                bottomLeft.color = invisible;
-                bottomRight.color = invisible;
-            }
-            else
-            {
-                topLeft.color = visible;
-                topRight.color = visible;
-                bottomLeft.color = visible;
-                bottomRight.color = visible;
-            }
+            ControlOverlay();
         }
     }
 
     private void InitGUI()
     {
-        int fontsize = levelValet.GetFontsize();
-        topLeft.fontSize = fontsize;
-        topRight.fontSize = fontsize;
-        bottomLeft.fontSize = fontsize;
-        bottomRight.fontSize = fontsize;
+        ControlOverlay();
+        ControlFontsize();
     }
 
     private void UpdateClock()
