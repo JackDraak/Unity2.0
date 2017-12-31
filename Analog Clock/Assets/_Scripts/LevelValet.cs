@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class LevelValet : MonoBehaviour
 {
     private static bool overlay = true;
+    private static float brightness = 1.0f;
     private static int fontsize = 18;
 
     private void OnEnable()
@@ -22,8 +23,10 @@ public class LevelValet : MonoBehaviour
         SceneManager.LoadScene(nextScene);
     }
 
+    public float GetBrightness()        { return brightness; }
     public int GetFontsize()            { return fontsize; }
     public bool GetOverlay()            { return overlay; }
+    public void SetBrightness(float v)  { brightness = v; }
     public void SetFontsize(int size)   { fontsize = size; }
     public void SetOverlay(bool torf)   { overlay = torf; }
     public void ToggleOverlay()         { overlay = !overlay; }

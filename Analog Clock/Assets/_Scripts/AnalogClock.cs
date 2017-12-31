@@ -14,7 +14,7 @@ public class AnalogClock : MonoBehaviour
     private AudioSource audioSource;
     private bool sweepLamp = true, stopwatch = false;
     private DateTime startTime, stopTime;
-    private float lookDelay = 5, updateElapsedTimer = 0, updateInterval = 1, updateTimer = 0;
+    private float lookDelay = 5f, updateElapsedTimer = 0f, updateInterval = 1f, updateTimer = 0f;
     private float rFac_12Hour = (0.1f / 12), rFac_Hour, rFac_Minute = 0.1f;
     private int notch = 30, semiNotch = 6;
     private KeyCode endOfLine, guiUp, guiDown, switchTheme, toggleClick, toggleLamp, toggleOverlay, toggleStopwatch;
